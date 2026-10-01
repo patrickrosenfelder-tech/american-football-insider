@@ -100,4 +100,6 @@ async function getGameDetail(eventId) {
   });
 }
 
-module.exports = { getScoreboard, getGameDetail, fetchAndStoreScoreboard };
+module.exports = {
+  getScoreboard, getGameDetail, fetchAndStoreScoreboard, normalizeEvent, extractPlayerStats,
+};

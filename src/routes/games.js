@@ -1,8 +1,10 @@
 const express = require('express');
+const validateId = require('./validateId');
 const gamesService = require('../services/gamesService');
 const db = require('../db');
 
 const router = express.Router();
+router.param('id', validateId);
 
 router.get('/scoreboard', async (req, res, next) => {
   try {
