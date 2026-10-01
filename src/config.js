@@ -4,12 +4,16 @@ module.exports = {
   port: parseInt(process.env.PORT || '3000', 10),
   espnBaseUrl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl',
   espnCoreUrl: 'https://cdn.espn.com/core/nfl',
-  dbPath: process.env.DB_PATH || './data/football.db',
+  sleeperBaseUrl: 'https://api.sleeper.app/v1',
+  // Serverless filesystems (Vercel) are read-only except /tmp.
+  dbPath: process.env.DB_PATH || (process.env.VERCEL ? '/tmp/football.db' : './data/football.db'),
   cache: {
     scoreboardTtlSeconds: parseInt(process.env.SCOREBOARD_TTL || '20', 10),
     teamsTtlSeconds: parseInt(process.env.TEAMS_TTL || '86400', 10),
     gameTtlSeconds: parseInt(process.env.GAME_TTL || '15', 10),
     standingsTtlSeconds: parseInt(process.env.STANDINGS_TTL || '3600', 10),
+    playersTtlSeconds: parseInt(process.env.PLAYERS_TTL || '21600', 10),
+    trendingTtlSeconds: parseInt(process.env.TRENDING_TTL || '600', 10),
   },
   pollIntervalMs: parseInt(process.env.POLL_INTERVAL_MS || '30000', 10),
 };

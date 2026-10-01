@@ -1,7 +1,9 @@
 const express = require('express');
+const validateId = require('./validateId');
 const teamsService = require('../services/teamsService');
 
 const router = express.Router();
+router.param('id', validateId);
 
 router.get('/', async (req, res, next) => {
   try {
