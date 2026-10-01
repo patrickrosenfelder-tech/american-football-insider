@@ -30,7 +30,7 @@ fetches, normalizes, caches, and persists it — it isn't just a proxy.
 ```bash
 npm install
 npm start
-# API listening on http://localhost:3000
+# API listening on http://localhost:4002
 ```
 
 Copy `.env.example` to `.env` to override defaults (port, cache TTLs, poll
@@ -53,9 +53,9 @@ interval, DB path).
 ### Example
 
 ```bash
-curl http://localhost:3000/api/games/scoreboard
-curl http://localhost:3000/api/teams/22          # Arizona Cardinals
-curl http://localhost:3000/api/games/401872948   # completed game with full boxscore
+curl http://localhost:4002/api/games/scoreboard
+curl http://localhost:4002/api/teams/22          # Arizona Cardinals
+curl http://localhost:4002/api/games/401872948   # completed game with full boxscore
 ```
 
 `seasontype`: `1` preseason, `2` regular season, `3` postseason.
@@ -64,7 +64,7 @@ curl http://localhost:3000/api/games/401872948   # completed game with full boxs
 
 ```js
 const { io } = require('socket.io-client');
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:4002');
 socket.on('scores:update', (payload) => console.log(payload));
 ```
 
@@ -82,7 +82,7 @@ SQLite file at `DB_PATH` (default `./data/football.db`):
 
 ```bash
 docker build -t football-insider-api .
-docker run -p 3000:3000 football-insider-api
+docker run -p 4002:4002 football-insider-api
 ```
 
 **Vercel:** `vercel.json` is included for the REST surface. Vercel's
