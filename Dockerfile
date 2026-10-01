@@ -7,7 +7,7 @@ RUN npm install --omit=dev
 
 COPY src ./src
 
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=4002
+EXPOSE 4002
 
 CMD ["node", "src/server.js"]

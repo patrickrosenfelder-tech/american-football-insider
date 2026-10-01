@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 module.exports = {
-  port: parseInt(process.env.PORT || '3000', 10),
+  port: parseInt(process.env.PORT || '4002', 10),
   espnBaseUrl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl',
   espnCoreUrl: 'https://cdn.espn.com/core/nfl',
   dbPath: process.env.DB_PATH || './data/football.db',
