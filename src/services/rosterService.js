@@ -1,6 +1,6 @@
 const cache = require('../cache/cacheManager');
 const { ESPN_SITE, fetchJson, findTeam } = require('./sportsDataService');
-const ratingService = require('./ratingService');
+const playerStatsService = require('./playerStatsService');
 
 const ESPN_ATHLETE = 'https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes';
 
@@ -16,10 +16,6 @@ const currentSeason = () => {
   return now.getUTCMonth() < 7 ? now.getUTCFullYear() - 1 : now.getUTCFullYear();
 };
 
-const ratingFor = (ratings, id) => {
-  const r = ratings?.ratings?.[id];
-  return r ? r.rating : null;
-};
 
 const normalizeAthlete = (a = {}) => ({
   id: a.id,
@@ -69,11 +65,10 @@ const getRoster = async (teamIdOrAbbr, { decorate = (a) => a } = {}) => {
   const team = await findTeam(teamIdOrAbbr);
   if (!team) return null;
   const roster = await fetchRoster(team);
-  const ratings = await ratingService.getRatings(roster.season);
   const groups = roster.groups.map((g) => {
     const byPosition = {};
     g.athletes.forEach((a) => {
-      const athlete = decorate({ ...a, rating: ratingFor(ratings, a.id) });
+      const athlete = decorate({ ...a });
       delete athlete.roster_injuries;
       (byPosition[a.position || 'Other'] ||= []).push(athlete);
     });
@@ -83,7 +78,7 @@ const getRoster = async (teamIdOrAbbr, { decorate = (a) => a } = {}) => {
       count: g.athletes.length,
       positions: Object.keys(byPosition)
         .sort((x, y) => posRank(x) - posRank(y))
-        .map((pos) => ({ position: pos, athletes: byPosition[pos].sort((x, y) => (y.rating ?? 0) - (x.rating ?? 0)) }))
+        .map((pos) => ({ position: pos, athletes: byPosition[pos].sort((x, y) => (Number(x.jersey) || 99) - (Number(y.jersey) || 99)) }))
     };
   });
   return {
@@ -91,7 +86,6 @@ const getRoster = async (teamIdOrAbbr, { decorate = (a) => a } = {}) => {
     season: roster.season,
     coach: roster.coach,
     groups,
-    ratings_through_week: ratings?.data_through_week ?? null,
     last_updated: roster.fetched_at
   };
 };
@@ -125,7 +119,6 @@ const getDepthChart = async (teamIdOrAbbr, { decorate = (a) => a } = {}) => {
     }), TTL.depth),
     fetchRoster(team)
   ]);
-  const ratings = await ratingService.getRatings(roster.season);
   const rosterById = {};
   roster.groups.forEach((g) => g.athletes.forEach((a) => { rosterById[a.id] = a; }));
 
@@ -148,8 +141,7 @@ const getDepthChart = async (teamIdOrAbbr, { decorate = (a) => a } = {}) => {
           short_name: a.shortName || r.short_name,
           jersey: r.jersey || null,
           position: r.position || null,
-          headshot: r.headshot || headshotUrl(a.id),
-          rating: ratingFor(ratings, a.id)
+          headshot: r.headshot || headshotUrl(a.id)
         };
         return decorate(athlete);
       })
@@ -164,8 +156,6 @@ const getDepthChart = async (teamIdOrAbbr, { decorate = (a) => a } = {}) => {
     offense: units.offense || null,
     defense: units.defense || null,
     special_teams: units.special || null,
-    ratings_through_week: ratings?.data_through_week ?? null,
-    rating_note: 'AFI rating (0-99) is our own stat-based rating, not an EA Madden rating.',
     last_updated: raw.fetched_at
   };
 };
@@ -186,8 +176,7 @@ const getPlayer = async (athleteId, { decorate = (a) => a } = {}) => {
   if (!a) return null;
 
   const season = currentSeason();
-  const ratings = await ratingService.getRatings(season);
-  const rating = ratings?.ratings?.[a.id] || null;
+  const stats = await playerStatsService.getPlayerStats(season);
 
   return decorate({
     id: a.id,
@@ -216,9 +205,8 @@ const getPlayer = async (athleteId, { decorate = (a) => a } = {}) => {
     season,
     // ESPN's season summary (with league rank) plus nflverse's full season line.
     stats_summary: (a.statsSummary?.statistics || []).map((s) => ({ label: s.displayName, value: s.displayValue, rank: s.rankDisplayValue || null })),
-    season_stats: ratings?.stat_lines?.[a.id] || null,
-    afi: rating,
-    ratings_through_week: ratings?.data_through_week ?? null,
+    season_stats: stats?.stat_lines?.[a.id] || null,
+    stats_through_week: stats?.data_through_week ?? null,
     espn_url: a.links?.find((l) => (l.rel || []).includes('playercard'))?.href || null,
     last_updated: bio.fetched_at
   });

@@ -3,7 +3,7 @@ const router = express.Router();
 const rosterService = require('../services/rosterService');
 const injuryService = require('../services/injuryService');
 
-// GET /api/players/:athleteId  (ESPN athlete id) — bio, season stats, AFI rating breakdown.
+// GET /api/players/:athleteId  (ESPN athlete id) — bio, season stats, injury status.
 router.get('/:athleteId', async (req, res) => {
   try {
     if (!/^\d+$/.test(req.params.athleteId)) {

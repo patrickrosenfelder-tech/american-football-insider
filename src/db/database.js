@@ -46,7 +46,7 @@ const initialize = () => {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Derived datasets (nflverse aggregates, AFI ratings) stored as JSON blobs keyed by name.
+    // Derived datasets (nflverse aggregates) stored as JSON blobs keyed by name.
     db.run(`CREATE TABLE IF NOT EXISTS datasets (
       key TEXT PRIMARY KEY,
       json TEXT NOT NULL,

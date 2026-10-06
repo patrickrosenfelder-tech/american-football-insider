@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, Logo, RatingBadge, InjuryBadge, Updated } from '../components.jsx';
+import { Loading, ErrorBox, Logo, InjuryBadge, Updated } from '../components.jsx';
 
 const STAT_LABELS = {
   completions: 'Completions', attempts: 'Pass attempts', passing_yards: 'Pass yards', passing_tds: 'Pass TD',
@@ -43,7 +43,6 @@ export default function Player() {
           </p>
           {p.injury && <p className="small"><InjuryBadge injury={p.injury} /> {p.injury.injury || ''} {p.injury.practice ? `· Practice (Wk ${p.injury.practice_week} report): ${p.injury.practice}` : ''}</p>}
         </div>
-        <div className="hero-rating"><RatingBadge rating={p.afi?.rating} large /><span className="small">AFI rating</span></div>
       </div>
 
       <div className="grid two-col">
@@ -62,23 +61,16 @@ export default function Player() {
           )}
         </div>
         <div className="card">
-          <h3 className="card-title">AFI rating breakdown</h3>
-          {!p.afi && <p className="muted small">Not rated yet: not enough snaps or stats this season (or no stat-based model for this position, e.g. long snappers).</p>}
-          {p.afi && (
-            <>
-              <p className="small">Position group <b>{p.afi.group}</b> · production percentile <b>{p.afi.production}</b>
-                {p.afi.snap_share != null && <> · snap share <b>{p.afi.snap_share}%</b> (pctl {p.afi.snap_percentile})</>}</p>
-              <table>
-                <thead><tr><th className="left">Metric</th><th>Weight</th><th>Value</th><th>Pctl</th></tr></thead>
-                <tbody>
-                  {p.afi.components.map((c) => (
-                    <tr key={c.metric}><td className="left">{c.metric}</td><td>{Math.round(c.weight * 100)}%</td><td>{c.value ?? '–'}</td><td>{c.percentile ?? '–'}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="muted small">Percentiles vs. qualified {p.afi.group}s league-wide{p.ratings_through_week ? `, through Week ${p.ratings_through_week}` : ''}. <Link to="/about/ratings">Formula</Link></p>
-            </>
+          <h3 className="card-title">Injury status</h3>
+          {!p.injury && <p className="muted small">Not on the current injury report.</p>}
+          {p.injury && (
+            <dl className="stat-list">
+              <div><dt>Status</dt><dd><InjuryBadge injury={p.injury} /> {p.injury.status}</dd></div>
+              {p.injury.injury && <div><dt>Injury</dt><dd>{p.injury.injury}</dd></div>}
+              {p.injury.practice && <div><dt>Practice (Wk {p.injury.practice_week})</dt><dd>{p.injury.practice}</dd></div>}
+            </dl>
           )}
+          {p.stats_through_week && <p className="muted small">Season stats through Week {p.stats_through_week} (nflverse).</p>}
         </div>
       </div>
       {p.espn_url && <p className="small"><a href={p.espn_url} target="_blank" rel="noreferrer"><u>ESPN player card</u></a></p>}

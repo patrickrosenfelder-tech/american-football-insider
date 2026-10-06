@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, RatingBadge, InjuryBadge, Updated } from '../components.jsx';
+import { Loading, ErrorBox, Logo, InjuryBadge, Updated } from '../components.jsx';
 import { MatchupTendencies } from './Tendencies.jsx';
 
 // [label, path, higherIsBetter, suffix]
@@ -50,7 +50,7 @@ function QbCard({ side }) {
     <div className="qb-card">
       <img className="headshot" src={qb.headshot} alt="" />
       <div className="grow">
-        <div><Link to={`/players/${qb.id}`}><b>{qb.name}</b></Link> <RatingBadge rating={qb.rating} small /> <InjuryBadge injury={qb.injury} small /></div>
+        <div><Link to={`/players/${qb.id}`}><b>{qb.name}</b></Link> <InjuryBadge injury={qb.injury} small /></div>
         <div className="small muted">
           {s.attempts ? `${s.completions}/${s.attempts}, ${s.passing_yards} yds, ${s.passing_tds} TD, ${s.interceptions} INT` : 'No pass attempts yet this season'}
         </div>

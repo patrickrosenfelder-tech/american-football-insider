@@ -52,16 +52,6 @@ export function GameCard({ game }) {
   );
 }
 
-// AFI rating badge: our own 0-99 rating (not Madden). null = not rated.
-export function RatingBadge({ rating, small, large }) {
-  const tier = rating == null ? 'nr' : rating >= 90 ? 'elite' : rating >= 80 ? 'good' : rating >= 70 ? 'avg' : 'low';
-  return (
-    <span className={`rating rating-${tier} ${small ? 'sm' : ''} ${large ? 'lg' : ''}`} title={rating == null ? 'Not rated yet' : `AFI rating ${rating}`}>
-      {rating ?? 'NR'}
-    </span>
-  );
-}
-
 const INJURY_ABBR = { Out: 'O', Doubtful: 'D', Questionable: 'Q', 'Injured Reserve': 'IR', 'Physically Unable to Perform': 'PUP', Suspension: 'SUSP' };
 
 export function injuryAbbr(status = '') {

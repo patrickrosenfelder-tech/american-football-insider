@@ -5,7 +5,6 @@ import Teams from './pages/Teams.jsx';
 import Team from './pages/Team.jsx';
 import Game from './pages/Game.jsx';
 import Player from './pages/Player.jsx';
-import RatingsInfo from './pages/RatingsInfo.jsx';
 import Injuries from './pages/Injuries.jsx';
 import Previews from './pages/Previews.jsx';
 import Preview from './pages/Preview.jsx';
@@ -42,12 +41,11 @@ export default function App() {
           <Route path="/previews" element={<Previews />} />
           <Route path="/preview/:gameId" element={<Preview />} />
           <Route path="/tendencies" element={<TendenciesPage />} />
-          <Route path="/about/ratings" element={<RatingsInfo />} />
           <Route path="*" element={<div className="state">Page not found.</div>} />
         </Routes>
       </main>
       <footer className="wrap footer">
-        Live data from ESPN’s public NFL feeds and nflverse. AFI ratings are our own stat-based ratings, not EA Madden ratings. Not affiliated with the NFL, ESPN or EA.
+        Live data from ESPN’s public NFL feeds and nflverse. Not affiliated with the NFL, ESPN or EA.
       </footer>
     </>
   );

@@ -1,4 +1,4 @@
-const ratingService = require('../services/ratingService');
+const playerStatsService = require('../services/playerStatsService');
 const injuryService = require('../services/injuryService');
 const teamStatsService = require('../services/teamStatsService');
 const tendencyService = require('../services/tendencyService');
@@ -19,10 +19,10 @@ const runJob = async (name, fn) => {
   return status[name];
 };
 
-// AFI ratings from nflverse season stats + snap counts.
-const refreshRatings = () => runJob('ratings', async () => {
-  const r = await ratingService.refreshRatings(currentSeason());
-  return { data_through_week: r.data_through_week, rated_players: Object.keys(r.ratings).length };
+// Player season stat lines from nflverse season stats + snap counts.
+const refreshPlayerStats = () => runJob('player_stats', async () => {
+  const r = await playerStatsService.refreshPlayerStats(currentSeason());
+  return { data_through_week: r.data_through_week, players: Object.keys(r.stat_lines).length };
 });
 
 // Official practice participation (nflverse injuries_<season>.csv).
@@ -49,10 +49,10 @@ const refreshSchedules = () => runJob('schedules', async () => {
 
 // On boot: build anything missing (SQLite on Fly lives in /tmp, so a fresh machine starts empty).
 const bootstrap = async () => {
-  if (!(await ratingService.getRatings(currentSeason()))) await refreshRatings();
+  if (!(await playerStatsService.getPlayerStats(currentSeason()))) await refreshPlayerStats();
   if (!(await injuryService.getPracticeReport(currentSeason()))) await refreshPractice();
   if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
 };
 
-module.exports = { bootstrap, refreshRatings, refreshPractice, refreshPbpDerived, refreshSchedules, status };
+module.exports = { bootstrap, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };

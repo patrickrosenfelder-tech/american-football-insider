@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, RatingBadge, InjuryBadge, Updated } from '../components.jsx';
+import { Loading, ErrorBox, InjuryBadge, Updated } from '../components.jsx';
 
 export default function Roster({ teamId }) {
   const { data, error, loading } = useApi(`/teams/${teamId}/roster`);
@@ -17,7 +17,7 @@ export default function Roster({ teamId }) {
           <div className="card table-card">
             <table className="roster-table">
               <thead>
-                <tr><th className="left">Player</th><th>Pos</th><th>AFI</th><th className="hide-sm">Age</th><th className="hide-sm">Ht / Wt</th><th className="hide-sm">Exp</th><th className="hide-sm left">College</th></tr>
+                <tr><th className="left">Player</th><th>Pos</th><th className="hide-sm">Age</th><th className="hide-sm">Ht / Wt</th><th className="hide-sm">Exp</th><th className="hide-sm left">College</th></tr>
               </thead>
               <tbody>
                 {g.positions.flatMap((p) => p.athletes).map((a) => (
@@ -30,7 +30,6 @@ export default function Roster({ teamId }) {
                       </Link>
                     </td>
                     <td>{a.position}</td>
-                    <td><RatingBadge rating={a.rating} small /></td>
                     <td className="hide-sm">{a.age ?? '–'}</td>
                     <td className="hide-sm">{a.height || '–'} / {a.weight?.replace(' lbs', '') || '–'}</td>
                     <td className="hide-sm">{a.experience === 0 ? 'R' : a.experience ?? '–'}</td>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, RatingBadge, InjuryBadge, Updated } from '../components.jsx';
+import { Loading, ErrorBox, InjuryBadge, Updated } from '../components.jsx';
 
 // Field layouts: [slotKey, gridColumn, gridRow] on a 9-column formation grid.
 const LAYOUTS = {
@@ -31,7 +31,6 @@ function PlayerCard({ slot, expanded }) {
     <div className="dc-slot">
       <Link to={`/players/${starter.id}`} className="dc-card" title={`${starter.name} — ${slot.espn_position_name || slot.label}`}>
         <span className="dc-pos">{slot.label}</span>
-        <RatingBadge rating={starter.rating} />
         <img className="dc-headshot" src={starter.headshot} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
         <span className="dc-name">{starter.short_name}</span>
         {starter.jersey && <span className="dc-num">#{starter.jersey}</span>}
@@ -42,7 +41,6 @@ function PlayerCard({ slot, expanded }) {
           <span className="dc-depth">{p.depth}</span>
           <span className="grow">{p.short_name}</span>
           <InjuryBadge injury={p.injury} small />
-          <RatingBadge rating={p.rating} small />
         </Link>
       ))}
     </div>
@@ -106,8 +104,7 @@ export default function DepthChart({ teamId }) {
       )}
       <p className="muted small note">
         {unit?.formation && <>ESPN depth chart formation: {unit.formation}. </>}
-        Ratings are <b>AFI ratings</b> (0–99), our own stat-based score{d.ratings_through_week ? ` through Week ${d.ratings_through_week}` : ''} — not EA Madden ratings.
-        NR = not enough snaps/stats yet. <Link to="/about/ratings">How it works</Link>.
+        Tap a card for the player page. Badges show current injury status (O / D / Q / IR / PUP).
       </p>
       <Updated at={d.last_updated} />
     </div>

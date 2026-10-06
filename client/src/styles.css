@@ -193,16 +193,7 @@ tr:last-child td { border-bottom: 0; }
 .prose p, .prose li { line-height: 1.55; }
 .wrap-cell { white-space: normal; min-width: 260px; }
 
-/* Rating + injury badges */
-.rating { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 24px; padding: 0 6px; border-radius: 7px;
-  font-weight: 900; font-size: .85rem; font-variant-numeric: tabular-nums; color: #fff; background: #64748b; }
-.rating.sm { min-width: 26px; height: 20px; font-size: .75rem; border-radius: 6px; }
-.rating.lg { min-width: 64px; height: 56px; font-size: 1.9rem; border-radius: 14px; }
-.rating-elite { background: linear-gradient(135deg, #b8860b, #f5c542); color: #1d1300; }
-.rating-good { background: #15803d; }
-.rating-avg { background: #2563eb; }
-.rating-low { background: #64748b; }
-.rating-nr { background: transparent; color: var(--muted); border: 1px dashed var(--line); }
+/* Injury badges */
 .inj { display: inline-flex; align-items: center; justify-content: center; padding: 1px 6px; border-radius: 6px; font-size: .7rem; font-weight: 900; color: #fff; background: #d97706; }
 .inj.sm { font-size: .65rem; padding: 0 5px; }
 .inj-o, .inj-ir, .inj-pup, .inj-sus, .inj-susp { background: var(--accent); }
@@ -222,8 +213,7 @@ tr:last-child td { border-bottom: 0; }
 .dc-card:hover { transform: translateY(-2px); border-color: #b9c4d8; }
 .dc-card.empty { opacity: .6; min-height: 120px; justify-content: center; }
 .dc-pos { position: absolute; top: 6px; left: 7px; font-size: .68rem; font-weight: 900; letter-spacing: .04em; color: var(--muted); }
-.dc-card .rating { position: absolute; top: 5px; right: 5px; }
-.dc-card .inj { position: absolute; top: 56px; right: 8px; }
+.dc-card .inj { position: absolute; top: 5px; right: 5px; }
 .dc-headshot { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: var(--line); margin-top: 14px; }
 .dc-name { font-weight: 800; font-size: .82rem; line-height: 1.15; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dc-num { font-size: .7rem; color: var(--muted); }
@@ -240,7 +230,6 @@ tr:last-child td { border-bottom: 0; }
 .player-hero { align-items: center; }
 .player-headshot { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; background: rgba(255,255,255,.9); flex: none; }
 .muted-inv { opacity: .7; font-weight: 600; }
-.hero-rating { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 @media (max-width: 640px) {
   .player-headshot { width: 72px; height: 72px; }
   .player-hero { flex-wrap: wrap; }

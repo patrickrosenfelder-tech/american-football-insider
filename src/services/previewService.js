@@ -2,7 +2,7 @@ const cache = require('../cache/cacheManager');
 const { ESPN_SITE, fetchJson, getScoreboard, getStandings, getTeamDetail, findTeam } = require('./sportsDataService');
 const rosterService = require('./rosterService');
 const injuryService = require('./injuryService');
-const ratingService = require('./ratingService');
+const playerStatsService = require('./playerStatsService');
 const teamStatsService = require('./teamStatsService');
 
 const TTL_PREVIEW = 1800;
@@ -53,17 +53,16 @@ const recentForm = (schedule, teamId, limit = 5) => schedule
 const UNAVAILABLE = ['Out', 'Injured Reserve', 'Doubtful', 'Suspension'];
 
 // Projected starter = first QB on the depth chart who isn't Out/IR/Doubtful/Suspended.
-const starterQb = (depth, ratings) => {
+const starterQb = (depth, playerStats) => {
   const slot = depth?.offense?.slots?.find((s) => s.key === 'qb');
   const players = slot?.players || [];
   if (!players.length) return null;
   const qb = players.find((p) => !UNAVAILABLE.includes(p.injury?.status)) || players[0];
-  const line = ratings?.stat_lines?.[qb.id] || {};
+  const line = playerStats?.stat_lines?.[qb.id] || {};
   return {
     id: qb.id,
     name: qb.name,
     headshot: qb.headshot,
-    rating: qb.rating,
     injury: qb.injury || null,
     replaces: qb !== players[0] ? { id: players[0].id, name: players[0].name, injury: players[0].injury } : null,
     season: {
@@ -106,7 +105,7 @@ const oddsFrom = (summary) => {
   };
 };
 
-const sideFor = async (team, { standings, injuries, ratings, teamStats, season }) => {
+const sideFor = async (team, { standings, injuries, playerStats, teamStats, season }) => {
   const detail = await getTeamDetail(team.abbreviation).catch(() => null);
   const decorate = (a) => ({ ...a, injury: injuries.map[a.id] || null });
   const depth = await rosterService.getDepthChart(team.abbreviation, { decorate }).catch(() => null);
@@ -118,7 +117,7 @@ const sideFor = async (team, { standings, injuries, ratings, teamStats, season }
     color: team.color,
     standing: standingFor(standings, team.id),
     base_defense: depth?.base_defense || null,
-    starting_qb: starterQb(depth, ratings),
+    starting_qb: starterQb(depth, playerStats),
     key_injuries: keyInjuries(injuries.byTeam[team.id], depth),
     recent_form: detail ? recentForm(detail.schedule, team.id) : [],
     stats: teamStats?.teams?.[team.abbreviation] || null,
@@ -138,10 +137,10 @@ const buildPreview = async (gameId) => {
   if (!comp) return null;
   const season = summary.header.season?.year || rosterService.currentSeason();
 
-  const [standings, league, ratings, teamStats] = await Promise.all([
+  const [standings, league, playerStats, teamStats] = await Promise.all([
     getStandings().catch(() => null),
     injuryService.getLeagueInjuries().catch(() => ({ teams: [] })),
-    ratingService.getRatings(season),
+    playerStatsService.getPlayerStats(season),
     teamStatsService.getTeamStats(season)
   ]);
   const injuries = { map: {}, byTeam: {} };
@@ -153,7 +152,7 @@ const buildPreview = async (gameId) => {
   const home = comp.competitors.find((c) => c.homeAway === 'home');
   const away = comp.competitors.find((c) => c.homeAway === 'away');
   const [homeTeam, awayTeam] = await Promise.all([findTeam(home.team.id), findTeam(away.team.id)]);
-  const ctx = { standings, injuries, ratings, teamStats, season };
+  const ctx = { standings, injuries, playerStats, teamStats, season };
   const [homeSide, awaySide] = await Promise.all([sideFor(homeTeam, ctx), sideFor(awayTeam, ctx)]);
   const h2h = await teamStatsService.headToHead(awayTeam.abbreviation, homeTeam.abbreviation).catch(() => null);
 
@@ -177,7 +176,7 @@ const buildPreview = async (gameId) => {
     } : null,
     head_to_head: h2h,
     team_stats_through_week: teamStats?.data_through_week ?? null,
-    ratings_through_week: ratings?.data_through_week ?? null,
+    stats_through_week: playerStats?.data_through_week ?? null,
     last_updated: new Date().toISOString()
   };
 };
