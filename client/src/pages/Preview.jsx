@@ -4,6 +4,7 @@ import { Loading, ErrorBox, Logo, InjuryBadge, Updated } from '../components.jsx
 import { MatchupTendencies } from './Tendencies.jsx';
 import { WeatherBlock } from './Weather.jsx';
 import { TrendsBlock } from './Picks.jsx';
+import { MatchupNews } from './News.jsx';
 
 // [label, path, higherIsBetter, suffix]
 const STAT_ROWS = [
@@ -136,6 +137,8 @@ export default function Preview() {
           </div>
         ))}
       </div>
+
+      <MatchupNews away={away} home={home} />
 
       <TrendsBlock gameId={p.game_id} away={away} home={home} />
 

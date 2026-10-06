@@ -86,6 +86,28 @@ export function NewsFeed({ team = null, compact = false }) {
   );
 }
 
+// Matchup preview block: latest readable stories tagging either team (both-team stories first).
+export function MatchupNews({ away, home, limit = 6 }) {
+  const { data, error, loading } = useApi(`/news?team=${away.abbreviation},${home.abbreviation}&limit=${limit}`);
+  return (
+    <div className="card">
+      <h3 className="card-title">Matchup news · {away.abbreviation} &amp; {home.abbreviation}</h3>
+      {loading && <p className="muted small">Loading news…</p>}
+      {error && <p className="muted small">News unavailable: {error.message}</p>}
+      {data && !data.data.stories.length && <p className="muted small">No stories for these teams yet.</p>}
+      {data && data.data.stories.map((s) => (
+        <Link key={s.id} to={`/news/${s.id}`} className="headline-row">
+          <span className={`story-type ${s.kind}`}>{s.type}</span>
+          <span className="grow"><b>{s.title}</b>{s.excerpt && <span className="muted small"> — {s.excerpt.length > 140 ? `${s.excerpt.slice(0, 140)}…` : s.excerpt}</span>}</span>
+          <span className="muted small">{s.teams.filter((t) => t === away.abbreviation || t === home.abbreviation).join(' · ')} · {ago(s.published)}</span>
+        </Link>
+      ))}
+      {data && data.data.stories.some((s) => s.ai) && <p className="muted small note">{AI_NOTE}. Data stories are written from ESPN data.</p>}
+      <p className="small"><Link to={`/teams/${away.abbreviation}?tab=news`}><u>All {away.abbreviation} news</u></Link> · <Link to={`/teams/${home.abbreviation}?tab=news`}><u>All {home.abbreviation} news</u></Link></p>
+    </div>
+  );
+}
+
 export default function News() {
   const { data } = useApi('/teams');
   const [params, setParams] = useSearchParams();

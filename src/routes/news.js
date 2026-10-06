@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const newsService = require('../services/newsService');
 
-// GET /api/news?team=PHI&kind=data|headline&limit=60 — readable stories (AI summaries + data stories) and
+// GET /api/news?team=PHI (or team=PHI,DAL for a matchup)&kind=data|headline&limit=60 — readable stories (AI summaries + data stories) and
 // remaining unsummarised headlines (link-outs only).
 router.get('/', async (req, res) => {
   try {

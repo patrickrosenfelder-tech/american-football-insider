@@ -371,3 +371,4 @@ a.tag:hover { border-color: #b9c4d8; }
 .trend-list { margin: 0; padding-left: 18px; }
 .trend-list li { line-height: 1.5; font-size: .9rem; }
 .mt { margin-top: 14px; }
+.card > a.headline-row { padding: 8px 0; color: inherit; text-decoration: none; }

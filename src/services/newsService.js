@@ -471,10 +471,12 @@ const teaser = (s) => ({
 
 const list = async ({ team = null, limit = 60, kind = null } = {}) => {
   const state = await load();
-  const t = team ? String(team).toUpperCase() : null;
+  // team may be a comma list (matchup news): stories tagging both teams sort first.
+  const want = team ? String(team).toUpperCase().split(',').filter(Boolean) : [];
+  const hits = (s) => want.filter((t) => s.teams.includes(t)).length;
   const stories = Object.values(state.stories)
-    .filter((s) => (!t || s.teams.includes(t)) && (!kind || s.kind === kind))
-    .sort((a, b) => b.published.localeCompare(a.published));
+    .filter((s) => (!want.length || hits(s) > 0) && (!kind || s.kind === kind))
+    .sort((a, b) => hits(b) - hits(a) || b.published.localeCompare(a.published));
   // Readable stories (AI summary or data story) first; unsummarised headlines listed separately.
   const readable = stories.filter((s) => s.kind === 'data' || s.summary).slice(0, limit).map(teaser);
   const headlines = stories.filter((s) => s.kind === 'headline' && !s.summary).slice(0, 30)
