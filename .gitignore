@@ -10,3 +10,4 @@ build/
 .idea/
 *.log
 npm-debug.log*
+client/dist/
