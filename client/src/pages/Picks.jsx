@@ -26,6 +26,11 @@ function PickCard({ g }) {
       {!p && <p className="muted small">No pick (game started before tracking or no line posted).</p>}
       {p && (
         <>
+          <div className="afi-signals">
+            <span className="confidence-stars" title={`${p.confidence_edge} point model-to-market edge`}>{'★'.repeat(p.confidence_stars)}<em> AFI Confidence Rating</em></span>
+            <span className={`momentum ${p.momentum?.home?.label?.toLowerCase()}`}>{p.momentum?.home?.badge} {g.home.abbreviation} {p.momentum?.home?.label}</span>
+            <span className={`momentum ${p.momentum?.away?.label?.toLowerCase()}`}>{p.momentum?.away?.badge} {g.away.abbreviation} {p.momentum?.away?.label}</span>
+          </div>
           <div className="pick-lines">
             <div>
               <span className="muted small">Spread</span>
@@ -47,6 +52,7 @@ function PickCard({ g }) {
             </div>
           </div>
           <p className="small">{p.reasoning}</p>
+          <p className="key-stat"><b>Efficiency signal:</b> {p.efficiency_rating?.snippet}</p>
           <p className="muted small">Model: {p.home} {fmtLine(p.model.spread_home)}, total {p.model.total} · Market: {p.market.details || '–'}{p.market.total != null ? `, O/U ${p.market.total}` : ''}</p>
         </>
       )}
@@ -66,6 +72,12 @@ function RecordTiles({ record }) {
       ))}
     </div>
   );
+}
+
+function ConfidenceRecord({ rows }) {
+  return <div className="card table-card"><table><thead><tr><th className="left">AFI Confidence Rating</th><th>ATS</th><th>O/U</th><th>ML</th></tr></thead><tbody>
+    {rows.map((row) => <tr key={row.stars}><td className="left"><span className="confidence-stars">{'★'.repeat(row.stars)}</span></td><td>{row.spread.text}</td><td>{row.total.text}</td><td>{row.moneyline.text}</td></tr>)}
+  </tbody></table></div>;
 }
 
 export default function Picks() {
@@ -90,6 +102,8 @@ export default function Picks() {
       <p className="disclaimer">{d.disclaimer}</p>
       <h2 className="section-title">Season record{d.tracking_since ? <span className="muted small"> · tracked since {new Date(d.tracking_since).toLocaleDateString()}</span> : ''}</h2>
       <RecordTiles record={d.record} />
+      <h2 className="section-title">Record by confidence</h2>
+      <ConfidenceRecord rows={d.confidence_record} />
       <h2 className="section-title">Week {d.week} picks</h2>
       <div className="grid wx-cards">
         {d.games.map((g) => <PickCard key={g.game_id} g={g} />)}
@@ -105,7 +119,8 @@ export default function Picks() {
           </div>
         </>
       )}
-      <p className="muted small note">How it works: {d.method}</p>
+      <h2 className="section-title">How AFI makes picks</h2>
+      <p className="muted small note">{d.method}</p>
       <Updated at={d.last_updated} />
     </section>
   );
