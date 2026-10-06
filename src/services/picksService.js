@@ -1,7 +1,7 @@
 const db = require('../db/database');
 const { getScoreboard, getUpcomingScoreboard } = require('./sportsDataService');
 const { loadSeason, phi } = require('./playoffService');
-const { getPlayedGames } = require('./teamStatsService');
+const { getPlayedGames, getTeamStats } = require('./teamStatsService');
 const { getPreview } = require('./previewService');
 const weatherService = require('./weatherService');
 const { currentSeason } = require('./rosterService');
@@ -37,9 +37,60 @@ const priorMargins = async (season) => {
   return Object.fromEntries(Object.keys(sum).map((t) => [t, (0.5 * sum[t]) / n[t]]));
 };
 
+const avg = (values) => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+const teamMargin = (game, teamId) => game.home === teamId ? game.home_score - game.away_score : game.away_score - game.home_score;
+
+// 45% last three, 30% games 4–7, 15% games 8+, and 10% of the prior
+// season's final four. The early-season fallback deliberately uses the whole
+// current sample and the same prior instead of pretending tiny samples are stable.
+const weightedRecency = (teamId, abbreviation, data, played) => {
+  const current = data.games.filter((g) => g.result && (g.home === teamId || g.away === teamId))
+    .sort((a, b) => b.date.localeCompare(a.date)).map((g) => teamMargin(g, teamId));
+  const prior = (played || []).filter((g) => g.season === data.season - 1 && g.game_type === 'REG' && (g.home === abbreviation || g.away === abbreviation))
+    .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4)
+    .map((g) => g.home === abbreviation ? g.home_score - g.away_score : g.away_score - g.home_score);
+  if (current.length < 3) return { value: 0.75 * avg(current) + 0.25 * avg(prior), games: current.length, fallback: true };
+  return {
+    value: 0.45 * avg(current.slice(0, 3)) + 0.30 * avg(current.slice(3, 7)) + 0.15 * avg(current.slice(7)) + 0.10 * avg(prior),
+    games: current.length, fallback: false
+  };
+};
+
+const efficiency = (stats, abbreviation) => {
+  const s = stats?.teams?.[abbreviation];
+  if (!s) return { rating: 0, sample: 0, snippet: 'Efficiency data will populate after the next PBP refresh.' };
+  const off = s.offense || {}; const def = s.defense || {};
+  const ypp = (off.yards_per_play || 0) - (def.yards_per_play || 0);
+  const turnover = (s.turnover_margin || 0) / Math.max(s.games || 1, 1);
+  const third = (off.third_down_pct || 0) - (def.third_down_pct || 0);
+  const redZone = (off.red_zone_td_pct || 0) - (def.red_zone_td_pct || 0);
+  // YPP uses the documented 0.08 points-per-YPP conversion; the remaining
+  // components normalize per-game turnovers and percentage-point rates.
+  const rating = (ypp * 0.08) + (turnover * 1.4) + (third * 0.08) + (redZone * 0.05);
+  return { rating, sample: s.games || 0, ypp, turnover, third, redZone, snippet: `${abbreviation} ${ypp >= 0 ? '+' : ''}${round1(ypp)} YPP differential · ${turnover >= 0 ? '+' : ''}${round1(turnover)} turnovers/game` };
+};
+
+const momentum = (abbreviation, season, played) => {
+  const games = (played || []).filter((g) => g.season === season && g.game_type === 'REG' && (g.home === abbreviation || g.away === abbreviation))
+    .sort((a, b) => b.date.localeCompare(a.date));
+  let wins = 0; let covers = 0; let blowouts = 0; let upset = 0;
+  games.forEach((g, index) => {
+    const home = g.home === abbreviation; const pf = home ? g.home_score : g.away_score; const pa = home ? g.away_score : g.home_score;
+    const won = pf > pa;
+    if (won && index === wins) wins += 1;
+    const line = home ? g.spread_line : (g.spread_line == null ? null : -g.spread_line);
+    if (line != null && pf + line > pa && index === covers) covers += 1;
+    if (pf - pa <= -14 && index === blowouts) blowouts += 1;
+    if (index < 2 && won && line != null && line >= 7) upset += Math.abs(pf - pa);
+  });
+  const score = Math.max(-5, Math.min(5, (covers * 1.5) + wins + (upset ? 2 : 0) - (blowouts * 1.5)));
+  return { score, adjustment: Math.max(-3, Math.min(3, score * 0.75)), label: score >= 2 ? 'Hot' : score <= -2 ? 'Cold' : 'Neutral', badge: score >= 2 ? '🔥' : score <= -2 ? '❄️' : '–' };
+};
+
 const buildModel = async (season) => {
   const data = await loadSeason(season);
   const prior = await priorMargins(season);
+  const [played, stats] = await Promise.all([getPlayedGames(), getTeamStats(season)]);
   const byId = Object.fromEntries(data.teams.map((t) => [t.id, t]));
   const acc = {};
   let lgPts = 0; let lgN = 0;
@@ -55,11 +106,15 @@ const buildModel = async (season) => {
   data.teams.forEach((t) => {
     const a = acc[t.id] || { pf: 0, pa: 0, g: 0 };
     const p = prior[t.abbreviation] || 0;
+    const recency = weightedRecency(t.id, t.abbreviation, data, played);
     teams[t.id] = {
       rating: (a.pf - a.pa + p * PRIOR_GAMES) / (a.g + PRIOR_GAMES),
       off: (a.pf + lg * PRIOR_GAMES) / (a.g + PRIOR_GAMES),
       def: (a.pa + lg * PRIOR_GAMES) / (a.g + PRIOR_GAMES),
-      games: a.g
+      games: a.g,
+      recency,
+      efficiency: efficiency(stats, t.abbreviation),
+      momentum: momentum(t.abbreviation, season, played)
     };
   });
   return { teams, byId, league_ppg: lg };
@@ -90,7 +145,11 @@ const makePick = async (g, model) => {
   const injH = injuryAdjust(preview?.home);
   const injA = injuryAdjust(preview?.away);
   const hfa = g.neutral_site ? 0 : HOME_FIELD;
-  const margin = h.rating - a.rating + hfa + injH.pts - injA.pts; // expected home margin
+  const recencyMargin = h.recency.value - a.recency.value;
+  const efficiencyMargin = h.efficiency.rating - a.efficiency.rating;
+  const momentumMargin = h.momentum.adjustment - a.momentum.adjustment;
+  // The prediction is intentionally decomposed so every card can show why it differs from the market.
+  const margin = (recencyMargin * 0.60) + (efficiencyMargin * 0.30) + (momentumMargin * 0.10) + hfa + injH.pts - injA.pts;
   const weatherAdj = wx?.impact?.totals_lean === 'under' ? -3 : 0;
   const homePts = (h.off + a.def) / 2 + (injH.pts - injA.pts) / 2;
   const awayPts = (a.off + h.def) / 2 - (injH.pts - injA.pts) / 2;
@@ -105,6 +164,9 @@ const makePick = async (g, model) => {
     model: { home_margin: round1(margin), spread_home: half(-margin), total: round1(total), home_win_prob: Math.round(pHome * 1000) / 10 },
     market: { spread_home: L.spread_home ?? null, total: L.total ?? null, moneyline_home: L.moneyline_home ?? null, moneyline_away: L.moneyline_away ?? null, provider: L.provider || null, details: L.details || null },
     weather: wx?.impact ? { level: wx.impact.level, note: wx.impact.note } : null,
+    weighted_recency: { home: round1(h.recency.value), away: round1(a.recency.value), home_games: h.recency.games, away_games: a.recency.games, fallback: h.recency.fallback || a.recency.fallback },
+    efficiency_rating: { home: round1(h.efficiency.rating), away: round1(a.efficiency.rating), differential: round1(efficiencyMargin), home_sample: h.efficiency.sample, away_sample: a.efficiency.sample, snippet: `${h.efficiency.snippet}; ${a.efficiency.snippet}` },
+    momentum: { home: h.momentum, away: a.momentum, differential: round1(momentumMargin) },
     made_at: new Date().toISOString()
   };
 
@@ -117,6 +179,10 @@ const makePick = async (g, model) => {
     const side = edge >= 0 ? 'home' : 'away';
     pick.spread = { side, team: side === 'home' ? home : away, line: side === 'home' ? L.spread_home : -L.spread_home, edge: round1(Math.abs(edge)), confidence: Math.abs(edge) >= 3 ? 'high' : Math.abs(edge) >= 1.5 ? 'medium' : 'low' };
   }
+  const marketMargin = L.spread_home == null ? null : -L.spread_home;
+  const confidenceEdge = marketMargin == null ? 0 : Math.abs(margin - marketMargin);
+  pick.confidence_stars = confidenceEdge >= 7 ? 5 : confidenceEdge >= 5 ? 4 : confidenceEdge >= 3 ? 3 : confidenceEdge >= 1.5 ? 2 : 1;
+  pick.confidence_edge = round1(confidenceEdge);
   if (L.total != null) {
     const edge = total - L.total;
     pick.total = { side: edge >= 0 ? 'over' : 'under', line: L.total, edge: round1(Math.abs(edge)), confidence: Math.abs(edge) >= 4 ? 'high' : Math.abs(edge) >= 2 ? 'medium' : 'low' };
@@ -126,7 +192,7 @@ const makePick = async (g, model) => {
   const imp = implied(ml);
   pick.moneyline = { side, team: side === 'home' ? home : away, odds: ml ?? null, model_prob: Math.round((side === 'home' ? pHome : 1 - pHome) * 1000) / 10, implied_prob: imp == null ? null : Math.round(imp * 1000) / 10 };
 
-  if (pick.spread) why.push(`That's ${pick.spread.edge} points of edge on ${pick.spread.team} ${fmtLine(pick.spread.line)}${pick.total ? `, and a model total of ${round1(total)} vs ${L.total} points to the ${pick.total.side.toUpperCase()}` : ''}.`);
+  if (pick.spread) why.push(`The ${pick.confidence_stars}-star edge is driven by a ${round1(recencyMargin)}-point recency differential, ${round1(efficiencyMargin)} from efficiency, and ${round1(momentumMargin)} from momentum; it favors ${pick.spread.team} ${fmtLine(pick.spread.line)}${pick.total ? `, with ${pick.total.side.toUpperCase()} ${pick.total.line} on the total` : ''}.`);
   const notes = [...injA.notes, ...injH.notes];
   if (notes.length) why.push(`Injuries factored in: ${notes.join('; ')}.`);
   if (weatherAdj) why.push(`Weather: ${wx.impact.flags.map((f) => f.label).join(', ')} trims 3 points from our total.`);
@@ -166,6 +232,8 @@ const record = (picks) => {
   Object.values(r).forEach((x) => { x.pct = x.w + x.l ? Math.round((1000 * x.w) / (x.w + x.l)) / 10 : null; x.text = `${x.w}-${x.l}${x.p ? `-${x.p}` : ''}`; });
   return r;
 };
+
+const segmentedRecord = (picks, key, value) => record(picks.filter((p) => key === 'stars' ? p.confidence_stars === value : [p.momentum?.home?.label, p.momentum?.away?.label].includes(value)));
 
 // Re-picks unstarted games, locks started ones (keeps the last pre-kickoff pick) and grades finals.
 const refreshPicks = async ({ week = null } = {}) => {
@@ -215,10 +283,12 @@ const getPicks = async ({ week = null } = {}) => {
   return {
     season, week: board.week, games,
     record: record(all),
+    confidence_record: [1, 2, 3, 4, 5].map((stars) => ({ stars, ...segmentedRecord(all, 'stars', stars) })),
+    momentum_record: ['Hot', 'Neutral', 'Cold'].map((state) => ({ state, ...segmentedRecord(all, 'momentum', state) })),
     weekly: Object.entries(byWeek).map(([w, ps]) => ({ week: Number(w), ...record(ps) })).sort((x, y) => y.week - x.week),
     tracking_since: all.length ? all.map((p) => p.made_at).sort()[0] : null,
     disclaimer: DISCLAIMER,
-    method: 'Margin = season point-margin rating (with half of last season as a 4-game prior) + 1.5 home field, adjusted for a starting QB out (-4) and injured starters (-0.5 each, max -2). Total = blended team scoring/allowed per game, -3 for wind/rain/snow. Win probability from a normal distribution (sd 13.5). Picks re-run hourly until kickoff, then lock; graded against the ESPN (DraftKings) line at pick time.',
+    method: 'Margin = 60% weighted recency (45% last 3 games, 30% games 4–7, 15% games 8+, 10% last season’s final four) + 30% efficiency power rating (YPP, turnovers, third down and red zone) + 10% momentum. Teams with fewer than three current-season games use a season-plus-prior fallback. Momentum is capped at ±3 points. Home field (+1.5) and injuries are then applied. AFI Confidence Rating compares the model margin to the market: 1★ under 1.5 points through 5★ at 7+ points.',
     last_updated: state.updated_at
   };
 };
