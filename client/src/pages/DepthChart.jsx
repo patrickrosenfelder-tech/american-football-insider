@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox, RatingBadge, InjuryBadge, Updated } from '../components.jsx';
 
@@ -71,7 +71,9 @@ function Formation({ unit, layoutKey, expanded }) {
 }
 
 export default function DepthChart({ teamId }) {
-  const [tab, setTab] = useState('offense');
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('unit') || 'offense';
+  const setTab = (unit) => setParams({ tab: 'depth', unit }, { replace: true });
   const [expanded, setExpanded] = useState(false);
   const { data, error, loading } = useApi(`/teams/${teamId}/depthchart`);
   if (loading) return <Loading label="Loading depth chart…" />;

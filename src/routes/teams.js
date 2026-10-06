@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db/database');
 const sportsDataService = require('../services/sportsDataService');
 const rosterService = require('../services/rosterService');
+const injuryService = require('../services/injuryService');
 
 router.get('/', async (req, res) => {
   try {
@@ -45,7 +46,8 @@ const sendOr404 = (res, data, notFound = 'Team not found') => {
 // Madden-style depth chart: offense / defense / special teams with depth 1-n per slot.
 router.get('/:teamId/depthchart', async (req, res) => {
   try {
-    sendOr404(res, await rosterService.getDepthChart(req.params.teamId));
+    const decorate = await injuryService.injuryDecorator();
+    sendOr404(res, await rosterService.getDepthChart(req.params.teamId, { decorate }));
   } catch (error) {
     res.status(502).json({ success: false, error: error.message });
   }
@@ -54,7 +56,18 @@ router.get('/:teamId/depthchart', async (req, res) => {
 // Full roster grouped by unit and position.
 router.get('/:teamId/roster', async (req, res) => {
   try {
-    sendOr404(res, await rosterService.getRoster(req.params.teamId));
+    const decorate = await injuryService.injuryDecorator();
+    sendOr404(res, await rosterService.getRoster(req.params.teamId, { decorate }));
+  } catch (error) {
+    res.status(502).json({ success: false, error: error.message });
+  }
+});
+
+// Team injury report: ESPN status + latest official practice participation.
+router.get('/:teamId/injuries', async (req, res) => {
+  try {
+    const team = await sportsDataService.findTeam(req.params.teamId);
+    sendOr404(res, team && await injuryService.getTeamInjuries(team));
   } catch (error) {
     res.status(502).json({ success: false, error: error.message });
   }

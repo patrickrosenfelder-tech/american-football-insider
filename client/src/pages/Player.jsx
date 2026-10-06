@@ -41,7 +41,7 @@ export default function Player() {
           <p className="small">
             {[p.age && `Age ${p.age}`, p.height, p.weight, p.college, p.experience, p.draft].filter(Boolean).join(' · ')}
           </p>
-          {p.injury && <p className="small"><InjuryBadge injury={p.injury} /> {p.injury.injury || ''} {p.injury.practice ? `· Practice: ${p.injury.practice}` : ''}</p>}
+          {p.injury && <p className="small"><InjuryBadge injury={p.injury} /> {p.injury.injury || ''} {p.injury.practice ? `· Practice (Wk ${p.injury.practice_week} report): ${p.injury.practice}` : ''}</p>}
         </div>
         <div className="hero-rating"><RatingBadge rating={p.afi?.rating} large /><span className="small">AFI rating</span></div>
       </div>

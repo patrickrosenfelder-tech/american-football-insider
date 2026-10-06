@@ -1,4 +1,5 @@
 const ratingService = require('../services/ratingService');
+const injuryService = require('../services/injuryService');
 const { currentSeason } = require('../services/rosterService');
 
 const status = {};
@@ -22,9 +23,16 @@ const refreshRatings = () => runJob('ratings', async () => {
   return { data_through_week: r.data_through_week, rated_players: Object.keys(r.ratings).length };
 });
 
+// Official practice participation (nflverse injuries_<season>.csv).
+const refreshPractice = () => runJob('practice_report', async () => {
+  const r = await injuryService.refreshPracticeReport(currentSeason());
+  return { latest_week: r.latest_week, players: Object.keys(r.players).length };
+});
+
 // On boot: build anything missing (SQLite on Fly lives in /tmp, so a fresh machine starts empty).
 const bootstrap = async () => {
   if (!(await ratingService.getRatings(currentSeason()))) await refreshRatings();
+  if (!(await injuryService.getPracticeReport(currentSeason()))) await refreshPractice();
 };
 
-module.exports = { bootstrap, refreshRatings, status };
+module.exports = { bootstrap, refreshRatings, refreshPractice, status };

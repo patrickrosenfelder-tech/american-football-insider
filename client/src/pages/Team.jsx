@@ -3,8 +3,9 @@ import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo } from '../components.jsx';
 import DepthChart from './DepthChart.jsx';
 import Roster from './Roster.jsx';
+import { TeamInjuries } from './Injuries.jsx';
 
-const TABS = [['overview', 'Overview'], ['depth', 'Depth chart'], ['roster', 'Roster']];
+const TABS = [['overview', 'Overview'], ['depth', 'Depth chart'], ['roster', 'Roster'], ['injuries', 'Injuries']];
 
 function ScheduleRow({ game, teamId }) {
   const us = game.home.id === teamId ? game.home : game.away;
@@ -81,6 +82,7 @@ export default function Team() {
       {tab === 'overview' && <Overview t={t} teamId={teamId} />}
       {tab === 'depth' && <DepthChart teamId={teamId} />}
       {tab === 'roster' && <Roster teamId={teamId} />}
+      {tab === 'injuries' && <TeamInjuries teamId={teamId} />}
     </section>
   );
 }
