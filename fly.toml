@@ -5,6 +5,12 @@ primary_region = 'iad'
 
 [env]
   PORT = '8080'
+  DB_PATH = '/data/nfl-data.db'
+
+# Persistent SQLite (news summaries, injury snapshots, AFI pick record).
+[mounts]
+  source = 'afi_data'
+  destination = '/data'
 
 [http_service]
   internal_port = 8080

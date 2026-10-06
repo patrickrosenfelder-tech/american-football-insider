@@ -336,6 +336,7 @@ const summarize = async (candidates, index, log) => {
   for (let i = 0; i < candidates.length; i += BATCH) {
     const batch = candidates.slice(i, i + BATCH);
     const res = await session.complete(promptFor(batch), validateBatch(batch.map((s) => s.id)));
+    console.log(`[news] batch ${i / BATCH + 1}: ${res ? `${res.provider} (${res.model}) ${res.json.length}/${batch.length}` : 'all providers failed'}`);
     if (!res) break; // every provider failed: keep data stories, retry next run
     res.json.forEach((x) => {
       const story = batch.find((s) => s.id === String(x.id));
