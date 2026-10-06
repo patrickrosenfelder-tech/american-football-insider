@@ -140,20 +140,28 @@ const refreshSchedules = async () => {
     rows.push({
       season: Number(r.season), week: Number(r.week), game_type: r.game_type, date: r.gameday,
       home: toEspn(r.home_team), away: toEspn(r.away_team),
-      home_score: Number(r.home_score), away_score: Number(r.away_score), espn_id: r.espn || null
+      home_score: Number(r.home_score), away_score: Number(r.away_score), espn_id: r.espn || null,
+      // Closing lines (spread_line > 0 = home favored), rest days, division game, neutral site.
+      spread_line: num(r.spread_line), total_line: num(r.total_line), home_ml: num(r.home_moneyline), away_ml: num(r.away_moneyline),
+      home_rest: num(r.home_rest), away_rest: num(r.away_rest), div_game: r.div_game === '1', neutral: r.location === 'Neutral'
     });
-  }, { columns: ['season', 'week', 'game_type', 'gameday', 'home_team', 'away_team', 'home_score', 'away_score', 'espn'] });
+  }, { columns: ['season', 'week', 'game_type', 'gameday', 'home_team', 'away_team', 'home_score', 'away_score', 'espn', 'spread_line', 'total_line',
+    'home_moneyline', 'away_moneyline', 'home_rest', 'away_rest', 'div_game', 'location'] });
   await db.saveDataset('schedules_played', rows, { games: rows.length });
   h2hMemo = rows;
   return rows;
 };
 
-const headToHead = async (a, b, limit = 5) => {
+const getPlayedGames = async () => {
   if (!h2hMemo) {
     const row = await db.loadDataset('schedules_played');
     h2hMemo = row ? row.data : null;
   }
-  if (!h2hMemo) return null;
+  return h2hMemo;
+};
+
+const headToHead = async (a, b, limit = 5) => {
+  if (!(await getPlayedGames())) return null;
   // Franchise moves: OAK->LV, SD->LAC, STL->LA(R).
   const alias = { LV: ['LV', 'OAK'], LAC: ['LAC', 'SD'], LAR: ['LAR', 'STL'] };
   const names = (t) => alias[t] || [t];
@@ -177,6 +185,7 @@ module.exports = {
   getTeamStats,
   refreshSchedules,
   headToHead,
+  getPlayedGames,
   toEspn,
   toNflverse,
   PBP_COLUMNS

@@ -351,3 +351,23 @@ a.tag:hover { border-color: #b9c4d8; }
 .wx-level.medium { color: #fff; background: #ca8a04; border-color: #ca8a04; }
 .wx-level.high { color: #fff; background: var(--accent); border-color: var(--accent); }
 .wx-level.low { color: var(--ink); }
+
+/* AFI Picks + trends */
+.disclaimer { font-size: .82rem; padding: 8px 12px; border-radius: 10px; border: 1px dashed var(--line); color: var(--muted); }
+.record-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.record-tile { display: flex; flex-direction: column; gap: 2px; }
+.record-big { font-size: 1.8rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.pick-card { display: flex; flex-direction: column; gap: 8px; }
+.pick-card p { margin: 0; }
+.pick-lines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pick-lines > div { display: flex; flex-direction: column; gap: 2px; font-size: .9rem; }
+.conf { align-self: flex-start; font-size: .64rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); }
+.conf.high { background: var(--win); border-color: var(--win); color: #fff; }
+.conf.medium { color: var(--ink); }
+.pick-res { align-self: flex-start; font-size: .7rem; font-weight: 900; padding: 1px 6px; border-radius: 5px; color: #fff; }
+.pick-res.win { background: var(--win); }
+.pick-res.loss { background: var(--accent); }
+.pick-res.push { background: var(--muted); }
+.trend-list { margin: 0; padding-left: 18px; }
+.trend-list li { line-height: 1.5; font-size: .9rem; }
+.mt { margin-top: 14px; }

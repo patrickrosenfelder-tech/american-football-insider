@@ -3,6 +3,7 @@ const injuryService = require('../services/injuryService');
 const teamStatsService = require('../services/teamStatsService');
 const tendencyService = require('../services/tendencyService');
 const newsService = require('../services/newsService');
+const picksService = require('../services/picksService');
 const { currentSeason } = require('../services/rosterService');
 
 const status = {};
@@ -55,6 +56,9 @@ const refreshNews = () => runJob('news', async () => {
   return { summarized: log.summarized, providers_used: used, new_stories: log.new_stories, missing_keys: log.missing_keys };
 });
 
+// AFI Picks: re-pick unstarted games, lock started ones, grade finals.
+const refreshPicks = () => runJob('picks', async () => picksService.refreshPicks());
+
 // On boot: build anything missing (SQLite on Fly lives in /tmp, so a fresh machine starts empty).
 const bootstrap = async () => {
   if (!(await playerStatsService.getPlayerStats(currentSeason()))) await refreshPlayerStats();
@@ -64,4 +68,4 @@ const bootstrap = async () => {
   await refreshNews();
 };
 
-module.exports = { bootstrap, refreshNews, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };
+module.exports = { bootstrap, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };

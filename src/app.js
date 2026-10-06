@@ -15,6 +15,8 @@ const tendenciesRoutes = require('./routes/tendencies');
 const playoffsRoutes = require('./routes/playoffs');
 const newsRoutes = require('./routes/news');
 const weatherRoutes = require('./routes/weather');
+const trendsRoutes = require('./routes/trends');
+const picksRoutes = require('./routes/picks');
 const adminRoutes = require('./routes/admin');
 const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
@@ -43,6 +45,8 @@ app.use('/api/tendencies', tendenciesRoutes);
 app.use('/api/playoffs', playoffsRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/trends', trendsRoutes);
+app.use('/api/picks', picksRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {

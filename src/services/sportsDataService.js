@@ -165,6 +165,17 @@ const getScoreboard = async ({ week, season, seasonType } = {}) => {
   return result;
 };
 
+// Current week, or the next one once every game of the current week is final (ESPN keeps showing the
+// finished week until its calendar rolls over).
+const getUpcomingScoreboard = async () => {
+  const board = await getScoreboard();
+  if (board.games.length && board.games.every((g) => g.status.completed)) {
+    const next = await getScoreboard({ week: board.week + 1, season: board.season, seasonType: board.season_type }).catch(() => null);
+    if (next?.games.length) return next;
+  }
+  return board;
+};
+
 const getGames = async (week = null, season = null, seasonType = null) => {
   const board = await getScoreboard({ week, season, seasonType });
   return board.games;
@@ -389,6 +400,7 @@ module.exports = {
   findTeam,
   normalizeTeamRef,
   getScoreboard,
+  getUpcomingScoreboard,
   getGames,
   getGameDetail,
   getGameScore,

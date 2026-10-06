@@ -1,6 +1,6 @@
 const axios = require('axios');
 const cache = require('../cache/cacheManager');
-const { getScoreboard, getGameDetail } = require('./sportsDataService');
+const { getScoreboard, getUpcomingScoreboard, getGameDetail } = require('./sportsDataService');
 
 // Kickoff weather from Open-Meteo (free, no key; non-commercial terms) for every game of a week.
 // Stadium coordinates + roof type below; venues not in the list (renamed / international) are geocoded
@@ -139,7 +139,7 @@ const gameWeather = async (g) => {
 };
 
 const getWeekWeather = async ({ week, season, seasonType } = {}) => {
-  const board = await getScoreboard({ week, season, seasonType });
+  const board = week ? await getScoreboard({ week, season, seasonType }) : await getUpcomingScoreboard();
   const games = await Promise.all(board.games.map((g) => gameWeather(g).catch((error) => ({ game_id: g.game_id, error: error.message }))));
   return { season: board.season, season_type: board.season_type, week: board.week, calendar: board.calendar, games, last_updated: new Date().toISOString() };
 };

@@ -3,6 +3,7 @@ import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, InjuryBadge, Updated } from '../components.jsx';
 import { MatchupTendencies } from './Tendencies.jsx';
 import { WeatherBlock } from './Weather.jsx';
+import { TrendsBlock } from './Picks.jsx';
 
 // [label, path, higherIsBetter, suffix]
 const STAT_ROWS = [
@@ -53,7 +54,7 @@ function QbCard({ side }) {
       <div className="grow">
         <div><Link to={`/players/${qb.id}`}><b>{qb.name}</b></Link> <InjuryBadge injury={qb.injury} small /></div>
         <div className="small muted">
-          {s.attempts ? `${s.completions}/${s.attempts}, ${s.passing_yards} yds, ${s.passing_tds} TD, ${s.interceptions} INT` : 'No pass attempts yet this season'}
+          {s.attempts ? `${s.completions}/${s.attempts}, ${s.passing_yards} yds, ${s.passing_tds ?? 0} TD, ${s.interceptions ?? 0} INT` : 'No pass attempts yet this season'}
         </div>
         {qb.replaces && <div className="small warn">Replaces {qb.replaces.name} ({qb.replaces.injury?.status}{qb.replaces.injury?.injury ? `, ${qb.replaces.injury.injury}` : ''})</div>}
       </div>
@@ -135,6 +136,8 @@ export default function Preview() {
           </div>
         ))}
       </div>
+
+      <TrendsBlock gameId={p.game_id} away={away} home={home} />
 
       <div className="grid two-col">
         <WeatherBlock gameId={p.game_id} />
