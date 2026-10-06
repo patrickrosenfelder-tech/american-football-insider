@@ -277,3 +277,38 @@ tr:last-child td { border-bottom: 0; }
   .topbar nav a { padding: 6px 7px; font-size: .82rem; }
   .bar-row { grid-template-columns: 100px 1fr 70px; }
 }
+
+/* Playoff predictor */
+.topbar nav { overflow-x: auto; scrollbar-width: none; }
+.topbar nav a { white-space: nowrap; }
+.predictor { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.predictor-results { position: sticky; top: 72px; display: grid; gap: 12px; }
+.predictor-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.predictor-actions button { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-weight: 700; cursor: pointer; color: var(--ink); }
+.predictor-actions button:disabled { opacity: .45; cursor: default; }
+.pick-week { margin-bottom: 10px; }
+.pick-row { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.pick-row:last-child { border-bottom: 0; }
+.pick-btn { display: inline-flex; align-items: center; gap: 6px; min-width: 112px; padding: 5px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); cursor: pointer; color: var(--ink); font-weight: 700; }
+.pick-btn:hover { border-color: #b9c4d8; }
+.pick-btn.picked { border-color: var(--win); background: color-mix(in srgb, var(--win) 14%, var(--card)); }
+.pick-btn.faded { opacity: .45; }
+.pick-prob { margin-left: auto; font-size: .75rem; color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pick-at { color: var(--muted); font-size: .8rem; }
+.pick-tie { width: 28px; height: 28px; border-radius: 8px; border: 1px dashed var(--line); background: transparent; color: var(--muted); cursor: pointer; font-weight: 800; font-size: .72rem; }
+.pick-tie.picked { border-style: solid; border-color: var(--ink); color: var(--ink); }
+.pick-when { margin-left: auto; white-space: nowrap; }
+.seed-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--line); font-size: .9rem; }
+.seed-row:last-of-type { border-bottom: 0; }
+.seed-num { width: 18px; text-align: center; font-weight: 900; color: var(--accent); }
+.tabnum { font-variant-numeric: tabular-nums; font-weight: 700; }
+.odds-table th.sortable { cursor: pointer; user-select: none; }
+.odds-table th.sortable.active { color: var(--ink); text-decoration: underline; }
+.odds-cell { display: inline-block; min-width: 54px; padding: 2px 6px; border-radius: 6px; font-variant-numeric: tabular-nums; font-weight: 700;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--win) 28%, transparent) var(--p), transparent var(--p)); }
+@media (max-width: 860px) {
+  .predictor { grid-template-columns: 1fr; }
+  .predictor-results { position: static; }
+  .pick-when { display: none; }
+  .pick-btn { min-width: 0; flex: 1; }
+}

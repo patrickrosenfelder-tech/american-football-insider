@@ -12,6 +12,7 @@ export function useApi(path, { refreshMs = 0, shouldRefresh = () => false } = {}
   const [state, setState] = useState({ data: null, error: null, loading: true });
 
   const load = useCallback(async (silent) => {
+    if (!path) { setState({ data: null, error: null, loading: false }); return null; }
     if (!silent) setState((s) => ({ ...s, loading: true, error: null }));
     try {
       const body = await api(path);

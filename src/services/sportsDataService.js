@@ -98,7 +98,30 @@ const normalizeEvent = (e) => {
       team_id: l.leaders?.[0]?.team?.id,
       value: l.leaders?.[0]?.displayValue
     })).filter((l) => l.athlete),
-    odds: comp.odds?.[0]?.details || null
+    odds: comp.odds?.[0]?.details || null,
+    lines: linesFrom(comp.odds?.[0])
+  };
+};
+
+const mlNum = (v) => {
+  if (v == null || v === '' || v === 'OFF') return null;
+  if (String(v).toUpperCase() === 'EVEN') return 100;
+  const n = Number(String(v).replace('+', ''));
+  return Number.isNaN(n) ? null : n;
+};
+
+// Structured betting lines from ESPN's competition odds (DraftKings feed). spread_home < 0 = home favored.
+const linesFrom = (o) => {
+  if (!o) return null;
+  const spread = o.pointSpread?.home?.close?.line ?? o.pointSpread?.home?.open?.line;
+  const spreadHome = spread != null && spread !== '' ? Number(String(spread).replace('+', '')) : (o.spread != null ? Number(o.spread) : null);
+  return {
+    provider: o.provider?.name || null,
+    details: o.details || null,
+    spread_home: Number.isNaN(spreadHome) ? null : spreadHome,
+    total: o.overUnder != null ? Number(o.overUnder) : null,
+    moneyline_home: mlNum(o.moneyline?.home?.close?.odds ?? o.moneyline?.home?.open?.odds),
+    moneyline_away: mlNum(o.moneyline?.away?.close?.odds ?? o.moneyline?.away?.open?.odds)
   };
 };
 
@@ -360,6 +383,7 @@ const getTeamStats = async (teamIdOrAbbr, season = null) => {
 };
 
 module.exports = {
+  linesFrom,
   ESPN_SITE,
   fetchJson,
   findTeam,
