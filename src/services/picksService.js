@@ -267,7 +267,10 @@ const getPicks = async ({ week = null } = {}) => {
   let state = await load(season);
   // First visit for a week (or stale > 1h): compute now.
   const missing = board.games.some((g) => g.status.state === 'pre' && !state.picks[g.game_id]);
-  if (missing || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
+  // Recalculate pre-kickoff legacy picks once after a model schema upgrade so
+  // clients never receive a mix of old and new pick-card fields.
+  const outdated = board.games.some((g) => g.status.state === 'pre' && state.picks[g.game_id] && state.picks[g.game_id].confidence_stars == null);
+  if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
     await refreshPicks({ week: board.week });
     state = await load(season);
   }
