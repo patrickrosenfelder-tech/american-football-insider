@@ -252,3 +252,23 @@ tr:last-child td { border-bottom: 0; }
 .team-title { display: flex; align-items: center; gap: 8px; }
 .team-title a:hover { text-decoration: underline; }
 .topbar nav { overflow-x: auto; }
+
+/* Previews */
+.btn { font-weight: 700; font-size: .85rem; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); }
+.link-text { color: var(--accent); }
+.odds-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: .88rem; }
+.qb-card { display: flex; gap: 10px; align-items: center; }
+.qb-card a:hover { text-decoration: underline; }
+.warn { color: #d97706; font-weight: 600; }
+.mt { margin-top: 16px; }
+.form-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.form-chip { display: flex; flex-direction: column; align-items: center; min-width: 58px; padding: 5px 6px; border-radius: 10px; border: 1px solid var(--line); font-weight: 900; line-height: 1.2; }
+.form-chip small { font-weight: 600; font-size: .68rem; color: var(--muted); }
+.form-chip.W span { color: var(--win); }
+.form-chip.L span { color: var(--accent); }
+.inj-line { display: flex; gap: 8px; align-items: center; padding: 5px 0; border-bottom: 1px dashed var(--line); font-size: .88rem; }
+.inj-line:last-child { border-bottom: 0; }
+.inj-line a:hover { text-decoration: underline; }
+.compare-row b.better { color: var(--win); }
+.h2h-row { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+.h2h-row:last-child { border-bottom: 0; }

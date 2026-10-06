@@ -39,7 +39,7 @@ function TeamRow({ team, game }) {
 
 export function GameCard({ game }) {
   return (
-    <Link to={`/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`}>
+    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`}>
       <div className="game-card-head">
         <StatusPill game={game} />
         {game.broadcast && <span className="muted small">{game.broadcast}</span>}

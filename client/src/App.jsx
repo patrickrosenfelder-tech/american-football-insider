@@ -7,6 +7,8 @@ import Game from './pages/Game.jsx';
 import Player from './pages/Player.jsx';
 import RatingsInfo from './pages/RatingsInfo.jsx';
 import Injuries from './pages/Injuries.jsx';
+import Previews from './pages/Previews.jsx';
+import Preview from './pages/Preview.jsx';
 
 export default function App() {
   return (
@@ -20,6 +22,7 @@ export default function App() {
           <nav>
             <NavLink to="/" end>Scores</NavLink>
             <NavLink to="/standings">Standings</NavLink>
+            <NavLink to="/previews">Previews</NavLink>
             <NavLink to="/teams">Teams</NavLink>
             <NavLink to="/injuries">Injuries</NavLink>
           </nav>
@@ -34,6 +37,8 @@ export default function App() {
           <Route path="/game/:gameId" element={<Game />} />
           <Route path="/players/:playerId" element={<Player />} />
           <Route path="/injuries" element={<Injuries />} />
+          <Route path="/previews" element={<Previews />} />
+          <Route path="/preview/:gameId" element={<Preview />} />
           <Route path="/about/ratings" element={<RatingsInfo />} />
           <Route path="*" element={<div className="state">Page not found.</div>} />
         </Routes>

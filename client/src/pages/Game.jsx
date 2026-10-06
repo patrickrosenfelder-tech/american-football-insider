@@ -60,7 +60,7 @@ export default function Game() {
   return (
     <section>
       <div className="card game-hero">
-        <div className="hero-status"><StatusPill game={g} />{isLive(g) && <span className="muted small">auto-refreshing</span>}</div>
+        <div className="hero-status"><StatusPill game={g} />{isLive(g) && <span className="muted small">auto-refreshing</span>}{g.status.state === 'pre' && <Link className="small" to={`/preview/${g.game_id}`}><u>Matchup preview</u></Link>}</div>
         <div className="hero-teams">
           {[g.away, g.home].map((t, i) => (
             <Link key={t.id} to={`/teams/${t.abbreviation}`} className={`hero-team ${g.status.state === 'post' && !t.winner ? 'lost' : ''}`}>
