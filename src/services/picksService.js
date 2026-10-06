@@ -164,6 +164,7 @@ const makePick = async (g, model) => {
     model: { home_margin: round1(margin), spread_home: half(-margin), total: round1(total), home_win_prob: Math.round(pHome * 1000) / 10 },
     market: { spread_home: L.spread_home ?? null, total: L.total ?? null, moneyline_home: L.moneyline_home ?? null, moneyline_away: L.moneyline_away ?? null, provider: L.provider || null, details: L.details || null },
     weather: wx?.impact ? { level: wx.impact.level, note: wx.impact.note } : null,
+    micro_matchups: preview?.micro_matchups || [],
     weighted_recency: { home: round1(h.recency.value), away: round1(a.recency.value), home_games: h.recency.games, away_games: a.recency.games, fallback: h.recency.fallback || a.recency.fallback },
     efficiency_rating: { home: round1(h.efficiency.rating), away: round1(a.efficiency.rating), differential: round1(efficiencyMargin), home_sample: h.efficiency.sample, away_sample: a.efficiency.sample, snippet: `${h.efficiency.snippet}; ${a.efficiency.snippet}` },
     momentum: { home: h.momentum, away: a.momentum, differential: round1(momentumMargin) },

@@ -366,6 +366,8 @@ a.tag:hover { border-color: #b9c4d8; }
 .momentum.hot { color: #b45309; border-color: #f59e0b; }
 .momentum.cold { color: #0369a1; border-color: #38bdf8; }
 .key-stat { font-size: .78rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 8px; }
+.afi-edges { display: flex; flex-direction: column; gap: 4px; font-size: .76rem; }
+.afi-edge { padding: 4px 6px; border-radius: 6px; background: color-mix(in srgb, var(--line) 35%, transparent); }
 .pick-lines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .pick-lines > div { display: flex; flex-direction: column; gap: 2px; font-size: .9rem; }
 .conf { align-self: flex-start; font-size: .64rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); }

@@ -4,6 +4,7 @@ const rosterService = require('./rosterService');
 const injuryService = require('./injuryService');
 const playerStatsService = require('./playerStatsService');
 const teamStatsService = require('./teamStatsService');
+const { getMicroMatchups } = require('./microMatchupService');
 
 const TTL_PREVIEW = 1800;
 
@@ -155,6 +156,7 @@ const buildPreview = async (gameId) => {
   const ctx = { standings, injuries, playerStats, teamStats, season };
   const [homeSide, awaySide] = await Promise.all([sideFor(homeTeam, ctx), sideFor(awayTeam, ctx)]);
   const h2h = await teamStatsService.headToHead(awayTeam.abbreviation, homeTeam.abbreviation).catch(() => null);
+  const micro_matchups = await getMicroMatchups({ season, home: homeTeam.abbreviation, away: awayTeam.abbreviation }).catch(() => []);
 
   return {
     game_id: gameId,
@@ -175,6 +177,7 @@ const buildPreview = async (gameId) => {
       source: 'ESPN Matchup Predictor'
     } : null,
     head_to_head: h2h,
+    micro_matchups,
     team_stats_through_week: teamStats?.data_through_week ?? null,
     stats_through_week: playerStats?.data_through_week ?? null,
     last_updated: new Date().toISOString()
