@@ -51,7 +51,7 @@ const PROVIDERS = [
       const { data } = await axios.get('https://api.groq.com/openai/v1/models', { headers: { Authorization: `Bearer ${key}` }, timeout: 15000 });
       return rank((data.data || []).map((m) => m.id), [/llama-[\d.]+-70b/, /qwen/, /gpt-oss-120b/, /llama/, /gpt-oss/], /guard|whisper|orpheus|tts|allam|safeguard|vision|compound/);
     },
-    delayMs: 2500, // free tier ~30 requests/minute, token-per-minute bound
+    delayMs: 15000, // free tier: tokens-per-minute is the binding limit
     call: async (key, model, prompt) => {
       const { data } = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
         model, temperature: 0.3, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: prompt }]
@@ -125,10 +125,10 @@ const createSession = () => {
   const log = { attempts: [], used: {} };
 
   // Returns { provider, model, json } or null when every provider failed. `validate` throws on bad output.
-  const complete = async (prompt, validate = (x) => x) => {
+  const complete = async (prompt, validate = (x) => x, retried = false) => {
     for (const p of PROVIDERS) {
       const key = process.env[p.env];
-      if (!key || state[p.name]?.down) continue;
+      if (!key || state[p.name]?.down || state[p.name]?.coolUntil > Date.now()) continue;
       const s = state[p.name] || (state[p.name] = { modelIndex: 0, last: 0, models: await modelsFor(p, key) });
       while (s.modelIndex < s.models.length) {
         const model = s.models[s.modelIndex];
@@ -149,18 +149,26 @@ const createSession = () => {
           if (e.status === 'bad_output') break;
           // Model unknown / retired / overloaded: try the provider's next model.
           if ([400, 404, 503].includes(e.status)) { s.modelIndex += 1; continue; }
-          // 429, 5xx, timeout, auth or unusable output: fall through to the next provider.
+          // 429: rate limited — cool down 65s and fall through to the next provider for this prompt.
+          if (e.status === 429) { s.coolUntil = Date.now() + 65000; break; }
+          // 5xx, timeout, auth: provider is out for this run.
           s.down = e.reason;
           break;
         }
       }
       if (s.modelIndex >= s.models.length) s.down = s.down || 'no usable model';
     }
+    // Everyone is rate limited: wait once for the first cooldown to end, then try again.
+    const cooling = Object.values(state).filter((x) => !x.down && x.coolUntil > Date.now()).map((x) => x.coolUntil);
+    if (!retried && cooling.length) {
+      await sleep(Math.min(...cooling) - Date.now() + 500);
+      return complete(prompt, validate, true);
+    }
     return null;
   };
 
   const summary = () => ({
-    providers: configured().map((p) => ({ ...p, used: log.used[p.name] || 0, models_tried: state[p.name] ? state[p.name].models.slice(0, state[p.name].modelIndex + 1) : [], stopped: state[p.name]?.down || null })),
+    providers: configured().map((p) => ({ ...p, used: log.used[p.name] || 0, models_tried: state[p.name] ? state[p.name].models.slice(0, state[p.name].modelIndex + 1) : [], stopped: state[p.name]?.down || (state[p.name]?.coolUntil > Date.now() ? 'rate limited (429)' : null) })),
     attempts: log.attempts.length,
     errors: log.attempts.filter((a) => !a.ok).slice(-10)
   });
