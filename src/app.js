@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -5,11 +7,14 @@ require('dotenv').config();
 const gameRoutes = require('./routes/games');
 const statsRoutes = require('./routes/stats');
 const teamsRoutes = require('./routes/teams');
+const standingsRoutes = require('./routes/standings');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// 3000/3001 are used by other local services on the dev Mac.
+const PORT = process.env.PORT || 3002;
+const CLIENT_DIST = path.join(__dirname, '../client/dist');
 
 app.use(cors());
 app.use(express.json());
@@ -20,13 +25,33 @@ cache.initialize();
 app.use('/api/games', gameRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/teams', teamsRoutes);
+app.use('/api/standings', standingsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`American Football Insider API running on port ${PORT}`);
+app.use('/api', (req, res) => {
+  res.status(404).json({ success: false, error: 'Not found' });
 });
+
+// Serve the built React app (npm run build) with SPA fallback.
+if (fs.existsSync(CLIENT_DIST)) {
+  app.use(express.static(CLIENT_DIST, { maxAge: '1h', index: false }));
+  app.get('*', (req, res) => {
+    res.set('Cache-Control', 'no-cache');
+    res.sendFile(path.join(CLIENT_DIST, 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.type('text').send('Frontend not built. Run `npm run build`, then restart. API is available under /api.');
+  });
+}
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`American Football Insider running on port ${PORT}`);
+  });
+}
 
 module.exports = app;

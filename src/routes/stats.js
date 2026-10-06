@@ -6,7 +6,7 @@ const sportsDataService = require('../services/sportsDataService');
 router.get('/team/:teamId', async (req, res) => {
   try {
     const { teamId } = req.params;
-    const { season = 2024 } = req.query;
+    const { season } = req.query;
 
     const stats = await sportsDataService.getTeamStats(teamId, season);
 
@@ -20,18 +20,18 @@ router.get('/team/:teamId', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(502).json({ success: false, error: error.message });
   }
 });
 
 router.post('/team/:teamId/cache-refresh', async (req, res) => {
   try {
     const { teamId } = req.params;
-    const { season = 2024 } = req.query;
+    const { season } = req.query;
 
     const cache = require('../cache/cacheManager');
-    const cacheKey = `team_stats_${teamId}_${season}`;
-    cache.del(cacheKey);
+    const team = await sportsDataService.getTeams().then((teams) => teams.find((t) => t.abbreviation === teamId.toUpperCase() || t.id === teamId));
+    if (team) cache.del(`team_stats_${team.id}_${season || 'cur'}`);
 
     const stats = await sportsDataService.getTeamStats(teamId, season);
 

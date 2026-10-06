@@ -13,15 +13,14 @@ router.get('/', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(502).json({ success: false, error: error.message });
   }
 });
 
+// :teamId accepts an abbreviation (KC) or an ESPN team id (12)
 router.get('/:teamId', async (req, res) => {
   try {
-    const { teamId } = req.params;
-    const teams = await sportsDataService.getTeams();
-    const team = teams.find(t => t.team_id === teamId.toUpperCase());
+    const team = await sportsDataService.getTeamDetail(req.params.teamId);
 
     if (!team) {
       return res.status(404).json({ success: false, error: 'Team not found' });
@@ -33,15 +32,13 @@ router.get('/:teamId', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(502).json({ success: false, error: error.message });
   }
 });
 
 router.post('/:teamId/sync', async (req, res) => {
   try {
-    const { teamId } = req.params;
-    const teams = await sportsDataService.getTeams();
-    const team = teams.find(t => t.team_id === teamId.toUpperCase());
+    const team = await sportsDataService.getTeamDetail(req.params.teamId);
 
     if (!team) {
       return res.status(404).json({ success: false, error: 'Team not found' });
@@ -50,7 +47,7 @@ router.post('/:teamId/sync', async (req, res) => {
     await db.run(
       `INSERT OR REPLACE INTO teams (team_id, team_name, city, division, conference, coach)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [team.team_id, team.team_name, team.city, team.division, team.conference, team.coach]
+      [team.abbreviation, team.name, team.location, team.division, team.conference, null]
     );
 
     res.json({
