@@ -51,3 +51,37 @@ export function GameCard({ game }) {
     </Link>
   );
 }
+
+// AFI rating badge: our own 0-99 rating (not Madden). null = not rated.
+export function RatingBadge({ rating, small, large }) {
+  const tier = rating == null ? 'nr' : rating >= 90 ? 'elite' : rating >= 80 ? 'good' : rating >= 70 ? 'avg' : 'low';
+  return (
+    <span className={`rating rating-${tier} ${small ? 'sm' : ''} ${large ? 'lg' : ''}`} title={rating == null ? 'Not rated yet' : `AFI rating ${rating}`}>
+      {rating ?? 'NR'}
+    </span>
+  );
+}
+
+const INJURY_ABBR = { Out: 'O', Doubtful: 'D', Questionable: 'Q', 'Injured Reserve': 'IR', 'Physically Unable to Perform': 'PUP', Suspension: 'SUSP' };
+
+export function injuryAbbr(status = '') {
+  if (INJURY_ABBR[status]) return INJURY_ABBR[status];
+  if (/PUP/i.test(status)) return 'PUP';
+  if (/reserve/i.test(status)) return 'IR';
+  return status.slice(0, 3).toUpperCase();
+}
+
+export function InjuryBadge({ injury, small }) {
+  if (!injury?.status) return null;
+  const abbr = injuryAbbr(injury.status);
+  return (
+    <span className={`inj inj-${abbr.toLowerCase()} ${small ? 'sm' : ''}`} title={`${injury.status}${injury.injury ? ` — ${injury.injury}` : ''}`}>
+      {abbr}
+    </span>
+  );
+}
+
+export function Updated({ at, label = 'Last updated' }) {
+  if (!at) return null;
+  return <p className="updated muted small">{label}: {new Date(at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>;
+}

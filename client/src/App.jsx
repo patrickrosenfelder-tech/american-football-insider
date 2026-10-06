@@ -4,6 +4,8 @@ import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
 import Team from './pages/Team.jsx';
 import Game from './pages/Game.jsx';
+import Player from './pages/Player.jsx';
+import RatingsInfo from './pages/RatingsInfo.jsx';
 
 export default function App() {
   return (
@@ -28,11 +30,13 @@ export default function App() {
           <Route path="/teams" element={<Teams />} />
           <Route path="/teams/:teamId" element={<Team />} />
           <Route path="/game/:gameId" element={<Game />} />
+          <Route path="/players/:playerId" element={<Player />} />
+          <Route path="/about/ratings" element={<RatingsInfo />} />
           <Route path="*" element={<div className="state">Page not found.</div>} />
         </Routes>
       </main>
       <footer className="wrap footer">
-        Live data from ESPN’s public NFL feeds. Not affiliated with the NFL or ESPN.
+        Live data from ESPN’s public NFL feeds and nflverse. AFI ratings are our own stat-based ratings, not EA Madden ratings. Not affiliated with the NFL, ESPN or EA.
       </footer>
     </>
   );

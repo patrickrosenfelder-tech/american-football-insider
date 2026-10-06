@@ -46,6 +46,14 @@ const initialize = () => {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // Derived datasets (nflverse aggregates, AFI ratings) stored as JSON blobs keyed by name.
+    db.run(`CREATE TABLE IF NOT EXISTS datasets (
+      key TEXT PRIMARY KEY,
+      json TEXT NOT NULL,
+      meta TEXT,
+      updated_at TEXT NOT NULL
+    )`);
+
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_status ON games(status)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_stats_team ON team_stats(team_id)`);
@@ -79,8 +87,21 @@ const all = (query, params = []) => {
   });
 };
 
+const saveDataset = (key, value, meta = {}) => run(
+  `INSERT OR REPLACE INTO datasets (key, json, meta, updated_at) VALUES (?, ?, ?, ?)`,
+  [key, JSON.stringify(value), JSON.stringify(meta), new Date().toISOString()]
+);
+
+const loadDataset = async (key) => {
+  const row = await get(`SELECT json, meta, updated_at FROM datasets WHERE key = ?`, [key]);
+  if (!row) return null;
+  return { data: JSON.parse(row.json), meta: JSON.parse(row.meta || '{}'), updated_at: row.updated_at };
+};
+
 module.exports = {
   db,
+  saveDataset,
+  loadDataset,
   initialize,
   run,
   get,

@@ -360,6 +360,10 @@ const getTeamStats = async (teamIdOrAbbr, season = null) => {
 };
 
 module.exports = {
+  ESPN_SITE,
+  fetchJson,
+  findTeam,
+  normalizeTeamRef,
   getScoreboard,
   getGames,
   getGameDetail,

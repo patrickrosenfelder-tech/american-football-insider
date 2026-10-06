@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 const sportsDataService = require('../services/sportsDataService');
+const rosterService = require('../services/rosterService');
 
 router.get('/', async (req, res) => {
   try {
@@ -31,6 +32,29 @@ router.get('/:teamId', async (req, res) => {
       data: team,
       timestamp: new Date().toISOString()
     });
+  } catch (error) {
+    res.status(502).json({ success: false, error: error.message });
+  }
+});
+
+const sendOr404 = (res, data, notFound = 'Team not found') => {
+  if (!data) return res.status(404).json({ success: false, error: notFound });
+  return res.json({ success: true, data, timestamp: new Date().toISOString() });
+};
+
+// Madden-style depth chart: offense / defense / special teams with depth 1-n per slot.
+router.get('/:teamId/depthchart', async (req, res) => {
+  try {
+    sendOr404(res, await rosterService.getDepthChart(req.params.teamId));
+  } catch (error) {
+    res.status(502).json({ success: false, error: error.message });
+  }
+});
+
+// Full roster grouped by unit and position.
+router.get('/:teamId/roster', async (req, res) => {
+  try {
+    sendOr404(res, await rosterService.getRoster(req.params.teamId));
   } catch (error) {
     res.status(502).json({ success: false, error: error.message });
   }

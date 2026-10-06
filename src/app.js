@@ -8,6 +8,8 @@ const gameRoutes = require('./routes/games');
 const statsRoutes = require('./routes/stats');
 const teamsRoutes = require('./routes/teams');
 const standingsRoutes = require('./routes/standings');
+const playersRoutes = require('./routes/players');
+const refresh = require('./jobs/refresh');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
 
@@ -26,6 +28,7 @@ app.use('/api/games', gameRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/teams', teamsRoutes);
 app.use('/api/standings', standingsRoutes);
+app.use('/api/players', playersRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -51,6 +54,7 @@ if (fs.existsSync(CLIENT_DIST)) {
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`American Football Insider running on port ${PORT}`);
+    refresh.bootstrap().catch((error) => console.error('Bootstrap refresh failed:', error.message));
   });
 }
 

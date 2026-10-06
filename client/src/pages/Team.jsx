@@ -1,6 +1,10 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo } from '../components.jsx';
+import DepthChart from './DepthChart.jsx';
+import Roster from './Roster.jsx';
+
+const TABS = [['overview', 'Overview'], ['depth', 'Depth chart'], ['roster', 'Roster']];
 
 function ScheduleRow({ game, teamId }) {
   const us = game.home.id === teamId ? game.home : game.away;
@@ -49,8 +53,9 @@ function StatGrid({ categories }) {
 
 export default function Team() {
   const { teamId } = useParams();
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') || 'overview';
   const team = useApi(`/teams/${teamId}`);
-  const stats = useApi(`/stats/team/${teamId}`);
 
   if (team.loading) return <Loading label="Loading team…" />;
   if (team.error) return <ErrorBox error={team.error} />;
@@ -67,6 +72,23 @@ export default function Team() {
         </div>
       </div>
 
+      <nav className="subnav">
+        {TABS.map(([k, label]) => (
+          <button key={k} type="button" className={tab === k ? 'active' : ''} onClick={() => setParams(k === 'overview' ? {} : { tab: k })}>{label}</button>
+        ))}
+      </nav>
+
+      {tab === 'overview' && <Overview t={t} teamId={teamId} />}
+      {tab === 'depth' && <DepthChart teamId={teamId} />}
+      {tab === 'roster' && <Roster teamId={teamId} />}
+    </section>
+  );
+}
+
+function Overview({ t, teamId }) {
+  const stats = useApi(`/stats/team/${teamId}`);
+  return (
+    <>
       <h2 className="section-title">Schedule</h2>
       <div className="card list-card">
         {t.schedule.map((g) => <ScheduleRow key={g.game_id} game={g} teamId={t.id} />)}
@@ -76,6 +98,6 @@ export default function Team() {
       {stats.loading && <Loading label="Loading stats…" />}
       {stats.error && <ErrorBox error={stats.error} />}
       {stats.data && <StatGrid categories={stats.data.data.categories} />}
-    </section>
+    </>
   );
 }
