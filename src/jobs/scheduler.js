@@ -6,13 +6,15 @@ const refresh = require('./refresh');
 
 const TICK_MS = 10 * 60 * 1000;
 
-// days: 0=Sun..6=Sat (null = every day); hour: Eastern hour of day.
+// days: 0=Sun..6=Sat (null = every day); hour: Eastern hour of day; everyHours: interval jobs.
 const SCHEDULE = [
   { job: 'practice_report', run: refresh.refreshPractice, days: null, hour: 7 },
   { job: 'player_stats', run: refresh.refreshPlayerStats, days: null, hour: 7 },
   // nflverse publishes pbp + FTN charting overnight after MNF, so tendencies/team stats run Tuesday.
   { job: 'pbp_derived', run: refresh.refreshPbpDerived, days: [2], hour: 8 },
-  { job: 'schedules', run: refresh.refreshSchedules, days: [2], hour: 8 }
+  { job: 'schedules', run: refresh.refreshSchedules, days: [2], hour: 8 },
+  // Headlines every 3h; LLM summaries are capped at NEWS_DAILY_LLM_CAP (150) stories per day.
+  { job: 'news', run: refresh.refreshNews, everyHours: 3 }
 ];
 
 const eastern = (d = new Date()) => {
@@ -29,9 +31,10 @@ const eastern = (d = new Date()) => {
 const register = (entry) => SCHEDULE.push(entry);
 
 const isDue = (entry, now = eastern()) => {
+  const last = refresh.status[entry.job]?.last_run;
+  if (entry.everyHours) return !last || Date.now() - Date.parse(last) >= entry.everyHours * 3600e3;
   if (entry.days && !entry.days.includes(now.dow)) return false;
   if (now.hour < entry.hour) return false;
-  const last = refresh.status[entry.job]?.last_run;
   return !last || eastern(new Date(last)).date !== now.date;
 };
 
@@ -55,9 +58,9 @@ const start = () => {
   setInterval(() => tick().catch((error) => console.error('[scheduler]', error.message)), TICK_MS).unref();
 };
 
-const describe = () => SCHEDULE.map(({ job, days, hour }) => ({
+const describe = () => SCHEDULE.map(({ job, days, hour, everyHours }) => ({
   job,
-  when: `${days ? days.map((d) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]).join(',') : 'daily'} ${String(hour).padStart(2, '0')}:00 ET`,
+  when: everyHours ? `every ${everyHours}h` : `${days ? days.map((d) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]).join(',') : 'daily'} ${String(hour).padStart(2, '0')}:00 ET`,
   ...(refresh.status[job] || {})
 }));
 

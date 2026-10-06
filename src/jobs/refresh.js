@@ -2,6 +2,7 @@ const playerStatsService = require('../services/playerStatsService');
 const injuryService = require('../services/injuryService');
 const teamStatsService = require('../services/teamStatsService');
 const tendencyService = require('../services/tendencyService');
+const newsService = require('../services/newsService');
 const { currentSeason } = require('../services/rosterService');
 
 const status = {};
@@ -47,12 +48,20 @@ const refreshSchedules = () => runJob('schedules', async () => {
   return { games: rows.length };
 });
 
+// News: headlines + data stories, then LLM summaries within the daily cap.
+const refreshNews = () => runJob('news', async () => {
+  const log = await newsService.runNews();
+  const used = Object.fromEntries((log.llm?.providers || []).filter((p) => p.used).map((p) => [p.name, p.used]));
+  return { summarized: log.summarized, providers_used: used, new_stories: log.new_stories, missing_keys: log.missing_keys };
+});
+
 // On boot: build anything missing (SQLite on Fly lives in /tmp, so a fresh machine starts empty).
 const bootstrap = async () => {
   if (!(await playerStatsService.getPlayerStats(currentSeason()))) await refreshPlayerStats();
   if (!(await injuryService.getPracticeReport(currentSeason()))) await refreshPractice();
   if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
+  await refreshNews();
 };
 
-module.exports = { bootstrap, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };
+module.exports = { bootstrap, refreshNews, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };
