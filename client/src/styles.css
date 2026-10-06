@@ -335,3 +335,19 @@ a.tag:hover { border-color: #b9c4d8; }
 .headline-row { display: flex; gap: 10px; align-items: baseline; padding: 8px 14px; border-bottom: 1px solid var(--line); font-size: .9rem; }
 .headline-row:last-child { border-bottom: 0; }
 @media (max-width: 640px) { .headline-row { flex-direction: column; gap: 2px; } }
+
+/* Weather */
+.wx-cards { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.wx-card { display: flex; flex-direction: column; gap: 6px; }
+.wx-card p { margin: 0; }
+.wx-card.medium { border-color: #ca8a04; }
+.wx-card.high { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.wx-teams { display: flex; align-items: center; gap: 6px; font-size: 1.05rem; }
+.wx-teams:hover b { text-decoration: underline; }
+.wx-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 6px 0; }
+.wx-grid > div { display: flex; flex-direction: column; font-size: .85rem; }
+.wx-big { font-size: 1.4rem; font-weight: 900; line-height: 1.1; }
+.wx-level { font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; padding: 2px 7px; border-radius: 6px; color: var(--muted); border: 1px solid var(--line); }
+.wx-level.medium { color: #fff; background: #ca8a04; border-color: #ca8a04; }
+.wx-level.high { color: #fff; background: var(--accent); border-color: var(--accent); }
+.wx-level.low { color: var(--ink); }

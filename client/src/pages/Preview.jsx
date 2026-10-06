@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, InjuryBadge, Updated } from '../components.jsx';
 import { MatchupTendencies } from './Tendencies.jsx';
+import { WeatherBlock } from './Weather.jsx';
 
 // [label, path, higherIsBetter, suffix]
 const STAT_ROWS = [
@@ -133,6 +134,10 @@ export default function Preview() {
             <Injuries side={t} />
           </div>
         ))}
+      </div>
+
+      <div className="grid two-col">
+        <WeatherBlock gameId={p.game_id} />
       </div>
 
       <div className="grid two-col">

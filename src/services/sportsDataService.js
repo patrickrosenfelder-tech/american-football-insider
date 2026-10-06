@@ -86,7 +86,7 @@ const normalizeEvent = (e) => {
     status,
     home,
     away,
-    venue: comp.venue ? { name: comp.venue.fullName, city: comp.venue.address?.city, state: comp.venue.address?.state } : null,
+    venue: comp.venue ? { name: comp.venue.fullName, city: comp.venue.address?.city, state: comp.venue.address?.state, country: comp.venue.address?.country, indoor: comp.venue.indoor === true } : null,
     neutral_site: comp.neutralSite === true,
     broadcast: (comp.broadcasts || []).flatMap((b) => b.names || []).join(', ') || null,
     possession: situation?.possession || null,
