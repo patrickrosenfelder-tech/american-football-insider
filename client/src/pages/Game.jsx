@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useApi, isLive, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, StatusPill } from '../components.jsx';
+import { Loading, ErrorBox, Logo, StatusPill, Updated } from '../components.jsx';
 
 const KEY_STATS = ['totalYards', 'netPassingYards', 'rushingYards', 'firstDowns', 'thirdDownEff', 'fourthDownEff',
   'turnovers', 'totalPenaltiesYards', 'possessionTime', 'redZoneAttempts', 'sacksYardsLost', 'yardsPerPlay'];
@@ -136,6 +136,7 @@ export default function Game() {
           </div>
         </>
       )}
+      <Updated at={g.fetched_at} />
     </section>
   );
 }

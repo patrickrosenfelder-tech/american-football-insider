@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, Logo } from '../components.jsx';
+import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Teams() {
   const { data, error, loading } = useApi('/teams');
@@ -30,6 +30,7 @@ export default function Teams() {
           </div>
         ))}
       </div>
+      <Updated at={data.last_updated} />
     </section>
   );
 }

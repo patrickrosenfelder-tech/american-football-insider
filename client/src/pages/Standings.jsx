@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, Logo } from '../components.jsx';
+import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Standings() {
   const { data, error, loading } = useApi('/standings');
@@ -51,6 +51,7 @@ export default function Standings() {
         ))}
       </div>
       <p className="muted small">Superscript = current conference playoff seed.</p>
+      <Updated at={data.data.fetched_at} />
     </section>
   );
 }

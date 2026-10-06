@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useApi, isLive, dayKey } from '../api.js';
-import { GameCard, Loading, ErrorBox, Logo } from '../components.jsx';
+import { GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Scores() {
   const [params, setParams] = useSearchParams();
@@ -77,6 +77,7 @@ export default function Scores() {
           ))}
         </div>
       )}
+      <Updated at={data.last_updated} />
     </section>
   );
 }

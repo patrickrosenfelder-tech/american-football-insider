@@ -18,6 +18,7 @@ const weatherRoutes = require('./routes/weather');
 const trendsRoutes = require('./routes/trends');
 const picksRoutes = require('./routes/picks');
 const adminRoutes = require('./routes/admin');
+const statusRoutes = require('./routes/status');
 const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
 const db = require('./db/database');
@@ -48,6 +49,7 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/trends', trendsRoutes);
 app.use('/api/picks', picksRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/status', statusRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -73,7 +75,8 @@ if (fs.existsSync(CLIENT_DIST)) {
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`American Football Insider running on port ${PORT}`);
-    refresh.bootstrap()
+    refresh.loadStatus()
+      .then(() => refresh.bootstrap())
       .catch((error) => console.error('Bootstrap refresh failed:', error.message))
       .finally(() => scheduler.start());
   });

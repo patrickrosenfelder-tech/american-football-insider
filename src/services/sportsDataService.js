@@ -159,7 +159,8 @@ const getScoreboard = async ({ week, season, seasonType } = {}) => {
     week: data.week?.number,
     teams_on_bye: (data.week?.teamsOnBye || []).map(normalizeTeamRef),
     calendar,
-    games
+    games,
+    fetched_at: new Date().toISOString()
   };
   cache.set(cacheKey, result, hasLiveGame(games) ? TTL.live : TTL.scoreboard);
   return result;
@@ -208,6 +209,7 @@ const getGameDetail = async (gameId) => {
 
   const result = {
     ...event,
+    fetched_at: new Date().toISOString(),
     team_stats: (data.boxscore?.teams || []).map((t) => ({
       team: normalizeTeamRef(t.team),
       stats: (t.statistics || []).map((s) => ({ name: s.name, label: s.label, value: s.displayValue }))
@@ -289,7 +291,8 @@ const getStandings = async () => cache.getOrSet('standings', async () => {
   return {
     season: meta.season || null,
     season_display: meta.seasonDisplayName || null,
-    conferences
+    conferences,
+    fetched_at: new Date().toISOString()
   };
 }, TTL.standings);
 
@@ -339,7 +342,8 @@ const getTeamDetail = async (teamIdOrAbbr) => {
       standing_summary: t.standingSummary || null,
       record_detail: (t.record?.items || []).map((r) => ({ type: r.type, summary: r.summary, description: r.description })),
       bye_week: schedule.byeWeek || null,
-      schedule: (schedule.events || []).map(normalizeEvent)
+      schedule: (schedule.events || []).map(normalizeEvent),
+      fetched_at: new Date().toISOString()
     };
   }, TTL.live * 4);
 };

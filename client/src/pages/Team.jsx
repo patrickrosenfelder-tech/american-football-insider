@@ -1,6 +1,6 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo } from '../components.jsx';
+import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 import DepthChart from './DepthChart.jsx';
 import Roster from './Roster.jsx';
 import { TeamInjuries } from './Injuries.jsx';
@@ -104,6 +104,7 @@ function Overview({ t, teamId }) {
       {stats.loading && <Loading label="Loading stats…" />}
       {stats.error && <ErrorBox error={stats.error} />}
       {stats.data && <StatGrid categories={stats.data.data.categories} />}
+      <Updated at={t.fetched_at} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff, dayKey } from '../api.js';
-import { Loading, ErrorBox, Logo } from '../components.jsx';
+import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Previews() {
   const [params] = useSearchParams();
@@ -40,6 +40,7 @@ export default function Previews() {
         </div>
       ))}
       {d.teams_on_bye?.length > 0 && <p className="muted small">On bye: {d.teams_on_bye.map((t) => t.abbreviation).join(', ')}</p>}
+      <Updated at={d.last_updated} />
     </section>
   );
 }

@@ -204,7 +204,8 @@ const listPreviews = async ({ week, season, seasonType } = {}) => {
       odds: g.odds,
       broadcast: g.broadcast,
       preview_url: `/api/previews/${g.game_id}`
-    }))
+    })),
+    last_updated: board.fetched_at || null
   };
 };
 

@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
       data: board.games,
       count: board.games.length,
       source: 'espn',
+      last_updated: board.fetched_at,
       timestamp: new Date().toISOString()
     });
   } catch (error) {

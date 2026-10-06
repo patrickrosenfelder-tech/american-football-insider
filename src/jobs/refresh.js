@@ -4,22 +4,98 @@ const teamStatsService = require('../services/teamStatsService');
 const tendencyService = require('../services/tendencyService');
 const newsService = require('../services/newsService');
 const picksService = require('../services/picksService');
-const { currentSeason } = require('../services/rosterService');
+const rosterService = require('../services/rosterService');
+const weatherService = require('../services/weatherService');
+const sportsDataService = require('../services/sportsDataService');
+const cache = require('../cache/cacheManager');
+const db = require('../db/database');
 
+const { currentSeason } = rosterService;
+
+// Per-job run state. Persisted (datasets.job_status) so the status page and the scheduler's
+// "last run" survive deploys. last_success / last_error are kept separately from the latest run.
 const status = {};
+const STATUS_KEY = 'job_status';
 
+const loadStatus = async () => {
+  const row = await db.loadDataset(STATUS_KEY).catch(() => null);
+  Object.entries(row?.data || {}).forEach(([name, s]) => { status[name] = { ...s, running: false }; });
+};
+
+const saveStatus = () => db.saveDataset(STATUS_KEY, status).catch((error) => console.error('[refresh] status save failed:', error.message));
+
+// A job may return { error } for a partial failure (e.g. 2 of 32 teams failed): the run still
+// counts as a success, but the message is recorded as the last error.
 const runJob = async (name, fn) => {
   const started = Date.now();
-  status[name] = { ...(status[name] || {}), running: true, started_at: new Date(started).toISOString() };
+  const prev = status[name] || {};
+  const keep = { last_success: prev.last_success || null, last_error: prev.last_error || null, last_error_at: prev.last_error_at || null };
+  status[name] = { ...prev, running: true, started_at: new Date(started).toISOString() };
   try {
-    const result = await fn();
-    status[name] = { running: false, ok: true, last_run: new Date().toISOString(), duration_ms: Date.now() - started, ...(result || {}) };
+    const { error, ...result } = (await fn()) || {};
+    const now = new Date().toISOString();
+    status[name] = {
+      ...keep, running: false, ok: true, last_run: now, last_success: now, duration_ms: Date.now() - started, ...result,
+      ...(error ? { last_error: error, last_error_at: now } : {})
+    };
   } catch (error) {
     console.error(`[refresh] ${name} failed:`, error.message);
-    status[name] = { ...status[name], running: false, ok: false, error: error.message, last_run: new Date().toISOString() };
+    const now = new Date().toISOString();
+    status[name] = { ...prev, ...keep, running: false, ok: false, last_run: now, last_error: error.message, last_error_at: now, duration_ms: Date.now() - started };
   }
+  await saveStatus();
   return status[name];
 };
+
+// Run fn over items with a small concurrency limit; returns failures as [{ item, error }].
+const eachLimited = async (items, limit, fn) => {
+  const failures = [];
+  let i = 0;
+  await Promise.all(Array.from({ length: limit }, async () => {
+    while (i < items.length) {
+      const item = items[i++];
+      await fn(item).catch((error) => failures.push({ item, error: error.message }));
+    }
+  }));
+  return failures;
+};
+
+const partial = (failures, total, label) => {
+  if (failures.length > total / 2) throw new Error(`${failures.length}/${total} ${label} failed: ${failures[0].error}`);
+  return failures.length ? `${failures.length}/${total} ${label} failed (${failures.map((f) => f.item).join(', ')}): ${failures[0].error}` : undefined;
+};
+
+// ESPN rosters + depth charts for all 32 teams: bust the 6h cache and re-fetch.
+const refreshRosters = () => runJob('rosters_depth', async () => {
+  const teams = await sportsDataService.getTeams();
+  const failures = await eachLimited(teams.map((t) => t.abbreviation), 4, async (abbr) => {
+    const team = teams.find((t) => t.abbreviation === abbr);
+    rosterService.bustTeam(team.id);
+    await rosterService.getDepthChart(abbr);
+  });
+  return { teams: teams.length - failures.length, error: partial(failures, teams.length, 'teams') };
+});
+
+// ESPN league-wide injury feed.
+const refreshInjuries = () => runJob('injuries', async () => {
+  cache.del('injuries_league');
+  const d = await injuryService.getLeagueInjuries();
+  return { players: d.teams.reduce((n, t) => n + t.injuries.length, 0) };
+});
+
+// Open-Meteo kickoff forecasts for this week's games.
+const refreshWeather = () => runJob('weather', async () => {
+  const d = await weatherService.getWeekWeather();
+  const failures = d.games.filter((g) => g.error).map((g) => ({ item: g.game_id, error: g.error }));
+  return { week: d.week, games: d.games.length, error: partial(failures, d.games.length || 1, 'games') };
+});
+
+// ESPN scoreboard lines (spread / total / moneyline) for this week.
+const refreshOdds = () => runJob('odds', async () => {
+  const board = await sportsDataService.getUpcomingScoreboard();
+  const upcoming = board.games.filter((g) => !g.status?.completed);
+  return { week: board.week, games: upcoming.length, games_with_lines: upcoming.filter((g) => g.lines || g.odds).length };
+});
 
 // Player season stat lines from nflverse season stats + snap counts.
 const refreshPlayerStats = () => runJob('player_stats', async () => {
@@ -68,4 +144,4 @@ const bootstrap = async () => {
   await refreshNews();
 };
 
-module.exports = { bootstrap, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };
+module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };

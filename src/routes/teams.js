@@ -9,10 +9,13 @@ const tendencyService = require('../services/tendencyService');
 router.get('/', async (req, res) => {
   try {
     const teams = await sportsDataService.getTeams();
+    // Records come from standings, so that fetch is the list's freshness.
+    const standings = await sportsDataService.getStandings().catch(() => null);
     res.json({
       success: true,
       data: teams,
       count: teams.length,
+      last_updated: standings?.fetched_at || null,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
