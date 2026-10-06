@@ -11,6 +11,7 @@ const standingsRoutes = require('./routes/standings');
 const playersRoutes = require('./routes/players');
 const injuriesRoutes = require('./routes/injuries');
 const previewsRoutes = require('./routes/previews');
+const tendenciesRoutes = require('./routes/tendencies');
 const refresh = require('./jobs/refresh');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
@@ -33,6 +34,7 @@ app.use('/api/standings', standingsRoutes);
 app.use('/api/players', playersRoutes);
 app.use('/api/injuries', injuriesRoutes);
 app.use('/api/previews', previewsRoutes);
+app.use('/api/tendencies', tendenciesRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

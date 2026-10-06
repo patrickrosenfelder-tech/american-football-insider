@@ -9,6 +9,7 @@ import RatingsInfo from './pages/RatingsInfo.jsx';
 import Injuries from './pages/Injuries.jsx';
 import Previews from './pages/Previews.jsx';
 import Preview from './pages/Preview.jsx';
+import TendenciesPage from './pages/Tendencies.jsx';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
             <NavLink to="/previews">Previews</NavLink>
             <NavLink to="/teams">Teams</NavLink>
             <NavLink to="/injuries">Injuries</NavLink>
+            <NavLink to="/tendencies">Tendencies</NavLink>
           </nav>
         </div>
       </header>
@@ -39,6 +41,7 @@ export default function App() {
           <Route path="/injuries" element={<Injuries />} />
           <Route path="/previews" element={<Previews />} />
           <Route path="/preview/:gameId" element={<Preview />} />
+          <Route path="/tendencies" element={<TendenciesPage />} />
           <Route path="/about/ratings" element={<RatingsInfo />} />
           <Route path="*" element={<div className="state">Page not found.</div>} />
         </Routes>

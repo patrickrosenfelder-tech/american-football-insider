@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, RatingBadge, InjuryBadge, Updated } from '../components.jsx';
+import { MatchupTendencies } from './Tendencies.jsx';
 
 // [label, path, higherIsBetter, suffix]
 const STAT_ROWS = [
@@ -156,13 +157,8 @@ export default function Preview() {
         </div>
       </div>
 
-      <TendencySlot p={p} />
+      <MatchupTendencies away={away} home={home} />
       <Updated at={p.last_updated} />
     </section>
   );
-}
-
-// Filled in by the scheme tendencies step.
-function TendencySlot() {
-  return null;
 }

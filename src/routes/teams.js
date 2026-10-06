@@ -4,6 +4,7 @@ const db = require('../db/database');
 const sportsDataService = require('../services/sportsDataService');
 const rosterService = require('../services/rosterService');
 const injuryService = require('../services/injuryService');
+const tendencyService = require('../services/tendencyService');
 
 router.get('/', async (req, res) => {
   try {
@@ -68,6 +69,25 @@ router.get('/:teamId/injuries', async (req, res) => {
   try {
     const team = await sportsDataService.findTeam(req.params.teamId);
     sendOr404(res, team && await injuryService.getTeamInjuries(team));
+  } catch (error) {
+    res.status(502).json({ success: false, error: error.message });
+  }
+});
+
+// Scheme tendencies: season + last 3 games (current season) and personnel/coverage reference season.
+router.get('/:teamId/tendencies', async (req, res) => {
+  try {
+    const team = await sportsDataService.findTeam(req.params.teamId);
+    if (!team) return res.status(404).json({ success: false, error: 'Team not found' });
+    const season = Number(req.query.season) || rosterService.currentSeason();
+    const view = await tendencyService.teamView(team.abbreviation, season);
+    if (!view) return res.status(503).json({ success: false, error: 'Tendencies not built yet (refresh job pending)' });
+    const depth = await rosterService.getDepthChart(team.abbreviation).catch(() => null);
+    res.json({
+      success: true,
+      data: { ...view, team: { id: team.id, abbreviation: team.abbreviation, name: team.name, logo: team.logo }, base_front_depth_chart: depth?.base_defense || null },
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
     res.status(502).json({ success: false, error: error.message });
   }

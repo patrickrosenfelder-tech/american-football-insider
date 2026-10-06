@@ -1,6 +1,7 @@
 const ratingService = require('../services/ratingService');
 const injuryService = require('../services/injuryService');
 const teamStatsService = require('../services/teamStatsService');
+const tendencyService = require('../services/tendencyService');
 const { currentSeason } = require('../services/rosterService');
 
 const status = {};
@@ -30,10 +31,14 @@ const refreshPractice = () => runJob('practice_report', async () => {
   return { latest_week: r.latest_week, players: Object.keys(r.players).length };
 });
 
-// Team offense/defense comparison stats from nflverse play-by-play.
-const refreshTeamStats = () => runJob('team_stats', async () => {
-  const r = await teamStatsService.refreshTeamStats(currentSeason());
-  return { data_through_week: r.data_through_week };
+// Play-by-play derived data: team comparison stats + scheme tendencies (pbp + FTN charting).
+// One pbp download feeds both.
+const refreshPbpDerived = () => runJob('pbp_derived', async () => {
+  const season = currentSeason();
+  const plays = await teamStatsService.loadPbp(season);
+  const stats = await teamStatsService.refreshTeamStats(season, plays);
+  const tendencies = await tendencyService.refreshTendencies(season, { plays, includeParticipation: false });
+  return { data_through_week: stats.data_through_week, plays: plays.length, ftn_through_week: tendencies.sources.ftn?.through_week ?? null };
 });
 
 // Completed games since 1999 for head-to-head records.
@@ -46,8 +51,8 @@ const refreshSchedules = () => runJob('schedules', async () => {
 const bootstrap = async () => {
   if (!(await ratingService.getRatings(currentSeason()))) await refreshRatings();
   if (!(await injuryService.getPracticeReport(currentSeason()))) await refreshPractice();
-  if (!(await teamStatsService.getTeamStats(currentSeason()))) await refreshTeamStats();
+  if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
 };
 
-module.exports = { bootstrap, refreshRatings, refreshPractice, refreshTeamStats, refreshSchedules, status };
+module.exports = { bootstrap, refreshRatings, refreshPractice, refreshPbpDerived, refreshSchedules, status };
