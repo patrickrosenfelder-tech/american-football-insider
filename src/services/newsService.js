@@ -12,8 +12,8 @@ const llm = require('./llmService');
 // Data stories (game recaps, injury updates, roster moves) are written by us from structured data.
 
 const DATASET = 'news_v1';
-const DAILY_LLM_CAP = Number(process.env.NEWS_DAILY_LLM_CAP || 150); // stories/day
-const RUN_LLM_CAP = Number(process.env.NEWS_RUN_LLM_CAP || 40); // stories/run
+const DAILY_LLM_CAP = Number(process.env.NEWS_DAILY_LLM_CAP || 40); // stories/day
+const RUN_LLM_CAP = Number(process.env.NEWS_RUN_LLM_CAP || 10); // stories/run
 const BATCH = 5; // stories per LLM request
 const KEEP_DAYS = 7;
 const MAX_AGE_HOURS = 96; // ignore feed items older than this
@@ -338,6 +338,8 @@ const summarize = async (candidates, index, log) => {
     const res = await session.complete(promptFor(batch), validateBatch(batch.map((s) => s.id)));
     console.log(`[news] batch ${i / BATCH + 1}: ${res ? `${res.provider} (${res.model}) ${res.json.length}/${batch.length}` : 'all providers failed'}`);
     if (!res) break; // every provider failed: keep data stories, retry next run
+    const latestAttempt = session.summary().attempts_detail.at(-1);
+    if (latestAttempt?.ok) latestAttempt.stories = res.json.length;
     res.json.forEach((x) => {
       const story = batch.find((s) => s.id === String(x.id));
       if (!story) return;
@@ -354,6 +356,26 @@ const summarize = async (candidates, index, log) => {
   }
   log.llm = session.summary();
   return done;
+};
+
+const saveUsage = async (day, summary) => {
+  const totals = {};
+  (summary.attempts_detail || []).forEach((a) => {
+    const t = totals[a.provider] ||= { requests: 0, stories: 0, tokens_in: 0, tokens_out: 0, rate_limits: 0, errors: 0 };
+    t.requests += 1;
+    t.stories += a.stories || 0;
+    t.tokens_in += Number(a.usage?.prompt_tokens || a.usage?.input_tokens || 0);
+    t.tokens_out += Number(a.usage?.completion_tokens || a.usage?.output_tokens || 0);
+    if (!a.ok) {
+      t.errors += 1;
+      t.last_error = a.error;
+      if (a.status === 429) { t.rate_limits += 1; t.last_429_at = a.at; }
+    }
+    if (a.limits) Object.assign(t, Object.fromEntries(Object.entries(a.limits).filter(([, v]) => v != null)));
+  });
+  const remote = await llm.fetchProviderLimits();
+  Object.entries(remote).forEach(([provider, limits]) => Object.assign(totals[provider] ||= { requests: 0, stories: 0, tokens_in: 0, tokens_out: 0, rate_limits: 0, errors: 0 }, limits));
+  await Promise.all(Object.entries(totals).map(([provider, usage]) => db.recordLlmUsage(day, provider, usage)));
 };
 
 // --- Run ---------------------------------------------------------------------------
@@ -446,6 +468,8 @@ const runNews = async ({ summarizeStories = true } = {}) => {
   log.unsummarized = Object.values(state.stories).filter((s) => s.kind === 'headline' && !s.summary).length;
   log.finished_at = new Date().toISOString();
 
+  if (log.llm?.attempts_detail) await saveUsage(today, log.llm);
+
   state.runs = [log, ...(state.runs || [])].slice(0, 10);
   state.updated_at = log.finished_at;
   await db.saveDataset(DATASET, state, { stories: Object.keys(state.stories).length });
@@ -508,4 +532,6 @@ const status = async () => {
   return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, summarized_today: state.daily?.[etDate()] || 0, runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
 };
 
-module.exports = { runNews, list, get, status, cluster, tokens, jaccard };
+const usage = async (days = 7) => db.llmUsage(days);
+
+module.exports = { runNews, list, get, status, usage, cluster, tokens, jaccard };

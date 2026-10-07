@@ -61,10 +61,22 @@ const initialize = () => {
       results_json TEXT NOT NULL, created_at TEXT NOT NULL
     )`);
 
+    // Provider-level LLM accounting. This deliberately contains no credentials or prompt content.
+    db.run(`CREATE TABLE IF NOT EXISTS llm_usage_daily (
+      day TEXT NOT NULL, provider TEXT NOT NULL,
+      requests INTEGER NOT NULL DEFAULT 0, stories_summarized INTEGER NOT NULL DEFAULT 0,
+      tokens_in INTEGER NOT NULL DEFAULT 0, tokens_out INTEGER NOT NULL DEFAULT 0,
+      rate_limits INTEGER NOT NULL DEFAULT 0, errors INTEGER NOT NULL DEFAULT 0,
+      last_error TEXT, last_429_at TEXT, remaining_requests TEXT, remaining_tokens TEXT,
+      reset_requests TEXT, reset_tokens TEXT, updated_at TEXT NOT NULL,
+      PRIMARY KEY(day, provider)
+    )`);
+
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_status ON games(status)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_stats_team ON team_stats(team_id)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_picks_backtest_week ON picks_backtest(season, week)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_llm_usage_day ON llm_usage_daily(day)`);
   });
 };
 
@@ -106,6 +118,23 @@ const loadDataset = async (key) => {
   return { data: JSON.parse(row.json), meta: JSON.parse(row.meta || '{}'), updated_at: row.updated_at };
 };
 
+const recordLlmUsage = async (day, provider, usage = {}) => run(`
+  INSERT INTO llm_usage_daily (day, provider, requests, stories_summarized, tokens_in, tokens_out, rate_limits, errors, last_error, last_429_at, remaining_requests, remaining_tokens, reset_requests, reset_tokens, updated_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  ON CONFLICT(day, provider) DO UPDATE SET
+    requests = requests + excluded.requests, stories_summarized = stories_summarized + excluded.stories_summarized,
+    tokens_in = tokens_in + excluded.tokens_in, tokens_out = tokens_out + excluded.tokens_out,
+    rate_limits = rate_limits + excluded.rate_limits, errors = errors + excluded.errors,
+    last_error = COALESCE(excluded.last_error, llm_usage_daily.last_error), last_429_at = COALESCE(excluded.last_429_at, llm_usage_daily.last_429_at),
+    remaining_requests = COALESCE(excluded.remaining_requests, llm_usage_daily.remaining_requests),
+    remaining_tokens = COALESCE(excluded.remaining_tokens, llm_usage_daily.remaining_tokens),
+    reset_requests = COALESCE(excluded.reset_requests, llm_usage_daily.reset_requests), reset_tokens = COALESCE(excluded.reset_tokens, llm_usage_daily.reset_tokens), updated_at = excluded.updated_at`,
+  [day, provider, usage.requests || 0, usage.stories || 0, usage.tokens_in || 0, usage.tokens_out || 0, usage.rate_limits || 0, usage.errors || 0,
+    usage.last_error || null, usage.last_429_at || null, usage.remaining_requests || null, usage.remaining_tokens || null,
+    usage.reset_requests || null, usage.reset_tokens || null, new Date().toISOString()]);
+
+const llmUsage = (days = 7) => all(`SELECT * FROM llm_usage_daily WHERE day >= ? ORDER BY day DESC, provider`, [new Date(Date.now() - (days - 1) * 864e5).toLocaleDateString('en-CA', { timeZone: 'America/New_York' })]);
+
 module.exports = {
   db,
   saveDataset,
@@ -113,5 +142,7 @@ module.exports = {
   initialize,
   run,
   get,
-  all
+  all,
+  recordLlmUsage,
+  llmUsage
 };

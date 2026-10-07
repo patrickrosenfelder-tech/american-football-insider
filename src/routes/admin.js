@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const refresh = require('../jobs/refresh');
 const scheduler = require('../jobs/scheduler');
+const newsService = require('../services/newsService');
 
 // Bearer ADMIN_TOKEN (Fly secret). Without the secret set, admin endpoints are disabled.
 const requireAdmin = (req, res, next) => {
@@ -26,6 +27,21 @@ router.post('/jobs/:job/run', requireAdmin, async (req, res) => {
   if (req.query.wait) return res.json({ success: true, data: await job });
   job.catch(() => {});
   return res.status(202).json({ success: true, data: { job: entry.job, started: true } });
+});
+
+// GET /admin/llm (also available as /api/admin/llm) — provider accounting and latest observed limits.
+router.get('/llm', requireAdmin, async (req, res) => {
+  try {
+    const rows = await newsService.usage(7);
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
+    const latest = Object.values(rows.reduce((acc, row) => {
+      if (!acc[row.provider] || acc[row.provider].updated_at < row.updated_at) acc[row.provider] = row;
+      return acc;
+    }, {}));
+    res.json({ success: true, data: { today: rows.filter((r) => r.day === today), last_7_days: rows, latest_limits: latest.map((r) => ({ provider: r.provider, remaining_requests: r.remaining_requests, remaining_tokens: r.remaining_tokens, reset_requests: r.reset_requests, reset_tokens: r.reset_tokens, updated_at: r.updated_at })), links: { groq: 'https://console.groq.com/settings/limits', openrouter: 'https://openrouter.ai/activity' } }, timestamp: new Date().toISOString() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 module.exports = router;

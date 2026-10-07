@@ -3,6 +3,7 @@ const router = express.Router();
 const scheduler = require('../jobs/scheduler');
 const db = require('../db/database');
 const { currentSeason } = require('../services/rosterService');
+const newsService = require('../services/newsService');
 
 // Public data-status view: one row per data source, built from the scheduler's job state.
 // `dataset` is a fallback for last_success when a job has not run since status tracking began.
@@ -61,7 +62,23 @@ const buildStatus = async () => {
       }))
     };
   }));
-  return { sources, last_updated: latest(sources.map((s) => s.last_success)), server_time: new Date().toISOString() };
+  const news = await newsService.status();
+  const lastRun = news.runs?.[0] || {};
+  const providers = lastRun.llm?.providers || [];
+  const providerUsed = providers.find((p) => p.used)?.name || null;
+  const providerHealth = news.llm.map((p) => ({ name: p.name, configured: p.configured, healthy: p.configured && !(providers.find((x) => x.name === p.name)?.stopped) }));
+  return {
+    sources,
+    news_llm: {
+      summarized_today: news.summarized_today,
+      daily_cap: news.daily_cap,
+      label: `${news.summarized_today}/${news.daily_cap} today`,
+      provider_used_last_run: providerUsed,
+      providers_healthy: providerHealth.every((p) => !p.configured || p.healthy),
+      providers: providerHealth
+    },
+    last_updated: latest(sources.map((s) => s.last_success)), server_time: new Date().toISOString()
+  };
 };
 
 // GET /api/status — per source: last successful update, next scheduled run, last error.

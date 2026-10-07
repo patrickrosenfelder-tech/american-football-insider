@@ -49,6 +49,7 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/trends', trendsRoutes);
 app.use('/api/picks', picksRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 app.use('/api/status', statusRoutes);
 
 app.get('/api/health', (req, res) => {

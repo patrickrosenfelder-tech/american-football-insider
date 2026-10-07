@@ -1,9 +1,8 @@
 const axios = require('axios');
 
 // Free-tier LLM fallback chain for news summaries. One key per provider, read from env (Fly secrets):
-//   1. Google Gemini Flash   GEMINI_API_KEY
-//   2. Groq                  GROQ_API_KEY
-//   3. OpenRouter ":free"    OPENROUTER_API_KEY
+//   1. Groq                  GROQ_API_KEY
+//   2. OpenRouter ":free"    OPENROUTER_API_KEY
 // On 429 / 5xx / timeout / bad output the next provider is tried. Keys are never logged or returned:
 // errors are reduced to provider + HTTP status + a short reason.
 
@@ -22,27 +21,6 @@ const rank = (ids, prefs, exclude) => {
 
 const PROVIDERS = [
   {
-    name: 'gemini',
-    env: 'GEMINI_API_KEY',
-    // Tried in order; a 404 (model retired) moves on to the next model of the same provider.
-    models: list('GEMINI_MODELS', null),
-    fallbackModels: ['gemini-flash-latest', 'gemini-2.5-flash'],
-    discover: async (key) => {
-      const { data } = await axios.get('https://generativelanguage.googleapis.com/v1beta/models', { params: { pageSize: 200 }, headers: { 'x-goog-api-key': key }, timeout: 15000 });
-      const ids = (data.models || []).filter((m) => (m.supportedGenerationMethods || []).includes('generateContent')).map((m) => m.name.replace('models/', ''));
-      return rank(ids.filter((id) => /flash/.test(id)), [/^gemini-flash-latest$/, /^gemini-[\d.]+-flash$/, /^gemini-flash-lite-latest$/, /^gemini-[\d.]+-flash-lite$/], /tts|image|omni|preview|audio|live|thinking/).slice(0, 4);
-    },
-    delayMs: 4500, // free tier ~10-15 requests/minute
-    call: async (key, model, prompt) => {
-      const { data } = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        { contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, responseMimeType: 'application/json' } },
-        { headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' }, timeout: TIMEOUT_MS }
-      );
-      return (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
-    }
-  },
-  {
     name: 'groq',
     env: 'GROQ_API_KEY',
     models: list('GROQ_MODELS', null),
@@ -53,10 +31,10 @@ const PROVIDERS = [
     },
     delayMs: 15000, // free tier: tokens-per-minute is the binding limit
     call: async (key, model, prompt) => {
-      const { data } = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+      const response = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
         model, temperature: 0.3, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: prompt }]
       }, { headers: { Authorization: `Bearer ${key}` }, timeout: TIMEOUT_MS });
-      return data.choices?.[0]?.message?.content || '';
+      return { text: response.data.choices?.[0]?.message?.content || '', usage: response.data.usage, headers: response.headers };
     }
   },
   {
@@ -71,13 +49,13 @@ const PROVIDERS = [
     },
     delayMs: 4000, // ":free" models ~20 requests/minute
     call: async (key, model, prompt) => {
-      const { data } = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
         model, temperature: 0.3, messages: [{ role: 'user', content: prompt }]
       }, {
         headers: { Authorization: `Bearer ${key}`, 'HTTP-Referer': 'https://american-football-insider.fly.dev', 'X-Title': 'American Football Insider' },
         timeout: TIMEOUT_MS
       });
-      return data.choices?.[0]?.message?.content || '';
+      return { text: response.data.choices?.[0]?.message?.content || '', usage: response.data.usage, headers: response.headers };
     }
   }
 ];
@@ -103,6 +81,24 @@ const withDeadline = (promise, ms) => Promise.race([promise, new Promise((_, rej
 
 const configured = () => PROVIDERS.map((p) => ({ name: p.name, env: p.env, configured: Boolean(process.env[p.env]) }));
 const missingKeys = () => PROVIDERS.filter((p) => !process.env[p.env]).map((p) => p.env);
+
+// OpenRouter exposes credit usage/limit for the authenticated key. Return only accounting fields;
+// credentials and the rest of the key metadata never leave this module.
+const fetchProviderLimits = async () => {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) return {};
+  try {
+    const { data } = await axios.get('https://openrouter.ai/api/v1/key', { headers: { Authorization: `Bearer ${key}` }, timeout: 15000 });
+    return { openrouter: {
+      remaining_requests: data?.data?.limit_remaining == null ? null : String(data.data.limit_remaining),
+      remaining_tokens: data?.data?.usage == null ? null : String(data.data.usage),
+      reset_requests: data?.data?.limit == null ? null : String(data.data.limit)
+    } };
+  } catch (error) {
+    console.warn(`[llm] openrouter limit lookup failed (${describeError(error).reason})`);
+    return {};
+  }
+};
 
 // Pulls the first JSON object out of a model reply (handles ```json fences and <think> blocks).
 const parseJson = (text) => {
@@ -138,13 +134,19 @@ const createSession = () => {
         let reply;
         try {
           reply = await withDeadline(p.call(key, model, prompt), TIMEOUT_MS + 5000);
-          const json = validate(parseJson(reply));
-          log.attempts.push({ provider: p.name, model, ok: true });
+          const json = validate(parseJson(reply.text));
+          const headers = reply.headers || {};
+          log.attempts.push({ provider: p.name, model, ok: true, usage: reply.usage || {}, limits: {
+            remaining_requests: headers['x-ratelimit-remaining-requests'] || headers['x-ratelimit-remaining-requests-day'] || null,
+            remaining_tokens: headers['x-ratelimit-remaining-tokens'] || null,
+            reset_requests: headers['x-ratelimit-reset-requests'] || null,
+            reset_tokens: headers['x-ratelimit-reset-tokens'] || null
+          } });
           log.used[p.name] = (log.used[p.name] || 0) + 1;
           return { provider: p.name, model, json };
         } catch (error) {
           const e = reply !== undefined ? { status: 'bad_output', reason: `bad output: ${String(error.message).slice(0, 80)}` } : describeError(error);
-          log.attempts.push({ provider: p.name, model, ok: false, error: e.reason });
+          log.attempts.push({ provider: p.name, model, ok: false, status: e.status, error: e.reason, at: new Date().toISOString() });
           // Reply arrived but was unusable: let the next provider try this prompt, keep this one for later prompts.
           if (e.status === 'bad_output') break;
           // Model unknown / retired / overloaded: try the provider's next model.
@@ -170,10 +172,11 @@ const createSession = () => {
   const summary = () => ({
     providers: configured().map((p) => ({ ...p, used: log.used[p.name] || 0, models_tried: state[p.name] ? state[p.name].models.slice(0, state[p.name].modelIndex + 1) : [], stopped: state[p.name]?.down || (state[p.name]?.coolUntil > Date.now() ? 'rate limited (429)' : null) })),
     attempts: log.attempts.length,
-    errors: log.attempts.filter((a) => !a.ok).slice(-10)
+    errors: log.attempts.filter((a) => !a.ok).slice(-10),
+    attempts_detail: log.attempts
   });
 
   return { complete, summary };
 };
 
-module.exports = { createSession, configured, missingKeys, parseJson, modelsFor, PROVIDERS };
+module.exports = { createSession, configured, missingKeys, parseJson, modelsFor, fetchProviderLimits, PROVIDERS };
