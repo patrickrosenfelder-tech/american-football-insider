@@ -81,6 +81,20 @@ function ConfidenceRecord({ rows }) {
   </tbody></table></div>;
 }
 
+function Backtest({ data }) {
+  if (!data) return null;
+  const cell = (r) => r?.pct == null ? '–' : `${r.wins}-${r.games - r.wins} (${r.pct}%)`;
+  return <>
+    <h2 className="section-title">{data.label}</h2>
+    <p className="muted small">Historical model rerun using only information available before each kickoff. It is not part of the live tracked record.</p>
+    <div className="card table-card"><table><thead><tr><th className="left">Week</th><th>Games</th><th>SU</th><th>ATS</th><th>O/U</th></tr></thead><tbody>
+      {data.weeks.map((w) => <tr key={w.week}><td className="left">Week {w.week}</td><td>{w.games}</td><td>{cell(w.su)}</td><td>{cell(w.ats)}</td><td>{cell(w.ou)}</td></tr>)}
+      <tr><td className="left"><b>Total</b></td><td>{data.total.games}</td><td>{cell(data.total.su)}</td><td>{cell(data.total.ats)}</td><td>{cell(data.total.ou)}</td></tr>
+    </tbody></table></div>
+    <p className="muted small">Baselines — always favorite: {cell(data.baselines.always_favorite_su)} SU; always home: {cell(data.baselines.always_home_su)} SU.</p>
+  </>;
+}
+
 export default function Picks() {
   const [params] = useSearchParams();
   const week = params.get('week');
@@ -105,6 +119,7 @@ export default function Picks() {
       <RecordTiles record={d.record} />
       <h2 className="section-title">Record by confidence</h2>
       <ConfidenceRecord rows={d.confidence_record} />
+      <Backtest data={d.backtest} />
       <h2 className="section-title">Week {d.week} picks</h2>
       <div className="grid wx-cards">
         {d.games.map((g) => <PickCard key={g.game_id} g={g} />)}

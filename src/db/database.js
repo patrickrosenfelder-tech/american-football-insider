@@ -54,9 +54,17 @@ const initialize = () => {
       updated_at TEXT NOT NULL
     )`);
 
+    db.run(`CREATE TABLE IF NOT EXISTS picks_backtest (
+      game_id TEXT PRIMARY KEY, season INTEGER NOT NULL, week INTEGER NOT NULL,
+      kickoff TEXT, away TEXT NOT NULL, home TEXT NOT NULL, model_json TEXT NOT NULL,
+      closing_spread REAL, closing_total REAL, home_score INTEGER, away_score INTEGER,
+      results_json TEXT NOT NULL, created_at TEXT NOT NULL
+    )`);
+
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_status ON games(status)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_stats_team ON team_stats(team_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_picks_backtest_week ON picks_backtest(season, week)`);
   });
 };
 
