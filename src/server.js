@@ -17,6 +17,9 @@ app.use(express.json());
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'american-football-insider', time: new Date().toISOString() });
 });
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', service: 'american-football-insider', time: new Date().toISOString() });
+});
 
 app.get('/', (req, res) => {
   res.json({
