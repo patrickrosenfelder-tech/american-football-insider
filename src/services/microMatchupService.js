@@ -1,4 +1,4 @@
-const { loadPbp } = require('./teamStatsService');
+const { assetUrl, streamCsv } = require('./nflverseService');
 
 // Signals are intentionally sparse: a player name plus a season average is
 // not an edge. Each emitted row is a game-applicable split or team-result key.
@@ -12,12 +12,13 @@ const playerKey = (name) => {
   return bits.length ? `${bits[bits.length - 1].toLowerCase()}|${bits[0][0].toLowerCase()}` : '';
 };
 let historyPromise;
+const HISTORY_COLUMNS = ['game_id', 'home_team', 'away_team', 'posteam', 'play_type', 'rush', 'pass', 'yards_gained', 'total_home_score', 'total_away_score', 'home_score', 'away_score', 'rusher_player_name', 'passer_player_name', 'complete_pass', 'incomplete_pass', 'interception', 'temp', 'wind', 'roof', 'game_time'];
 
 const history = async (season) => {
   if (historyPromise) return historyPromise;
-  historyPromise = Promise.all([loadPbp(season - 1), loadPbp(season)]).then((sets) => {
+  historyPromise = (async () => {
     const games = new Map(); const rush = new Map(); const pass = new Map();
-    sets.flat().forEach((p) => {
+    const add = (p) => {
       if (!p.game_id || !p.home_team || !p.away_team) return;
       const g = games.get(p.game_id) || { home: p.home_team, away: p.away_team, hs: 0, as: 0 };
       g.hs = Math.max(g.hs, n(p.total_home_score), n(p.home_score)); g.as = Math.max(g.as, n(p.total_away_score), n(p.away_score)); games.set(p.game_id, g);
@@ -34,9 +35,13 @@ const history = async (season) => {
         if (/^(20|21|22|23)/.test(p.game_time || '')) { x.primeA += 1; x.primeY += n(p.yards_gained); }
         pass.set(k, x);
       }
-    });
+    };
+    // Stream rather than retaining two full PBP seasons in a web request.
+    // The resulting maps contain only player-game aggregates.
+    await streamCsv(assetUrl('pbp', `play_by_play_${season - 1}.csv.gz`), add, { columns: HISTORY_COLUMNS });
+    await streamCsv(assetUrl('pbp', `play_by_play_${season}.csv.gz`), add, { columns: HISTORY_COLUMNS });
     return { rush: [...rush.values()].map((x) => ({ ...x, game: games.get(x.gameId) })).filter((x) => x.game), pass: [...pass.values()] };
-  }).catch((e) => { historyPromise = null; throw e; });
+  })().catch((e) => { historyPromise = null; throw e; });
   return historyPromise;
 };
 
