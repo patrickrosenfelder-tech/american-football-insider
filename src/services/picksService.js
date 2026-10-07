@@ -338,7 +338,11 @@ const getPicks = async ({ week = null } = {}) => {
   const missing = board.games.some((g) => g.status.state === 'pre' && !state.picks[g.game_id]);
   // Recalculate pre-kickoff legacy picks once after a model schema upgrade so
   // clients never receive a mix of old and new pick-card fields.
-  const outdated = board.games.some((g) => g.status.state === 'pre' && state.picks[g.game_id] && state.picks[g.game_id].confidence_stars == null);
+  const outdated = board.games.some((g) => {
+    const pick = state.picks[g.game_id];
+    return g.status.state === 'pre' && pick && (pick.confidence_stars == null
+      || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample));
+  });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
     await refreshPicks({ week: board.week });
     state = await load(season);
