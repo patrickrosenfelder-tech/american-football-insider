@@ -1,90 +1,79 @@
-const { getTendencies } = require('./tendencyService');
+const { loadPbp } = require('./teamStatsService');
 
-// Key-matchup output is intentionally conservative: no venue or surface
-// defaults, and every retained signal has a numeric, game-specific sample.
-const make = (icon, label, text, impact, sample) => ({ icon, label, text, impact: Math.min(2, Math.max(-2, impact)), sample });
+// Signals are intentionally sparse: a player name plus a season average is
+// not an edge. Each emitted row is a game-applicable split or team-result key.
+const make = (icon, label, text, impact, sample) => ({ icon, label, text, impact: Math.max(-2, Math.min(2, impact)), sample });
 const n = (v) => Number(v) || 0;
 const one = (v) => Math.round(v * 10) / 10;
+// nflverse PBP names are usually abbreviated (J.Conner); ESPN depth charts
+// use display names (James Conner).  This stable key prevents a false miss.
+const playerKey = (name) => {
+  const bits = String(name || '').replace(/[^a-zA-Z. ]/g, '').trim().split(/[ .]+/).filter(Boolean);
+  return bits.length ? `${bits[bits.length - 1].toLowerCase()}|${bits[0][0].toLowerCase()}` : '';
+};
+let historyPromise;
 
-const injuryNames = (side) => (side?.key_injuries || [])
-  .filter((i) => i.starter && ['Out', 'Doubtful', 'Injured Reserve'].includes(i.status) && /^(C|G|OT|OG|OL|T)$/i.test(i.position || ''))
-  .map((i) => i.name);
+const history = async (season) => {
+  if (historyPromise) return historyPromise;
+  historyPromise = Promise.all([loadPbp(season - 1), loadPbp(season)]).then((sets) => {
+    const games = new Map(); const rush = new Map(); const pass = new Map();
+    sets.flat().forEach((p) => {
+      if (!p.game_id || !p.home_team || !p.away_team) return;
+      const g = games.get(p.game_id) || { home: p.home_team, away: p.away_team, hs: 0, as: 0 };
+      g.hs = Math.max(g.hs, n(p.total_home_score), n(p.home_score)); g.as = Math.max(g.as, n(p.total_away_score), n(p.away_score)); games.set(p.game_id, g);
+      if (p.play_type === 'run' && p.rush === '1' && p.rusher_player_name && p.posteam) {
+        const k = `${p.game_id}|${p.posteam}|${p.rusher_player_name}`; const x = rush.get(k) || { gameId: p.game_id, team: p.posteam, player: p.rusher_player_name, yards: 0, carries: 0 };
+        x.yards += n(p.yards_gained); x.carries += 1; rush.set(k, x);
+      }
+      if (p.play_type === 'pass' && p.pass === '1' && p.passer_player_name && p.posteam && (p.complete_pass === '1' || p.incomplete_pass === '1' || p.interception === '1')) {
+        const k = `${p.game_id}|${p.posteam}|${p.passer_player_name}`; const x = pass.get(k) || { player: p.passer_player_name, attempts: 0, yards: 0, coldA: 0, coldY: 0, windA: 0, windY: 0, primeA: 0, primeY: 0 };
+        x.attempts += 1; x.yards += n(p.yards_gained);
+        const outdoor = !/dome|closed/i.test(p.roof || '');
+        if (outdoor && n(p.temp) < 40) { x.coldA += 1; x.coldY += n(p.yards_gained); }
+        if (outdoor && n(p.wind) > 15) { x.windA += 1; x.windY += n(p.yards_gained); }
+        if (/^(20|21|22|23)/.test(p.game_time || '')) { x.primeA += 1; x.primeY += n(p.yards_gained); }
+        pass.set(k, x);
+      }
+    });
+    return { rush: [...rush.values()].map((x) => ({ ...x, game: games.get(x.gameId) })).filter((x) => x.game), pass: [...pass.values()] };
+  }).catch((e) => { historyPromise = null; throw e; });
+  return historyPromise;
+};
+
+const wins = (games) => games.reduce((r, x) => {
+  const w = x.game.home === x.team ? x.game.hs > x.game.as : x.game.as > x.game.hs;
+  if (w) r.w += 1; else r.l += 1; return r;
+}, { w: 0, l: 0 });
+
+const rbSignal = (rows, side, team) => {
+  const rb = side?.rb1; if (!rb?.name) return null;
+  const games = rows.filter((x) => x.team === team && playerKey(x.player) === playerKey(rb.name) && x.carries > 0);
+  const carries = games.reduce((s, x) => s + x.carries, 0); if (games.length < 4 || carries < 20) return null;
+  const y = games.map((x) => x.yards).sort((a, b) => a - b); const threshold = Math.round(y[Math.floor(y.length / 2)] / 5) * 5;
+  const high = wins(games.filter((x) => x.yards >= threshold)); const low = wins(games.filter((x) => x.yards < threshold));
+  const hiRate = high.w / (high.w + high.l); const loRate = low.w / (low.w + low.l);
+  if (high.w + high.l < 2 || low.w + low.l < 2 || Math.abs(hiRate - loRate) < 0.25) return null;
+  const impact = hiRate > loRate ? 0.8 : -0.8;
+  return make('🏃', 'RB1 team-results threshold', `${team} is ${high.w}-${high.l} when ${rb.name} reaches ${threshold}+ rush yards and ${low.w}-${low.l} when held under (${carries} carries, 2025–26). AFI ${impact > 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, carries);
+};
+
+const qbSplit = (rows, side, weather) => {
+  const qb = side?.starting_qb; const f = weather?.forecast; if (!qb?.name || !f) return null;
+  const hour = Number.isFinite(Date.parse(weather.date || '')) ? new Date(weather.date).getUTCHours() : -1;
+  const kind = n(f.temp_f) < 40 ? 'cold' : n(f.wind_mph) > 15 ? 'wind' : (hour >= 20 || hour <= 3) ? 'prime' : null;
+  if (!kind) return null;
+  const key = kind === 'cold' ? ['coldA', 'coldY', 'cold'] : kind === 'wind' ? ['windA', 'windY', 'wind'] : ['primeA', 'primeY', 'primetime'];
+  const gs = rows.filter((x) => playerKey(x.player) === playerKey(qb.name)); const allA = gs.reduce((s, x) => s + x.attempts, 0); const allY = gs.reduce((s, x) => s + x.yards, 0);
+  const a = gs.reduce((s, x) => s + x[key[0]], 0); const y = gs.reduce((s, x) => s + x[key[1]], 0); const otherA = allA - a;
+  if (a < 50 || otherA < 50 || !allA) return null;
+  const split = y / a; const other = (allY - y) / otherA; if (Math.abs(split - other) < 1) return null;
+  const condition = kind === 'cold' ? `${Math.round(f.temp_f)}°F forecast` : kind === 'wind' ? `${Math.round(f.wind_mph)} mph forecast wind` : 'primetime kickoff'; const impact = split < other ? -0.8 : 0.8;
+  return make('🌦️', 'QB condition split', `${qb.name}: ${one(split)} YPA in ${key[2]} games vs ${one(other)} otherwise (${a} attempts; ${condition}). AFI ${impact > 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, a);
+};
 
 async function getMicroMatchups({ season, home, away, weather, preview }) {
-  const tendencies = await getTendencies(season).catch(() => null);
-  const h = tendencies?.teams?.[home]; const a = tendencies?.teams?.[away];
-  const out = [];
-  const qbSplit = (side, opponent, isRoad) => {
-    const qb = side?.starting_qb;
-    const line = qb?.season || {};
-    const attempts = Number(line.attempts) || 0;
-    const yards = Number(line.passing_yards) || 0;
-    // A venue tag alone is not an edge.  Retain a home/road signal only for a
-    // material split; historical split data is deliberately never inferred.
-    const split = qb?.splits?.home_road;
-    if (!qb?.name || !split || n(split.home_attempts) < 50 || n(split.road_attempts) < 50) return;
-    const homeYpa = n(split.home_yards) / n(split.home_attempts);
-    const roadYpa = n(split.road_yards) / n(split.road_attempts);
-    if (Math.abs(homeYpa - roadYpa) < 1.0) return;
-    const ypa = Math.round((yards / attempts) * 10) / 10;
-    const condition = isRoad ? 'on the road' : 'at home';
-    out.push(make('🏈', 'QB home/road split', `${qb.name}: ${one(roadYpa)} YPA on the road vs ${one(homeYpa)} at home (${condition} game; ${attempts} season attempts).`, isRoad ? -0.6 : 0.6, n(split.home_attempts) + n(split.road_attempts)));
-  };
-  // The road/home split is evaluated for this exact venue; the attempt minimum
-  // prevents a one-game quarterback claim from appearing on a pick card.
-  qbSplit(preview?.away, preview?.home || {}, true);
-  qbSplit(preview?.home, preview?.away || {}, false);
-  const blitz = (def, offense, defense, opponent) => {
-    const rate = def?.defense?.ftn?.blitz_rate; const epa = offense?.offense?.pass_epa;
-    const sample = def?.defense?.ftn?.charted_plays || 0;
-    const injured = injuryNames(offense);
-    if (sample >= 50 && rate != null && rate >= 35 && epa != null && epa < 0 && injured.length) out.push(make('🔥', 'Pass rush vs injured OL', `${defense} blitzes ${rate}% over ${sample} charted dropbacks; ${opponent} is without starting OL ${injured.join(', ')} and has ${epa} pass EPA/play.`, 1, sample));
-  };
-  blitz(h, a, home, away); blitz(a, h, away, home);
-  const coverage = (def, offense, defense, opponent) => {
-    const man = def?.defense?.participation?.man_rate; const pass = offense?.offense?.pass_epa;
-    const sample = def?.defense?.participation?.plays || 0;
-    if (sample >= 50 && man != null && (man >= 60 || man <= 30) && pass != null && Math.abs(pass) >= 0.08) out.push(make('🎯', 'Man/zone extreme', `${defense} plays ${man >= 60 ? 'man' : 'zone'} ${man}% over ${sample} charted snaps; ${opponent}'s passing EPA/play is ${pass}.`, pass < 0 ? 0.8 : -0.8, sample));
-  };
-  coverage(h, a, home, away); coverage(a, h, away, home);
-
-  // Season stats supply the receiver's usage and the named depth-chart CB.
-  // We disclose snaps and passes defended rather than fabricate coverage targets.
-  const wrCb = (off, def, offTeam, defTeam) => {
-    const wr = off?.wr1; const cb = def?.cb1;
-    const targets = n(wr?.season?.targets); const yards = n(wr?.season?.receiving_yards);
-    const cbSnaps = n(cb?.season?.def_snaps); const pd = n(cb?.season?.def_pass_defended);
-    if (!wr?.name || !cb?.name || targets < 30 || cbSnaps < 25) return;
-    const yprr = targets ? one(yards / targets) : 0;
-    out.push(make('🎯', 'WR1 vs CB1', `${wr.name}: ${targets} targets, ${yprr} yards/target vs ${cb.name}, ${cbSnaps} defensive snaps and ${pd} passes defended.`, yprr >= 8 ? 0.7 : -0.4, Math.min(targets, cbSnaps)));
-  };
-  wrCb(preview?.away, preview?.home, away, home); wrCb(preview?.home, preview?.away, home, away);
-
-  const rushVsOl = (def, off, defTeam, offTeam) => {
-    const rusher = def?.edge_rusher; const qb = off?.starting_qb;
-    const sacks = n(rusher?.season?.def_sacks); const allowed = n(qb?.season?.sacks_suffered);
-    const injured = injuryNames(off);
-    const yppAllowed = n(def?.stats?.defense?.yards_per_play);
-    if (!rusher?.name || !qb?.name || yppAllowed <= 0 || yppAllowed > 5.6) return;
-    const olNote = injured.length ? `; ${offTeam} is without starting OL ${injured.join(', ')}` : '';
-    const sackNote = sacks ? `${rusher.name} has ${sacks} sacks` : `${rusher.name} starts on the edge`;
-    const protection = allowed ? `${qb.name} has been sacked ${allowed} times` : `${qb.name} has ${n(qb?.season?.attempts)} attempts`;
-    out.push(make('🔥', 'Pass rush vs OL', `${sackNote}; ${defTeam} allows ${yppAllowed} yards/play. ${protection}${olNote}.`, 0.8, Math.max(25, n(qb?.season?.attempts))));
-  };
-  rushVsOl(preview?.home, preview?.away, home, away); rushVsOl(preview?.away, preview?.home, away, home);
-
-  // A volume signal is only useful when the back has cleared the stated
-  // sample; this remains a transparent current-season threshold, not a fake
-  // win/loss split when historical game logs are unavailable.
-  const rbVolume = (side, team) => {
-    const rb = side?.rb1; const carries = n(rb?.season?.carries); const yards = n(rb?.season?.rushing_yards);
-    if (!rb?.name || carries < 20) return;
-    const games = Math.max(1, n(rb.season.games)); const threshold = Math.round((yards / games) / 5) * 5;
-    if (threshold < 45) return;
-    out.push(make('🏃', 'RB1 volume threshold', `${team}'s ${rb.name} averages ${one(yards / games)} rush yards on ${carries} carries; the key is keeping him under ${threshold} yards.`, 0.5, carries));
-  };
-  rbVolume(preview?.away, away); rbVolume(preview?.home, home);
-  return out.sort((x, y) => Math.abs(y.impact) - Math.abs(x.impact)).slice(0, 3);
+  const data = await history(season);
+  return [rbSignal(data.rush, preview?.away, away), rbSignal(data.rush, preview?.home, home), qbSplit(data.pass, preview?.away, weather), qbSplit(data.pass, preview?.home, weather)]
+    .filter(Boolean).sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact)).slice(0, 3);
 }
-
 module.exports = { getMicroMatchups };

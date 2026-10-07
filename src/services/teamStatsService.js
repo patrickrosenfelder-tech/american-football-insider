@@ -11,7 +11,9 @@ const PBP_COLUMNS = ['game_id', 'play_id', 'season_type', 'week', 'posteam', 'de
   'yards_gained', 'pass', 'rush', 'interception', 'fumble_lost', 'down', 'third_down_converted', 'third_down_failed',
   'fixed_drive', 'fixed_drive_result', 'drive_inside20', 'total_home_score', 'total_away_score', 'epa', 'success',
   'qb_dropback', 'sack', 'shotgun', 'no_huddle', 'qb_scramble', 'game_seconds_remaining', 'drive', 'wp', 'half_seconds_remaining',
-  'score_differential', 'qtr'];
+  'score_differential', 'qtr', 'passer_player_name', 'passer_player_id', 'receiver_player_name', 'receiver_player_id',
+  'rusher_player_name', 'rusher_player_id', 'air_yards', 'complete_pass', 'incomplete_pass', 'pass_touchdown',
+  'home_score', 'away_score', 'temp', 'wind', 'roof', 'surface', 'game_time'];
 
 const pbpUrl = (season) => assetUrl('pbp', `play_by_play_${season}.csv.gz`);
 
