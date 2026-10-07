@@ -58,9 +58,6 @@ db.exec(`
     UNIQUE(game_espn_id, player_name, stat_category)
   );
 
-  CREATE INDEX IF NOT EXISTS idx_games_week ON games (season, week, season_type);
-  CREATE INDEX IF NOT EXISTS idx_stats_game ON player_stats (game_espn_id);
-
   -- A backtest row is immutable evidence for one historical prediction.  Live
   -- picks deliberately use a separate surface so they never inflate records.
   CREATE TABLE IF NOT EXISTS picks_backtest (
@@ -87,6 +84,20 @@ db.exec(`
     home_su_result TEXT,
     created_at TEXT NOT NULL
   );
+`);
+
+// The Fly volume predates the current MVP schema.  `CREATE TABLE IF NOT
+// EXISTS` does not add columns to it, so make this migration explicit before
+// creating indexes that depend on the column.
+function ensureColumn(table, column, definition) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name);
+  if (!columns.includes(column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+}
+
+ensureColumn('games', 'season_type', 'INTEGER');
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_games_week ON games (season, week, season_type);
+  CREATE INDEX IF NOT EXISTS idx_stats_game ON player_stats (game_espn_id);
   CREATE INDEX IF NOT EXISTS idx_picks_backtest_week ON picks_backtest (season, week);
 `);
 
