@@ -78,6 +78,27 @@ const starterQb = (depth, playerStats) => {
   };
 };
 
+// Keep the matchup builder independent of an additional depth-chart request.
+// These are starters, not a claim that a player will shadow in coverage.
+const featuredStarter = (depth, playerStats, keys) => {
+  const slot = depth?.offense?.slots?.find((s) => keys.includes(String(s.key || '').toLowerCase()));
+  const p = slot?.players?.[0];
+  if (!p) return null;
+  return { id: p.id, name: p.name, position: p.position, headshot: p.headshot, season: playerStats?.stat_lines?.[p.id] || {} };
+};
+const startingCorner = (depth, playerStats) => {
+  const slot = depth?.defense?.slots?.find((s) => /^(cb|lcb|rcb)$/.test(String(s.key || '').toLowerCase()));
+  const p = slot?.players?.[0];
+  if (!p) return null;
+  return { id: p.id, name: p.name, position: p.position, headshot: p.headshot, season: playerStats?.stat_lines?.[p.id] || {} };
+};
+const edgeRusher = (depth, playerStats) => {
+  const slot = depth?.defense?.slots?.find((s) => /^(de|lde|rde|le|re|olb|wlb|slb|lb)$/.test(String(s.key || '').toLowerCase()));
+  const p = slot?.players?.[0];
+  if (!p) return null;
+  return { id: p.id, name: p.name, position: p.position, headshot: p.headshot, season: playerStats?.stat_lines?.[p.id] || {} };
+};
+
 // Key injuries: Out/Doubtful/Questionable players, depth-chart starters first.
 const keyInjuries = (injuries, depth, limit = 8) => {
   const starters = new Set();
@@ -119,6 +140,10 @@ const sideFor = async (team, { standings, injuries, playerStats, teamStats, seas
     standing: standingFor(standings, team.id),
     base_defense: depth?.base_defense || null,
     starting_qb: starterQb(depth, playerStats),
+    wr1: featuredStarter(depth, playerStats, ['wr', 'wr1', 'lwr', 'rwr']),
+    rb1: featuredStarter(depth, playerStats, ['rb', 'hb', 'fb']),
+    cb1: startingCorner(depth, playerStats),
+    edge_rusher: edgeRusher(depth, playerStats),
     key_injuries: keyInjuries(injuries.byTeam[team.id], depth),
     recent_form: detail ? recentForm(detail.schedule, team.id) : [],
     stats: teamStats?.teams?.[team.abbreviation] || null,
