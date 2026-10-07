@@ -151,7 +151,11 @@ const makePick = async (g, model) => {
   const efficiencyMargin = h.efficiency.rating - a.efficiency.rating;
   const momentumMargin = h.momentum.adjustment - a.momentum.adjustment;
   // The prediction is intentionally decomposed so every card can show why it differs from the market.
-  const margin = (recencyMargin * 0.60) + (efficiencyMargin * 0.30) + (momentumMargin * 0.10) + hfa + injH.pts - injA.pts;
+  const baseMargin = (recencyMargin * 0.60) + (efficiencyMargin * 0.30) + (momentumMargin * 0.10) + hfa + injH.pts - injA.pts;
+  // Each matchup impact is explicitly team-relative; fold it into the line so
+  // “adds/subtracts” in the card is a real AFI-line adjustment, not decoration.
+  const matchupMargin = microMatchups.reduce((total, signal) => total + (signal.team === g.home.abbreviation ? signal.impact : signal.team === g.away.abbreviation ? -signal.impact : 0), 0);
+  const margin = baseMargin + matchupMargin;
   const weatherAdj = wx?.impact?.totals_lean === 'under' ? -3 : 0;
   const homePts = (h.off + a.def) / 2 + (injH.pts - injA.pts) / 2;
   const awayPts = (a.off + h.def) / 2 - (injH.pts - injA.pts) / 2;
@@ -167,7 +171,8 @@ const makePick = async (g, model) => {
     market: { spread_home: L.spread_home ?? null, total: L.total ?? null, moneyline_home: L.moneyline_home ?? null, moneyline_away: L.moneyline_away ?? null, provider: L.provider || null, details: L.details || null },
     weather: wx?.impact ? { level: wx.impact.level, note: wx.impact.note } : null,
     micro_matchups: microMatchups,
-    micro_matchup_version: 9,
+    micro_matchup_version: 10,
+    matchup_adjustment: round1(matchupMargin),
     weighted_recency: { home: round1(h.recency.value), away: round1(a.recency.value), home_games: h.recency.games, away_games: a.recency.games, fallback: h.recency.fallback || a.recency.fallback },
     efficiency_rating: { home: round1(h.efficiency.rating), away: round1(a.efficiency.rating), differential: round1(efficiencyMargin), home_sample: h.efficiency.sample, away_sample: a.efficiency.sample, snippet: `${h.efficiency.snippet}; ${a.efficiency.snippet}` },
     momentum: { home: h.momentum, away: a.momentum, differential: round1(momentumMargin) },
@@ -341,7 +346,7 @@ const getPicks = async ({ week = null } = {}) => {
   // clients never receive a mix of old and new pick-card fields.
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
-    return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 9
+    return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 10
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
