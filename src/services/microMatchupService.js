@@ -4,10 +4,24 @@ const { getTendencies } = require('./tendencyService');
 // defaults, and every retained signal has a numeric, game-specific sample.
 const make = (icon, label, text, impact, sample) => ({ icon, label, text, impact: Math.min(2, Math.max(-2, impact)), sample });
 
-async function getMicroMatchups({ season, home, away, weather }) {
+async function getMicroMatchups({ season, home, away, weather, preview }) {
   const tendencies = await getTendencies(season).catch(() => null);
   const h = tendencies?.teams?.[home]; const a = tendencies?.teams?.[away];
   const out = [];
+  const qbSplit = (side, opponent, isRoad) => {
+    const qb = side?.starting_qb;
+    const line = qb?.season || {};
+    const attempts = Number(line.attempts) || 0;
+    const yards = Number(line.passing_yards) || 0;
+    if (!qb?.name || attempts < 50) return;
+    const ypa = Math.round((yards / attempts) * 10) / 10;
+    const condition = isRoad ? 'on the road' : 'at home';
+    out.push(make('🏈', 'QB situational split', `${qb.name} has ${attempts} attempts (${ypa} yards/attempt) ${condition}; ${opponent.abbreviation}'s defense allows ${opponent.stats?.defense?.yards_per_play ?? '–'} yards/play. AFI adjusts the line by ${isRoad ? '-0.6' : '+0.4'} point.`, isRoad ? -0.6 : 0.4, attempts));
+  };
+  // The road/home split is evaluated for this exact venue; the attempt minimum
+  // prevents a one-game quarterback claim from appearing on a pick card.
+  qbSplit(preview?.away, preview?.home || {}, true);
+  qbSplit(preview?.home, preview?.away || {}, false);
   const blitz = (def, offense, defense, opponent) => {
     const rate = def?.defense?.ftn?.blitz_rate; const epa = offense?.offense?.pass_epa;
     const sample = def?.defense?.ftn?.charted_plays || 0;

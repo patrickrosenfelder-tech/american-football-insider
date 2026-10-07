@@ -143,7 +143,7 @@ const makePick = async (g, model) => {
   const a = model.teams[g.away.id];
   if (!h || !a) return null;
   const [preview, wx] = await Promise.all([getPreview(g.game_id).catch(() => null), weatherService.gameWeather(g).catch(() => null)]);
-  const microMatchups = await getMicroMatchups({ season: model.season || currentSeason(), home: g.home.abbreviation, away: g.away.abbreviation, weather: wx }).catch(() => []);
+  const microMatchups = await getMicroMatchups({ season: model.season || currentSeason(), home: g.home.abbreviation, away: g.away.abbreviation, weather: wx, preview }).catch(() => []);
   const injH = injuryAdjust(preview?.home);
   const injA = injuryAdjust(preview?.away);
   const hfa = g.neutral_site ? 0 : HOME_FIELD;
@@ -167,6 +167,7 @@ const makePick = async (g, model) => {
     market: { spread_home: L.spread_home ?? null, total: L.total ?? null, moneyline_home: L.moneyline_home ?? null, moneyline_away: L.moneyline_away ?? null, provider: L.provider || null, details: L.details || null },
     weather: wx?.impact ? { level: wx.impact.level, note: wx.impact.note } : null,
     micro_matchups: microMatchups,
+    micro_matchup_version: 2,
     weighted_recency: { home: round1(h.recency.value), away: round1(a.recency.value), home_games: h.recency.games, away_games: a.recency.games, fallback: h.recency.fallback || a.recency.fallback },
     efficiency_rating: { home: round1(h.efficiency.rating), away: round1(a.efficiency.rating), differential: round1(efficiencyMargin), home_sample: h.efficiency.sample, away_sample: a.efficiency.sample, snippet: `${h.efficiency.snippet}; ${a.efficiency.snippet}` },
     momentum: { home: h.momentum, away: a.momentum, differential: round1(momentumMargin) },
@@ -340,8 +341,8 @@ const getPicks = async ({ week = null } = {}) => {
   // clients never receive a mix of old and new pick-card fields.
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
-    return g.status.state === 'pre' && pick && (pick.confidence_stars == null
-      || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample));
+    return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 2
+      || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
     await refreshPicks({ week: board.week });
