@@ -450,7 +450,9 @@ const runNews = async ({ summarizeStories = true } = {}) => {
 
   // 4. LLM summaries for unsummarised headline stories, most-covered + newest first, within the daily cap.
   const today = etDate();
-  state.daily = { [today]: state.daily?.[today] || 0 };
+  // A lower configured cap must take effect immediately, including against a count persisted
+  // by an older deployment with a larger cap.
+  state.daily = { [today]: Math.min(Number(state.daily?.[today] || 0), DAILY_LLM_CAP) };
   const budget = Math.max(0, Math.min(RUN_LLM_CAP, DAILY_LLM_CAP - state.daily[today]));
   const candidates = Object.values(state.stories)
     .filter((s) => s.kind === 'headline' && !s.summary)
@@ -529,7 +531,7 @@ const get = async (id) => {
 
 const status = async () => {
   const state = await load();
-  return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, summarized_today: state.daily?.[etDate()] || 0, runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
+  return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, summarized_today: Math.min(Number(state.daily?.[etDate()] || 0), DAILY_LLM_CAP), runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
 };
 
 const usage = async (days = 7) => db.llmUsage(days);
