@@ -260,15 +260,17 @@ const historicalRow = (g, allGames) => {
   const margin = round1((h.margin - a.margin) * 0.6 + ((h.pf - a.pa) - (a.pf - h.pa)) * 0.1 + 1.5);
   const modelHome = margin >= 0;
   const total = round1(((h.pf + a.pa) + (a.pf + h.pa)) / 2 || 44);
-  const homeCover = g.home_score - g.away_score + (g.spread_line || 0);
+  // nflverse schedules use a positive spread_line when the home side lays
+  // points (e.g. SEA 3 means SEA -3), unlike ESPN's signed home spread.
+  const homeCover = g.home_score - g.away_score - (g.spread_line || 0);
   const su = (modelHome ? g.home_score > g.away_score : g.away_score > g.home_score) ? 'W' : 'L';
   const ats = g.spread_line == null ? null : (homeCover === 0 ? 'P' : ((homeCover > 0) === modelHome ? 'W' : 'L'));
   const ou = g.total_line == null ? null : (g.home_score + g.away_score === g.total_line ? 'P' : ((g.home_score + g.away_score > g.total_line) === (total > g.total_line) ? 'W' : 'L'));
-  const favoriteHome = (g.spread_line || 0) < 0;
+  const favoriteHome = (g.spread_line || 0) > 0;
   const favorite = favoriteHome ? g.home : g.away;
   const favoriteSu = (favorite === g.home ? g.home_score > g.away_score : g.away_score > g.home_score) ? 'W' : 'L';
   const homeSu = g.home_score > g.away_score ? 'W' : 'L';
-  const stars = Math.max(1, Math.min(5, Math.ceil(Math.abs(margin + (g.spread_line || 0)) / 1.5)));
+  const stars = Math.max(1, Math.min(5, Math.ceil(Math.abs(margin - (g.spread_line || 0)) / 1.5)));
   return { game_id: `${g.season}-${g.week}-${g.away}-${g.home}`, season: g.season, week: g.week, kickoff: g.date, away: g.away, home: g.home,
     model: { home_margin: margin, total, pick: modelHome ? g.home : g.away, stars, prior_games: { home: h.games, away: a.games } },
     closing_spread: g.spread_line, closing_total: g.total_line, home_score: g.home_score, away_score: g.away_score,
@@ -300,11 +302,7 @@ const refreshBacktest = async () => {
   return shapeBacktest(rows);
 };
 
-const getBacktest = async () => {
-  const saved = await db.all('SELECT * FROM picks_backtest WHERE season = 2026 AND week BETWEEN 1 AND 3 ORDER BY week, kickoff');
-  if (!saved.length) return refreshBacktest();
-  return shapeBacktest(saved.map((r) => ({ ...r, model: JSON.parse(r.model_json), results: JSON.parse(r.results_json) })));
-};
+const getBacktest = async () => refreshBacktest();
 
 // Re-picks unstarted games, locks started ones (keeps the last pre-kickoff pick) and grades finals.
 const refreshPicks = async ({ week = null } = {}) => {
