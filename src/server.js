@@ -8,6 +8,7 @@ const gamesRouter = require('./routes/games');
 const teamsRouter = require('./routes/teams');
 const standingsRouter = require('./routes/standings');
 const statsRouter = require('./routes/stats');
+const picksRouter = require('./routes/picks');
 
 const app = express();
 app.use(cors());
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
       'GET /api/games/:id',
       'GET /api/stats/game/:id',
       'GET /api/standings',
+      'GET /api/picks?season=&week= (includes separately-labelled backtest)',
       'WebSocket: scores:update events pushed to all connected clients',
     ],
   });
@@ -38,6 +40,7 @@ app.use('/api/games', gamesRouter);
 app.use('/api/teams', teamsRouter);
 app.use('/api/standings', standingsRouter);
 app.use('/api/stats', statsRouter);
+app.use('/api/picks', picksRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'not_found', path: req.path });

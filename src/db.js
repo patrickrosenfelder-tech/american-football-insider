@@ -60,6 +60,34 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_games_week ON games (season, week, season_type);
   CREATE INDEX IF NOT EXISTS idx_stats_game ON player_stats (game_espn_id);
+
+  -- A backtest row is immutable evidence for one historical prediction.  Live
+  -- picks deliberately use a separate surface so they never inflate records.
+  CREATE TABLE IF NOT EXISTS picks_backtest (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_espn_id TEXT UNIQUE NOT NULL,
+    season INTEGER NOT NULL,
+    week INTEGER NOT NULL,
+    kickoff TEXT,
+    away_team TEXT NOT NULL,
+    home_team TEXT NOT NULL,
+    model_pick TEXT NOT NULL,
+    model_margin REAL NOT NULL,
+    confidence_stars INTEGER NOT NULL,
+    closing_spread REAL,
+    closing_total REAL,
+    away_score INTEGER,
+    home_score INTEGER,
+    su_result TEXT,
+    ats_result TEXT,
+    ou_result TEXT,
+    favorite_pick TEXT,
+    favorite_su_result TEXT,
+    home_pick TEXT,
+    home_su_result TEXT,
+    created_at TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_picks_backtest_week ON picks_backtest (season, week);
 `);
 
 const upsertTeamStmt = db.prepare(`
@@ -154,6 +182,34 @@ function getPlayerStatsForGame(gameEspnId) {
   return db.prepare('SELECT * FROM player_stats WHERE game_espn_id = ? ORDER BY team_name, stat_category').all(gameEspnId);
 }
 
+const upsertBacktestStmt = db.prepare(`
+  INSERT INTO picks_backtest (
+    game_espn_id, season, week, kickoff, away_team, home_team, model_pick,
+    model_margin, confidence_stars, closing_spread, closing_total, away_score,
+    home_score, su_result, ats_result, ou_result, favorite_pick,
+    favorite_su_result, home_pick, home_su_result, created_at
+  ) VALUES (
+    @game_espn_id, @season, @week, @kickoff, @away_team, @home_team, @model_pick,
+    @model_margin, @confidence_stars, @closing_spread, @closing_total, @away_score,
+    @home_score, @su_result, @ats_result, @ou_result, @favorite_pick,
+    @favorite_su_result, @home_pick, @home_su_result, @created_at
+  ) ON CONFLICT(game_espn_id) DO UPDATE SET
+    model_pick = excluded.model_pick, model_margin = excluded.model_margin,
+    confidence_stars = excluded.confidence_stars, closing_spread = excluded.closing_spread,
+    closing_total = excluded.closing_total, away_score = excluded.away_score,
+    home_score = excluded.home_score, su_result = excluded.su_result,
+    ats_result = excluded.ats_result, ou_result = excluded.ou_result,
+    favorite_pick = excluded.favorite_pick, favorite_su_result = excluded.favorite_su_result,
+    home_pick = excluded.home_pick, home_su_result = excluded.home_su_result,
+    created_at = excluded.created_at
+`);
+
+function upsertBacktest(row) { upsertBacktestStmt.run(row); }
+
+function listBacktests(season = 2026) {
+  return db.prepare('SELECT * FROM picks_backtest WHERE season = ? ORDER BY week, kickoff').all(season);
+}
+
 module.exports = {
   db,
   upsertTeam,
@@ -164,4 +220,6 @@ module.exports = {
   listGames,
   getGameByEspnId,
   getPlayerStatsForGame,
+  upsertBacktest,
+  listBacktests,
 };

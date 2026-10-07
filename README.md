@@ -48,6 +48,8 @@ interval, DB path).
 | GET | `/api/games/:id` | Game detail: final/live score, team stats, full player boxscore (ESPN event id) |
 | GET | `/api/stats/game/:id` | Player stats for a game, read from SQLite |
 | GET | `/api/standings` | Conference standings |
+| GET | `/api/picks?season=&week=` | Current game cards plus a separate, labelled Weeks 1-3 model backtest. Matchup signals are omitted unless a player-specific, numeric, minimum-sample signal is available. |
+| POST | `/api/picks/backtest/refresh` | Rebuild 2026 Weeks 1-3 backtest rows from ESPN schedule/closing-odds data, where available. |
 | WS | (default namespace) | Emits `connected` on connect, `scores:update` when any game's score/status changes |
 
 ### Example
