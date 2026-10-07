@@ -1,5 +1,6 @@
 const espn = require('../espnClient');
 const db = require('../db');
+const { topSignals } = require('./microMatchupService');
 
 function competitor(competition, homeAway) {
   return competition.competitors?.find((item) => item.homeAway === homeAway) || {};
@@ -104,7 +105,9 @@ async function getPicks({ season, week, refreshBacktest: shouldRefresh = false }
     const competition = event.competitions?.[0] || {};
     const home = competitor(competition, 'home').team || {};
     const away = competitor(competition, 'away').team || {};
-    const signals = []; // No matchup integration existed in the original API.
+    // This API currently has no licensed participation/coverage feed.  Never
+    // substitute a league-wide or venue note: empty is an honest result.
+    const signals = topSignals([]);
     return { gameId: event.id, kickoff: event.date, awayTeam: away.displayName, homeTeam: home.displayName,
       signals, reasoning: signals.length ? `AFI adjustment based on: ${signals.map((s) => s.text).join(' ')}` : null };
   });
