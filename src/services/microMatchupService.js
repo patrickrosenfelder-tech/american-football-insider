@@ -20,7 +20,6 @@ async function getMicroMatchups({ season, home, away, weather }) {
     if (sample >= 50 && man != null && man >= 40 && pass != null && pass < 0) out.push(make('🎯', 'Coverage key', `${defense} plays man coverage ${man}% over ${sample} charted snaps; ${opponent}'s passing EPA/play is ${pass}. AFI adjusts ${defense} by +0.8 point.`, 0.8, sample));
   };
   coverage(h, a, home, away); coverage(a, h, away, home);
-  if (weather?.impact?.level && weather.impact.level !== 'none' && /\d/.test(weather.impact.note || '')) out.push(make('🌧', 'Weather', weather.impact.note, 0.5, null));
   return out.sort((x, y) => Math.abs(y.impact) - Math.abs(x.impact)).slice(0, 3);
 }
 
