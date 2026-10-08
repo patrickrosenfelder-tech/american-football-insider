@@ -4,7 +4,7 @@ const { loadSeason, phi } = require('./playoffService');
 const { getPlayedGames, getTeamStats } = require('./teamStatsService');
 const { getPreview } = require('./previewService');
 const weatherService = require('./weatherService');
-const { getMicroMatchups } = require('./microMatchupService');
+const { getMicroMatchups, matchupAdjustment } = require('./microMatchupService');
 const { currentSeason } = require('./rosterService');
 
 // AFI Picks — our own model pick per game (spread, total, moneyline). For entertainment only.
@@ -154,7 +154,9 @@ const makePick = async (g, model) => {
   const baseMargin = (recencyMargin * 0.60) + (efficiencyMargin * 0.30) + (momentumMargin * 0.10) + hfa + injH.pts - injA.pts;
   // Each matchup impact is explicitly team-relative; fold it into the line so
   // “adds/subtracts” in the card is a real AFI-line adjustment, not decoration.
-  const matchupMargin = microMatchups.reduce((total, signal) => total + (signal.team === g.home.abbreviation ? signal.impact : signal.team === g.away.abbreviation ? -signal.impact : 0), 0);
+  // The sum is capped (±2) until the signals have been backtested.
+  const matchup = matchupAdjustment(microMatchups, g.home.abbreviation, g.away.abbreviation);
+  const matchupMargin = matchup.capped;
   const margin = baseMargin + matchupMargin;
   const weatherAdj = wx?.impact?.totals_lean === 'under' ? -3 : 0;
   const homePts = (h.off + a.def) / 2 + (injH.pts - injA.pts) / 2;
@@ -171,8 +173,9 @@ const makePick = async (g, model) => {
     market: { spread_home: L.spread_home ?? null, total: L.total ?? null, moneyline_home: L.moneyline_home ?? null, moneyline_away: L.moneyline_away ?? null, provider: L.provider || null, details: L.details || null },
     weather: wx?.impact ? { level: wx.impact.level, note: wx.impact.note } : null,
     micro_matchups: microMatchups,
-    micro_matchup_version: 10,
+    micro_matchup_version: 11,
     matchup_adjustment: round1(matchupMargin),
+    matchup_adjustment_uncapped: matchup.raw,
     weighted_recency: { home: round1(h.recency.value), away: round1(a.recency.value), home_games: h.recency.games, away_games: a.recency.games, fallback: h.recency.fallback || a.recency.fallback },
     efficiency_rating: { home: round1(h.efficiency.rating), away: round1(a.efficiency.rating), differential: round1(efficiencyMargin), home_sample: h.efficiency.sample, away_sample: a.efficiency.sample, snippet: `${h.efficiency.snippet}; ${a.efficiency.snippet}` },
     momentum: { home: h.momentum, away: a.momentum, differential: round1(momentumMargin) },
@@ -310,7 +313,16 @@ const refreshBacktest = async () => {
   return shapeBacktest(rows);
 };
 
-const getBacktest = async () => refreshBacktest();
+// Weeks 1-3 are final, so the backtest only needs recomputing when the played
+// games feed changes; cache it rather than re-running it (and 48 upserts) per request.
+let backtestMemo = null;
+const getBacktest = async () => {
+  if (backtestMemo && Date.now() - backtestMemo.at < 6 * 3600e3) return backtestMemo.promise;
+  const entry = { at: Date.now(), promise: refreshBacktest() };
+  backtestMemo = entry;
+  entry.promise.catch(() => { if (backtestMemo === entry) backtestMemo = null; });
+  return entry.promise;
+};
 
 // Re-picks unstarted games, locks started ones (keeps the last pre-kickoff pick) and grades finals.
 const refreshPicks = async ({ week = null } = {}) => {
@@ -348,7 +360,7 @@ const getPicks = async ({ week = null } = {}) => {
   // clients never receive a mix of old and new pick-card fields.
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
-    return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 10
+    return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 11
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {

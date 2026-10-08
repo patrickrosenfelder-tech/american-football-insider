@@ -181,7 +181,7 @@ const buildPreview = async (gameId) => {
   const ctx = { standings, injuries, playerStats, teamStats, season };
   const [homeSide, awaySide] = await Promise.all([sideFor(homeTeam, ctx), sideFor(awayTeam, ctx)]);
   const h2h = await teamStatsService.headToHead(awayTeam.abbreviation, homeTeam.abbreviation).catch(() => null);
-  const micro_matchups = await getMicroMatchups({ season, home: homeTeam.abbreviation, away: awayTeam.abbreviation }).catch(() => []);
+  const micro_matchups = await getMicroMatchups({ season, home: homeTeam.abbreviation, away: awayTeam.abbreviation, preview: { home: homeSide, away: awaySide } }).catch(() => []);
 
   return {
     game_id: gameId,
