@@ -15,5 +15,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/client/dist ./client/dist
 COPY package.json ./
 COPY src ./src
+# Node serves the versioned training artifact; Python is never needed at request time.
+COPY --from=build /app/scripts/model/model_v2.json ./scripts/model/model_v2.json
 EXPOSE 8080
 CMD ["node", "src/app.js"]
