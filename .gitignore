@@ -1,4 +1,6 @@
 node_modules/
+scripts/model/.cache/
+scripts/model/features_*.csv
 .env
 .env.local
 *.db

@@ -9,6 +9,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
-      - run: python scripts/model/train.py
+      - run: pip install -r scripts/model/requirements.txt
+      - run: python scripts/model/export_features.py --start 2002 --output-start 2016 --end $(date +%Y)
+      - run: python scripts/model/train.py --input scripts/model/features_2016_2026.csv
       - uses: actions/upload-artifact@v4
         with: { name: afi-model-v2, path: scripts/model/model_v2.json }
