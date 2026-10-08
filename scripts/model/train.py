@@ -16,7 +16,7 @@ GROUPS = {
     "tendencies": ["early_pass_diff", "pressure_diff"],
     "matchup_interactions": ["pass_epa_x_pressure", "rush_epa_x_rush_def"],
     "situational": ["home_field", "rest_diff"], "availability": ["availability_diff", "availability_missing"],
-    "momentum": ["recent_margin_diff", "upset_diff"], "elo": ["elo_diff", "elo_home_prob"],
+    "momentum": ["recent_margin_diff", "upset_diff"], "elo": ["elo_diff"],
 }
 def sigmoid(x): return 1 / (1 + np.exp(-np.clip(x, -30, 30)))
 def cols(groups): return [f for g in groups for f in GROUPS[g]]
@@ -46,6 +46,11 @@ def calibration(pred):
 def coefficient_map(model, features, classifier=True):
     scaler, est = model.named_steps["standardscaler"], model.steps[-1][1]; weights = est.coef_[0] if classifier else est.coef_
     return {n: round(float(w / s), 6) for n, w, s in zip(features, weights, scaler.scale_)}
+def intercept(model, classifier=True):
+    scaler, est = model.named_steps["standardscaler"], model.steps[-1][1]
+    weights = est.coef_[0] if classifier else est.coef_
+    # Convert StandardScaler-space intercept into raw feature units for Node.
+    return round(float(est.intercept_[0] - np.sum(weights * scaler.mean_ / scaler.scale_)), 6)
 def main():
     p = argparse.ArgumentParser(); p.add_argument("--input", required=True); p.add_argument("--output", default=str(OUT)); p.add_argument("--version", default="v2.1.0"); p.add_argument("--min-train", type=int, default=96); args = p.parse_args()
     df = pd.read_csv(args.input); required = {"kickoff", "season", "week", "home_win", "home_margin", "legacy_v1_margin"}
@@ -67,7 +72,7 @@ def main():
     baselines = {"always_home": scores(pred, np.repeat(.5, len(pred)), np.zeros(len(pred))), "afi_v1_recency": v1}
     if len(market): baselines["closing_line"] = scores(market, sigmoid(market.closing_spread / 6.5), market.closing_spread)
     promoted = overall["log_loss"] < v1["log_loss"] and overall["su_accuracy"] >= v1["su_accuracy"]
-    artifact = {"version": args.version, "generated_at": datetime.now(timezone.utc).isoformat(), "algorithm": "regularized logistic regression + ridge margin regression", "feature_groups": list(GROUPS), "features": features, "coefficients": {"win_probability": coefficient_map(win, features), "home_margin": coefficient_map(margin, features, False)}, "metrics": {"status": "walk_forward_complete", "overall": overall, "by_season": by_season, "baselines": baselines, "calibration": calibration(pred)}, "ablation": ablation, "promotion": {"live": promoted, "compared_to": "afi_v1_recency", "reason": "Promoted only when OOS log loss improves and SU accuracy does not decline.", "decision": "promote" if promoted else "hold"}, "data_contract": {"point_in_time": True, "market_lines_are_evaluation_only": True, "first_oos_rows": int(len(pred)), "training_rows": int(len(df))}}
+    artifact = {"version": args.version, "generated_at": datetime.now(timezone.utc).isoformat(), "algorithm": "regularized logistic regression + ridge margin regression", "feature_groups": list(GROUPS), "features": features, "coefficients": {"win_probability": coefficient_map(win, features), "home_margin": coefficient_map(margin, features, False)}, "intercepts": {"win_probability": intercept(win), "home_margin": intercept(margin, False)}, "metrics": {"status": "walk_forward_complete", "overall": overall, "by_season": by_season, "baselines": baselines, "calibration": calibration(pred)}, "ablation": ablation, "promotion": {"live": promoted, "compared_to": "afi_v1_recency", "reason": "Promoted only when OOS log loss improves and SU accuracy does not decline.", "decision": "promote" if promoted else "hold"}, "data_contract": {"point_in_time": True, "market_lines_are_evaluation_only": True, "first_oos_rows": int(len(pred)), "training_rows": int(len(df))}}
     pathlib.Path(args.output).write_text(json.dumps(artifact, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"artifact": args.output, "promotion": artifact["promotion"], "overall": overall}, indent=2))
 if __name__ == "__main__": main()

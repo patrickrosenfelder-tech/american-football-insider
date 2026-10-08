@@ -52,9 +52,10 @@ function PickCard({ g }) {
             </div>
           </div>
           <p className="small">{p.reasoning}</p>
+          <p className="muted small">{p.model_version} · {p.model_v2?.contributions?.map(c => `${c.feature} ${c.points >= 0 ? '+' : ''}${c.points}`).join(' · ') || 'learned feature contributions unavailable'}</p>
           <p className="key-stat"><b>Efficiency signal:</b> {p.efficiency_rating?.snippet}</p>
           <div className="afi-edges"><b>AFI Key Matchups</b>{p.micro_matchups?.map((m) => <span key={`${m.label}-${m.text}`} className="afi-edge">{m.icon} <b>{m.label}:</b> {m.text}</span>) || <span className="muted small">Limited data</span>}</div>
-          <p className="muted small">Model: {p.home} {fmtLine(p.model.spread_home)}, total {p.model.total} · Market: {p.market.details || '–'}{p.market.total != null ? `, O/U ${p.market.total}` : ''}</p>
+          <p className="muted small">Model: {p.home} {fmtLine(p.model.spread_home)}, {p.model.home_win_prob}% home win, total {p.model.total} · Market: {p.market.details || '–'}{p.market.total != null ? `, O/U ${p.market.total}` : ''}</p>
         </>
       )}
     </div>

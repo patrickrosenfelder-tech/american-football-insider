@@ -6,6 +6,8 @@ const { getPreview } = require('./previewService');
 const weatherService = require('./weatherService');
 const { getMicroMatchups, matchupAdjustment } = require('./microMatchupService');
 const { currentSeason } = require('./rosterService');
+const { buildFeatures } = require('./featureService');
+const { predict, registry } = require('./modelService');
 
 // AFI Picks — our own model pick per game (spread, total, moneyline). For entertainment only.
 //
@@ -146,6 +148,8 @@ const makePick = async (g, model) => {
   const microMatchups = await getMicroMatchups({ season: model.season || currentSeason(), home: g.home.abbreviation, away: g.away.abbreviation, weather: wx, preview }).catch(() => []);
   const injH = injuryAdjust(preview?.home);
   const injA = injuryAdjust(preview?.away);
+  const features = await buildFeatures({ season: model.season || currentSeason(), home: g.home.abbreviation, away: g.away.abbreviation, kickoff: g.date, neutralSite: !!g.neutral_site, availabilityHome: injH.pts, availabilityAway: injA.pts });
+  const v2 = predict(features);
   const hfa = g.neutral_site ? 0 : HOME_FIELD;
   const recencyMargin = h.recency.value - a.recency.value;
   const efficiencyMargin = h.efficiency.rating - a.efficiency.rating;
@@ -157,19 +161,22 @@ const makePick = async (g, model) => {
   // The sum is capped (±2) until the signals have been backtested.
   const matchup = matchupAdjustment(microMatchups, g.home.abbreviation, g.away.abbreviation);
   const matchupMargin = matchup.capped;
-  const margin = baseMargin + matchupMargin;
+  // V2 owns the line.  Micro-matchups remain editorial context only unless a
+  // signal becomes an explicitly trained feature.
+  const margin = v2.home_margin;
   const weatherAdj = wx?.impact?.totals_lean === 'under' ? -3 : 0;
   const homePts = (h.off + a.def) / 2 + (injH.pts - injA.pts) / 2;
   const awayPts = (a.off + h.def) / 2 - (injH.pts - injA.pts) / 2;
   const total = homePts + awayPts + weatherAdj;
-  const pHome = phi(margin / SD);
+  const pHome = v2.home_win_probability;
   const L = g.lines || {};
   const home = g.home.abbreviation;
   const away = g.away.abbreviation;
 
   const pick = {
     game_id: g.game_id, week: g.week, date: g.date, home, away, home_id: g.home.id, away_id: g.away.id,
-    model: { home_margin: round1(margin), spread_home: half(-margin), total: round1(total), home_win_prob: Math.round(pHome * 1000) / 10 },
+    model: { version: registry.version, home_margin: round1(margin), spread_home: half(-margin), total: round1(total), home_win_prob: Math.round(pHome * 1000) / 10 },
+    model_version: registry.version, features,
     market: { spread_home: L.spread_home ?? null, total: L.total ?? null, moneyline_home: L.moneyline_home ?? null, moneyline_away: L.moneyline_away ?? null, provider: L.provider || null, details: L.details || null },
     weather: wx?.impact ? { level: wx.impact.level, note: wx.impact.note } : null,
     micro_matchups: microMatchups,
@@ -204,7 +211,7 @@ const makePick = async (g, model) => {
   const imp = implied(ml);
   pick.moneyline = { side, team: side === 'home' ? home : away, odds: ml ?? null, model_prob: Math.round((side === 'home' ? pHome : 1 - pHome) * 1000) / 10, implied_prob: imp == null ? null : Math.round(imp * 1000) / 10 };
 
-  if (pick.spread) why.push(`The ${pick.confidence_stars}-star edge is driven by a ${round1(recencyMargin)}-point recency differential, ${round1(efficiencyMargin)} from efficiency, and ${round1(momentumMargin)} from momentum; it favors ${pick.spread.team} ${fmtLine(pick.spread.line)}${pick.total ? `, with ${pick.total.side.toUpperCase()} ${pick.total.line} on the total` : ''}.`);
+  if (pick.spread) why.push(`The ${pick.confidence_stars}-star edge uses the ${registry.version} learned margin against the market; it favors ${pick.spread.team} ${fmtLine(pick.spread.line)}${pick.total ? `, with ${pick.total.side.toUpperCase()} ${pick.total.line} on the total` : ''}.`);
   const notes = [...injA.notes, ...injH.notes];
   if (microMatchups.length) why.push(`Key matchup: ${microMatchups[0].text}`);
   if (notes.length) why.push(`Injuries factored in: ${notes.join('; ')}.`);
@@ -360,7 +367,7 @@ const getPicks = async ({ week = null } = {}) => {
   // clients never receive a mix of old and new pick-card fields.
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
-    return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 11
+    return g.status.state === 'pre' && pick && (pick.model_version !== registry.version || pick.confidence_stars == null || pick.micro_matchup_version !== 11
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
@@ -384,7 +391,8 @@ const getPicks = async ({ week = null } = {}) => {
     weekly: Object.entries(byWeek).map(([w, ps]) => ({ week: Number(w), ...record(ps) })).sort((x, y) => y.week - x.week),
     tracking_since: all.length ? all.map((p) => p.made_at).sort()[0] : null,
     disclaimer: DISCLAIMER,
-    method: 'Margin = 60% weighted recency (45% last 3 games, 30% games 4–7, 15% games 8+, 10% last season’s final four) + 30% efficiency power rating (YPP, turnovers, third down and red zone) + 10% momentum. Teams with fewer than three current-season games use a season-plus-prior fallback. Momentum is capped at ±3 points. Home field (+1.5) and injuries are then applied. AFI Confidence Rating compares the model margin to the market: 1★ under 1.5 points through 5★ at 7+ points.',
+    model_version: registry.version,
+    method: `${registry.version} uses learned logistic win-probability and ridge margin coefficients. Spread, moneyline and confidence compare those outputs with the market. Micro-matchups are explanation-only and do not move the line.`,
     last_updated: state.updated_at
     , backtest: await getBacktest()
   };
