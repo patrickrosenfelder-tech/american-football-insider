@@ -116,7 +116,8 @@ const describeError = (error) => {
 };
 
 // Provider state for one run: once a provider is rate limited or down it is skipped for the rest of the run.
-const createSession = () => {
+// `maxRequests` caps HTTP calls (including failed and retried ones) for the session.
+const createSession = ({ maxRequests = Infinity } = {}) => {
   const state = {};
   const log = { attempts: [], used: {} };
 
@@ -127,6 +128,7 @@ const createSession = () => {
       if (!key || state[p.name]?.down || state[p.name]?.coolUntil > Date.now()) continue;
       const s = state[p.name] || (state[p.name] = { modelIndex: 0, last: 0, models: await modelsFor(p, key) });
       while (s.modelIndex < s.models.length) {
+        if (log.attempts.length >= maxRequests) { log.capped = true; return null; }
         const model = s.models[s.modelIndex];
         const wait = s.last + p.delayMs - Date.now();
         if (wait > 0) await sleep(wait);
@@ -172,6 +174,7 @@ const createSession = () => {
   const summary = () => ({
     providers: configured().map((p) => ({ ...p, used: log.used[p.name] || 0, models_tried: state[p.name] ? state[p.name].models.slice(0, state[p.name].modelIndex + 1) : [], stopped: state[p.name]?.down || (state[p.name]?.coolUntil > Date.now() ? 'rate limited (429)' : null) })),
     attempts: log.attempts.length,
+    request_cap_reached: !!log.capped,
     errors: log.attempts.filter((a) => !a.ok).slice(-10),
     attempts_detail: log.attempts
   });

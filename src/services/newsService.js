@@ -14,6 +14,8 @@ const llm = require('./llmService');
 const DATASET = 'news_v1';
 const DAILY_LLM_CAP = Number(process.env.NEWS_DAILY_LLM_CAP || 40); // stories/day
 const RUN_LLM_CAP = Number(process.env.NEWS_RUN_LLM_CAP || 10); // stories/run
+// Requests are capped separately: failed calls, model fallbacks and 429 retries cost quota too.
+const DAILY_LLM_REQUEST_CAP = Number(process.env.NEWS_DAILY_LLM_REQUEST_CAP || 30); // requests/day
 const BATCH = 5; // stories per LLM request
 const KEEP_DAYS = 7;
 const MAX_AGE_HOURS = 96; // ignore feed items older than this
@@ -330,8 +332,8 @@ const validateBatch = (ids) => (json) => {
   return good;
 };
 
-const summarize = async (candidates, index, log) => {
-  const session = llm.createSession();
+const summarize = async (candidates, index, log, maxRequests) => {
+  const session = llm.createSession({ maxRequests });
   let done = 0;
   for (let i = 0; i < candidates.length; i += BATCH) {
     const batch = candidates.slice(i, i + BATCH);
@@ -390,7 +392,15 @@ const load = async () => {
 
 const etDate = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
 
-const runNews = async ({ summarizeStories = true } = {}) => {
+// Overlapping runs (scheduler + admin trigger) would both read the same daily
+// counters and double-spend the LLM budget, so a second caller joins the first.
+let running = null;
+const runNews = (opts) => {
+  if (!running) running = runNewsOnce(opts).finally(() => { running = null; });
+  return running;
+};
+
+const runNewsOnce = async ({ summarizeStories = true } = {}) => {
   const state = await load();
   const log = { started_at: new Date().toISOString(), missing_keys: llm.missingKeys() };
   const index = await buildIndex();
@@ -453,7 +463,9 @@ const runNews = async ({ summarizeStories = true } = {}) => {
   // A lower configured cap must take effect immediately, including against a count persisted
   // by an older deployment with a larger cap.
   state.daily = { [today]: Math.min(Number(state.daily?.[today] || 0), DAILY_LLM_CAP) };
-  const budget = Math.max(0, Math.min(RUN_LLM_CAP, DAILY_LLM_CAP - state.daily[today]));
+  state.requests = { [today]: Number(state.requests?.[today] || 0) };
+  const requestBudget = Math.max(0, DAILY_LLM_REQUEST_CAP - state.requests[today]);
+  const budget = requestBudget ? Math.max(0, Math.min(RUN_LLM_CAP, DAILY_LLM_CAP - state.daily[today])) : 0;
   const candidates = Object.values(state.stories)
     .filter((s) => s.kind === 'headline' && !s.summary)
     .sort((a, b) => b.sources.length - a.sources.length || b.published.localeCompare(a.published))
@@ -461,12 +473,14 @@ const runNews = async ({ summarizeStories = true } = {}) => {
   log.summary_candidates = candidates.length;
   log.summarized = 0;
   if (summarizeStories && candidates.length && log.missing_keys.length < llm.PROVIDERS.length) {
-    log.summarized = await summarize(candidates, index, log);
+    log.summarized = await summarize(candidates, index, log, requestBudget);
     state.daily[today] += log.summarized;
+    state.requests[today] += log.llm?.attempts || 0;
   } else if (log.missing_keys.length === llm.PROVIDERS.length) {
     log.llm = { skipped: 'no LLM keys configured' };
   }
   log.summarized_today = state.daily[today];
+  log.requests_today = state.requests[today];
   log.unsummarized = Object.values(state.stories).filter((s) => s.kind === 'headline' && !s.summary).length;
   log.finished_at = new Date().toISOString();
 
@@ -531,7 +545,7 @@ const get = async (id) => {
 
 const status = async () => {
   const state = await load();
-  return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, summarized_today: Math.min(Number(state.daily?.[etDate()] || 0), DAILY_LLM_CAP), runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
+  return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, daily_request_cap: DAILY_LLM_REQUEST_CAP, requests_today: Number(state.requests?.[etDate()] || 0), summarized_today: Math.min(Number(state.daily?.[etDate()] || 0), DAILY_LLM_CAP), runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
 };
 
 const usage = async (days = 7) => db.llmUsage(days);

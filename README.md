@@ -27,7 +27,7 @@ npm run build          # builds the React app into client/dist
 PORT=3002 npm start    # http://localhost:3002  (3000/3001 are taken on the dev Mac)
 ```
 
-Optional env (see `.env`, never committed): `GROQ_API_KEY`, `OPENROUTER_API_KEY` for news summaries, `NEWS_DAILY_LLM_CAP` (default `40`), `NEWS_RUN_LLM_CAP` (default `10`), `ADMIN_TOKEN` for manual job triggers, `DB_PATH` for SQLite.
+Optional env (see `.env`, never committed): `GROQ_API_KEY`, `OPENROUTER_API_KEY` for news summaries, `NEWS_DAILY_LLM_CAP` (default `40`), `NEWS_RUN_LLM_CAP` (default `10`), `NEWS_DAILY_LLM_REQUEST_CAP` (default `30`), `ADMIN_TOKEN` for manual job triggers, `DB_PATH` for SQLite.
 
 ## API
 
@@ -77,7 +77,7 @@ LLM fallback chain (free tiers, one key per provider, keys only from Fly secrets
 2. OpenRouter `:free` models (`OPENROUTER_API_KEY`)
 3. If both fail, the run skips summaries and keeps the data stories. Unsummarized headlines are listed as link-outs marked “summary pending”, and the next run retries them.
 
-Model IDs are discovered from each provider's model list (cached 6 h), because free-tier model names change often. You can override them with `GROQ_MODELS` or `OPENROUTER_MODELS` (comma-separated). If a model returns 404, 400 or 503, the next model is tried. A 429 puts that provider on a 65 s cooldown. Timeouts, 5xx and auth errors move to the next provider. Rate limits: 5 stories per request, at least 4-15 s between calls per provider, at most 10 stories per run and 40 per day by default (`NEWS_RUN_LLM_CAP`, `NEWS_DAILY_LLM_CAP`). The app records observed Groq rate-limit headers and OpenRouter key usage/limit data (checked 2026-10-07); free-tier allowances change, so the provider consoles remain authoritative.
+Model IDs are discovered from each provider's model list (cached 6 h), because free-tier model names change often. You can override them with `GROQ_MODELS` or `OPENROUTER_MODELS` (comma-separated). If a model returns 404, 400 or 503, the next model is tried. A 429 puts that provider on a 65 s cooldown. Timeouts, 5xx and auth errors move to the next provider. Rate limits: 5 stories per request, at least 4-15 s between calls per provider, at most 10 stories per run and 40 per day by default (`NEWS_RUN_LLM_CAP`, `NEWS_DAILY_LLM_CAP`), and at most 30 LLM requests per US Eastern day including failed and retried calls (`NEWS_DAILY_LLM_REQUEST_CAP`). Overlapping news runs share one in-flight run. The app records observed Groq rate-limit headers and OpenRouter key usage/limit data (checked 2026-10-07); free-tier allowances change, so the provider consoles remain authoritative.
 
 ### Models and formulas
 
