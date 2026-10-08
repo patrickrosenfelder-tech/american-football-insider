@@ -1,0 +1,23 @@
+{
+  "version": "v2.0.0",
+  "generated_at": "2026-10-08T00:49:32.468576+00:00",
+  "algorithm": "regularized logistic regression + ridge margin regression",
+  "feature_groups": [
+    "team_strength",
+    "tendencies",
+    "matchup_interactions",
+    "situational",
+    "availability",
+    "momentum",
+    "elo"
+  ],
+  "promotion": {
+    "live": false,
+    "reason": "A candidate is promoted only after chronological OOS comparison."
+  },
+  "metrics": {
+    "status": "bootstrap",
+    "note": "Pass --input features.csv after the nflverse point-in-time export."
+  },
+  "ablation": []
+}

@@ -19,6 +19,8 @@ const trendsRoutes = require('./routes/trends');
 const picksRoutes = require('./routes/picks');
 const adminRoutes = require('./routes/admin');
 const statusRoutes = require('./routes/status');
+const modelRoutes = require('./routes/model');
+const powerRankingsRoutes = require('./routes/powerRankings');
 const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
 const db = require('./db/database');
@@ -51,6 +53,8 @@ app.use('/api/picks', picksRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api/status', statusRoutes);
+app.use('/api/model', modelRoutes);
+app.use('/api/power-rankings', powerRankingsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

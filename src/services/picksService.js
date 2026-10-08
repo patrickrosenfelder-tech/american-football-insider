@@ -207,6 +207,8 @@ const makePick = async (g, model) => {
   if (notes.length) why.push(`Injuries factored in: ${notes.join('; ')}.`);
   if (weatherAdj) why.push(`Weather: ${wx.impact.flags.map((f) => f.label).join(', ')} trims 3 points from our total.`);
   pick.reasoning = why.slice(0, 4).join(' ');
+  // Lazy require avoids the model/picks service dependency during model builds.
+  pick.model_v2 = require('./modelService').explainPick(pick);
   return pick;
 };
 

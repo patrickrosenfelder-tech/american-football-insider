@@ -61,6 +61,18 @@ const initialize = () => {
       results_json TEXT NOT NULL, created_at TEXT NOT NULL
     )`);
 
+    // Point-in-time model artifacts and walk-forward results. JSON columns keep
+    // the registry portable while the training job is intentionally file based.
+    db.run(`CREATE TABLE IF NOT EXISTS model_runs (
+      model_version TEXT PRIMARY KEY, trained_at TEXT NOT NULL, train_window TEXT NOT NULL,
+      metrics_json TEXT NOT NULL, ablation_json TEXT NOT NULL, promoted INTEGER NOT NULL DEFAULT 0
+    )`);
+    db.run(`CREATE TABLE IF NOT EXISTS model_backtests (
+      model_version TEXT NOT NULL, season INTEGER NOT NULL, week INTEGER NOT NULL,
+      metrics_json TEXT NOT NULL, created_at TEXT NOT NULL,
+      PRIMARY KEY(model_version, season, week)
+    )`);
+
     // Provider-level LLM accounting. This deliberately contains no credentials or prompt content.
     db.run(`CREATE TABLE IF NOT EXISTS llm_usage_daily (
       day TEXT NOT NULL, provider TEXT NOT NULL,
@@ -76,6 +88,7 @@ const initialize = () => {
     db.run(`CREATE INDEX IF NOT EXISTS idx_games_status ON games(status)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_stats_team ON team_stats(team_id)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_picks_backtest_week ON picks_backtest(season, week)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_model_backtests_week ON model_backtests(model_version, season, week)`);
     db.run(`CREATE INDEX IF NOT EXISTS idx_llm_usage_day ON llm_usage_daily(day)`);
   });
 };
