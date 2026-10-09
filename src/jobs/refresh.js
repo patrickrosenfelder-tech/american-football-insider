@@ -9,6 +9,7 @@ const weatherService = require('../services/weatherService');
 const sportsDataService = require('../services/sportsDataService');
 const cache = require('../cache/cacheManager');
 const db = require('../db/database');
+const tradeService = require('../services/tradeService');
 
 const { currentSeason } = rosterService;
 
@@ -134,6 +135,8 @@ const refreshNews = () => runJob('news', async () => {
 
 // AFI Picks: re-pick unstarted games, lock started ones, grade finals.
 const refreshPicks = () => runJob('picks', async () => picksService.refreshPicks());
+const refreshTrades = () => runJob('transactions', async () => tradeService.refreshTrades());
+const refreshFreeAgents = () => runJob('free_agents', async () => tradeService.refreshFreeAgents());
 
 // On boot: build anything missing (SQLite on Fly lives in /tmp, so a fresh machine starts empty).
 const bootstrap = async () => {
@@ -142,6 +145,8 @@ const bootstrap = async () => {
   if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
   await refreshNews();
+  await refreshTrades();
+  await refreshFreeAgents();
 };
 
-module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, status };
+module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshFreeAgents, status };

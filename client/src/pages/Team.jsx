@@ -7,7 +7,7 @@ import { TeamInjuries } from './Injuries.jsx';
 import { TeamTendencies } from './Tendencies.jsx';
 import { NewsFeed } from './News.jsx';
 
-const TABS = [['overview', 'Overview'], ['news', 'News'], ['depth', 'Depth chart'], ['roster', 'Roster'], ['injuries', 'Injuries'], ['tendencies', 'Tendencies']];
+const TABS = [['overview', 'Overview'], ['news', 'News'], ['trades', 'Trades'], ['depth', 'Depth chart'], ['roster', 'Roster'], ['injuries', 'Injuries'], ['tendencies', 'Tendencies']];
 
 function ScheduleRow({ game, teamId }) {
   const us = game.home.id === teamId ? game.home : game.away;
@@ -87,8 +87,16 @@ export default function Team() {
       {tab === 'injuries' && <TeamInjuries teamId={teamId} />}
       {tab === 'tendencies' && <TeamTendencies teamId={teamId} />}
       {tab === 'news' && <NewsFeed team={t.abbreviation} compact />}
+      {tab === 'trades' && <TeamTrades team={t.abbreviation} />}
     </section>
   );
+}
+
+function TeamTrades({ team }) {
+  const trades = useApi(`/trades?team=${team}`);
+  if (trades.loading) return <Loading label="Loading trades…" />;
+  if (trades.error) return <ErrorBox error={trades.error} />;
+  return <div className="card list-card">{trades.data.data.trades.length ? trades.data.data.trades.map((x) => <div className="news" key={x.id}><b>{x.date}</b> · {x.teams.map((s) => `${s.team} received ${s.receives.join(', ') || 'considerations'}`).join(' / ')}</div>) : <div className="news muted">No recorded trades for this team in this season.</div>}</div>;
 }
 
 function Overview({ t, teamId }) {

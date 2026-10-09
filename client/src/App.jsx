@@ -15,6 +15,8 @@ import Weather from './pages/Weather.jsx';
 import Picks from './pages/Picks.jsx';
 import Model from './pages/Model.jsx';
 import PowerRankings from './pages/PowerRankings.jsx';
+import Trades from './pages/Trades.jsx';
+import FreeAgents from './pages/FreeAgents.jsx';
 
 export default function App() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
           <nav>
             <NavLink to="/" end>Scores</NavLink>
             <NavLink to="/news">News</NavLink>
+            <NavLink to="/trades">Trades</NavLink>
+            <NavLink to="/free-agents">Free Agents</NavLink>
             <NavLink to="/standings">Standings</NavLink>
             <NavLink to="/previews">Previews</NavLink>
             <NavLink to="/picks">Picks</NavLink>
@@ -59,6 +63,8 @@ export default function App() {
           <Route path="/picks" element={<Picks />} />
           <Route path="/model" element={<Model />} />
           <Route path="/power-rankings" element={<PowerRankings />} />
+          <Route path="/trades" element={<Trades />} />
+          <Route path="/free-agents" element={<FreeAgents />} />
           <Route path="/news/:storyId" element={<NewsStory />} />
           <Route path="*" element={<div className="state">Page not found.</div>} />
         </Routes>

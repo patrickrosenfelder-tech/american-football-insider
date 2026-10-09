@@ -21,6 +21,8 @@ const adminRoutes = require('./routes/admin');
 const statusRoutes = require('./routes/status');
 const modelRoutes = require('./routes/model');
 const powerRankingsRoutes = require('./routes/powerRankings');
+const tradesRoutes = require('./routes/trades');
+const freeAgentsRoutes = require('./routes/freeAgents');
 const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
 const db = require('./db/database');
@@ -55,6 +57,8 @@ app.use('/admin', adminRoutes);
 app.use('/api/status', statusRoutes);
 app.use('/api/model', modelRoutes);
 app.use('/api/power-rankings', powerRankingsRoutes);
+app.use('/api/trades', tradesRoutes);
+app.use('/api/free-agents', freeAgentsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
