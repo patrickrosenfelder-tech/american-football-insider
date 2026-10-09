@@ -39,16 +39,29 @@ function TeamRow({ team, game }) {
 
 export function GameCard({ game }) {
   const accent = game.home?.color || game.away?.color || '#0b1c2d';
+  const showScore = game.status.state !== 'pre';
+  const Team = ({ team }) => (
+    <div className={`game-card-team ${game.status.state === 'post' && !team.winner ? 'lost' : ''}`}>
+      <strong>{team.short_name || team.name}</strong>
+      {team.record && <span>{team.record}</span>}
+      <div className="game-card-mark">
+        <Logo src={team.logo} alt={team.abbreviation} size={54} />
+        {showScore && <b className="game-card-score">{team.score ?? '–'}</b>}
+      </div>
+    </div>
+  );
   return (
     <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`} style={{ '--team-accent': accent }}>
-      <div className="game-card-head">
-        <StatusPill game={game} />
-        {game.broadcast && <span className="muted small">{game.broadcast}</span>}
+      <div className="game-card-teams">
+        <Team team={game.away} />
+        <Team team={game.home} />
       </div>
-      <TeamRow team={game.away} game={game} />
-      <TeamRow team={game.home} game={game} />
-      {isLive(game) && game.down_distance && <div className="situation">{game.down_distance}</div>}
-      {game.status.state === 'pre' && game.odds && <div className="muted small">Line: {game.odds}</div>}
+      <div className="game-card-meta">
+        <StatusPill game={game} />
+        {game.broadcast && <span>{game.broadcast}</span>}
+        {isLive(game) && game.down_distance && <span className="situation">{game.down_distance}</span>}
+        {game.status.state === 'pre' && game.odds && <span>{game.odds}</span>}
+      </div>
     </Link>
   );
 }
@@ -61,6 +74,7 @@ export function FeaturedFinal({ game }) {
       <div>
         <strong>{team.name || team.short_name}</strong>
         {team.record && <span>{team.record}</span>}
+        {team.abbreviation && <em>{team.abbreviation}</em>}
       </div>
     </div>
   );
@@ -68,9 +82,9 @@ export function FeaturedFinal({ game }) {
     <Link to={`/game/${game.game_id}`} className="featured-final card" style={{ '--team-accent': accent }}>
       <div className="featured-matchup">
         <Team team={game.away} align="away" />
-        <div className="featured-score" aria-label={`${game.away.name} ${game.away.score}, ${game.home.name} ${game.home.score}`}>
-          <b>{game.away.score ?? '–'}</b><span className="final-badge">FINAL</span><b>{game.home.score ?? '–'}</b>
-        </div>
+        <b className="featured-score away-score" aria-label={`${game.away.name} score`}>{game.away.score ?? '–'}</b>
+        <span className="final-badge">FINAL</span>
+        <b className="featured-score home-score" aria-label={`${game.home.name} score`}>{game.home.score ?? '–'}</b>
         <Team team={game.home} align="home" />
       </div>
       <div className="featured-footer">

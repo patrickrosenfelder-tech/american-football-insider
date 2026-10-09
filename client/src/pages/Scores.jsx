@@ -40,7 +40,8 @@ export default function Scores() {
 
   return (
     <section>
-      <div className="page-head">
+      <div className={`scores-hero ${finals.length > 0 ? 'has-featured-final' : ''}`}>
+      <div className="page-head scores-page-head">
         <div>
           <h1>{data.season} {(seasonType || data.season_type) === '3' || data.season_type === 3 ? 'Playoffs' : `Week ${week || data.week}`}</h1>
           <p className="muted">All times ET · {games.length} games{liveCount > 0 && <> · <span className="live-text">{liveCount} live</span></>}{liveCount > 0 && ' · auto-refreshing'}</p>
@@ -57,14 +58,15 @@ export default function Scores() {
         )}
       </div>
 
-      {games.length === 0 && <div className="state">No games scheduled this week.</div>}
-
       {finals.length > 0 && (
         <section className="finals-section" aria-labelledby="finals-heading">
-          <div className="scores-section-head"><h2 id="finals-heading">Final scores</h2><span>Completed</span></div>
+          <h2 id="finals-heading" className="sr-only">Final scores</h2>
           <div className="featured-finals">{finals.map((g) => <FeaturedFinal key={g.game_id} game={g} />)}</div>
         </section>
       )}
+      </div>
+
+      {games.length === 0 && <div className="state">No games scheduled this week.</div>}
 
       {Object.entries(byDay).map(([day, list]) => (
         <div key={day} className="day-group">
