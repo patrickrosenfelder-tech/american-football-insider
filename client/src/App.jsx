@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -11,7 +11,6 @@ import Preview from './pages/Preview.jsx';
 import TendenciesPage from './pages/Tendencies.jsx';
 import Playoffs from './pages/Playoffs.jsx';
 import News, { NewsStory } from './pages/News.jsx';
-import Social from './pages/Social.jsx';
 import Weather from './pages/Weather.jsx';
 import Picks from './pages/Picks.jsx';
 import Model from './pages/Model.jsx';
@@ -31,7 +30,6 @@ export default function App() {
           <nav>
             <NavLink to="/" end>Scores</NavLink>
             <NavLink to="/news">News</NavLink>
-            <NavLink to="/social">Social</NavLink>
             <NavLink to="/trades">Trades</NavLink>
             <NavLink to="/free-agents">Free Agents</NavLink>
             <NavLink to="/standings">Standings</NavLink>
@@ -61,7 +59,7 @@ export default function App() {
           <Route path="/tendencies" element={<TendenciesPage />} />
           <Route path="/playoffs" element={<Playoffs />} />
           <Route path="/news" element={<News />} />
-          <Route path="/social" element={<Social />} />
+          <Route path="/social" element={<Navigate to="/news" replace />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/picks" element={<Picks />} />
           <Route path="/model" element={<Model />} />

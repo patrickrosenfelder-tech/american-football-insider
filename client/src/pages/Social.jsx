@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, Updated } from '../components.jsx';
+import { Loading } from '../components.jsx';
 
 const REFRESH_MS = 60000;
 const live = { refreshMs: REFRESH_MS, shouldRefresh: () => true };
@@ -155,7 +155,6 @@ export function SocialWidget({ team = null, limit = 12, title = 'Social' }) {
       <div className={`social-body ${open ? 'open' : ''}`}>
         <div className="social-widget-head">
           <h2 className="section-title">{title}</h2>
-          <Link to={team ? `/social?team=${team}` : '/social'} className="small"><u>All posts →</u></Link>
         </div>
         {loading && <Loading label="Loading posts…" />}
         {error && <p className="muted small">Social feed unavailable: {error.message}</p>}
@@ -163,62 +162,5 @@ export function SocialWidget({ team = null, limit = 12, title = 'Social' }) {
         <div className="social-list">{posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>
       </div>
     </aside>
-  );
-}
-
-export default function Social() {
-  const [params, setParams] = useSearchParams();
-  const platform = params.get('platform') || '';
-  const account = params.get('account') || '';
-  const team = params.get('team') || '';
-  const teams = useApi('/teams');
-  const qs = new URLSearchParams({ limit: '100' });
-  if (platform) qs.set('platform', platform);
-  if (account) qs.set('account', account);
-  if (team) qs.set('team', team);
-  const { data, error, loading } = useApi(`/social?${qs}`, live);
-  const set = (key, value) => {
-    const next = new URLSearchParams(params);
-    if (value) next.set(key, value); else next.delete(key);
-    if (key === 'platform') next.delete('account');
-    setParams(next, { replace: true });
-  };
-  const d = data?.data;
-  const accounts = (d?.accounts || []).filter((a) => !platform || a.platform === platform);
-  return (
-    <section>
-      <div className="page-head">
-        <div><h1>Social</h1><p className="muted small">Insider and beat-reporter posts, NFL video and community threads — newest first, refreshed every minute.</p></div>
-        <div className="filters">
-          <label>Account
-            <select value={account} onChange={(e) => set('account', e.target.value)}>
-              <option value="">All accounts</option>
-              {accounts.map((a) => <option key={`${a.platform}:${a.account}`} value={a.account}>{a.name}{platform ? '' : ` (${PLATFORMS[a.platform]?.label})`}</option>)}
-            </select>
-          </label>
-          <label>Team
-            <select value={team} onChange={(e) => set('team', e.target.value)}>
-              <option value="">All teams</option>
-              {(teams.data?.data || []).map((t) => <option key={t.id} value={t.abbreviation}>{t.name}</option>)}
-            </select>
-          </label>
-        </div>
-      </div>
-      <div className="tabs">
-        {[['', 'All'], ...Object.entries(PLATFORMS).map(([k, v]) => [k, `${v.icon} ${v.label}`])].map(([k, label]) => {
-          const off = k && d?.platforms?.find((x) => x.platform === k)?.enabled === false;
-          return <button key={label} type="button" className={platform === k ? 'active' : ''} disabled={off} title={off ? 'Not configured yet' : undefined} onClick={() => set('platform', k)}>{label}</button>;
-        })}
-      </div>
-      {loading && <Loading label="Loading posts…" />}
-      {error && <ErrorBox error={error} />}
-      {d && !d.posts.length && <div className="state">No posts match these filters.</div>}
-      {d && <div className="social-feed">{d.posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>}
-      <p className="muted small note">
-        Posts are shown in full from public feeds (Bluesky public API, YouTube channel RSS{d?.platforms?.find((x) => x.platform === 'reddit')?.enabled ? ', Reddit API' : ''}) with a link to every original.
-        “Breaking” marks posts from national insiders in the last 30 minutes that mention a trade, signing, injury, IR, release or agreement.
-      </p>
-      {d && <Updated at={d.last_updated} />}
-    </section>
   );
 }

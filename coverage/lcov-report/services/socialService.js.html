@@ -1,0 +1,1111 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for services/socialService.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> socialService.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">26.1% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>65/249</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">6.36% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>18/283</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">9.23% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>6/65</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">31.44% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>61/194</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const axios = require('axios');
+const { XMLParser } = require('fast-xml-parser');
+const db = require('../db/database');
+const accounts = require('../config/socialAccounts');
+&nbsp;
+// Social feed: public posts from Bluesky, YouTube and (with keys) Reddit, kept in their own store and
+// shown in full with a link to the original. Separate from news (no clustering, no LLM).
+// Each platform refreshes on its own schedule (see jobs/scheduler.js) and records its own health.
+&nbsp;
+const DATASET = 'social_v1';
+const KEEP_DAYS = { bluesky: 7, youtube: 7, reddit: 3 };
+const MAX_POSTS = 2500;
+const FAILURE_LIMIT = 3; // consecutive failures before an account is parked
+const PARK_RETRY_MS = 3600e3; // parked accounts are retried once an hour
+const BREAKING_MS = 30 * 60e3;
+const BREAKING_RE = /\b(trad(?:e|ed|es|ing)|sign(?:s|ed|ing)|injur(?:y|ies|ed)|out|released?|releasing|agree[sd]?|agreement)\b/i;
+&nbsp;
+const BLUESKY_API = 'https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed';
+const YOUTUBE_RSS = 'https://www.youtube.com/feeds/videos.xml';
+const REDDIT_TOKEN_URL = 'https://www.reddit.com/api/v1/access_token';
+const REDDIT_API = 'https://oauth.reddit.com';
+const REDDIT_UA = `web:american-football-insider:v1.0 (by /u/${process.env.REDDIT_USERNAME || 'american-football-insider'})`;
+&nbsp;
+const http = axios.create({ timeout: 15000, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; American-Football-Insider/1.0; +https://american-football-insider.fly.dev)' } });
+const xml = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '' });
+&nbsp;
+const decode = <span class="fstat-no" title="function not covered" >(s</span>) =&gt; <span class="cstat-no" title="statement not covered" >String(s || '').replace(/&amp;amp;/g, '&amp;').replace(/&amp;lt;/g, '&lt;').replace(/&amp;gt;/g, '&gt;').replace(/&amp;quot;/g, '"').replace(/&amp;#39;|&amp;#x27;/g, "'");</span>
+const clip = <span class="fstat-no" title="function not covered" >(s</span>, n) =&gt; (<span class="cstat-no" title="statement not covered" >s.length &gt; n ? `${s.slice(0, n - 1).replace(/\s+\S*$/, '')}…` : s)</span>;
+const errorText = <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; (<span class="cstat-no" title="statement not covered" >error.response ? `HTTP ${error.response.status}` : error.message)</span>;
+&nbsp;
+// --- Bluesky -------------------------------------------------------------------------
+&nbsp;
+// Link facets index UTF-8 bytes; the visible text of a link is often shortened ("nfl.com/news/…"),
+// so the client renders these segments with the full target URL.
+const blueskySegments = (text, facets = <span class="branch-0 cbranch-no" title="branch not covered" >[])</span> =&gt; {
+  const links = facets
+    .map((f) =&gt; ({ start: f.index?.byteStart, end: f.index?.byteEnd, href: (f.features || <span class="branch-1 cbranch-no" title="branch not covered" >[])</span>.find((x) =&gt; x.$type === 'app.bsky.richtext.facet#link')?.uri }))
+    .filter((l) =&gt; l.href &amp;&amp; Number.isInteger(l.start) &amp;&amp; Number.isInteger(l.end) &amp;&amp; l.end &gt; l.start)
+    .sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >a.start - b.start)</span>;
+  if (!links.length) return null;
+  const bytes = Buffer.from(text, 'utf8');
+  const segments = [];
+  let at = 0;
+  links.forEach((l) =&gt; {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (l.start &lt; at || l.end &gt; bytes.length) <span class="cstat-no" title="statement not covered" >return;</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (l.start &gt; at) segments.push({ text: bytes.slice(at, l.start).toString('utf8') });
+    segments.push({ text: bytes.slice(l.start, l.end).toString('utf8'), href: l.href });
+    at = l.end;
+  });
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (at &lt; bytes.length) <span class="cstat-no" title="statement not covered" >segments.push({ text: bytes.slice(at).toString('utf8') });</span>
+  return segments;
+};
+&nbsp;
+const blueskyMedia = <span class="fstat-no" title="function not covered" >(e</span>mbed) =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (!embed) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const e = <span class="cstat-no" title="statement not covered" >embed.$type === 'app.bsky.embed.recordWithMedia#view' ? embed.media : embed;</span>
+<span class="cstat-no" title="statement not covered" >  if (e?.$type === 'app.bsky.embed.images#view' &amp;&amp; e.images?.length) {</span>
+<span class="cstat-no" title="statement not covered" >    return { type: 'image', thumb: e.images[0].thumb, full: e.images[0].fullsize, alt: e.images[0].alt || '', count: e.images.length };</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (e?.$type === 'app.bsky.embed.video#view') <span class="cstat-no" title="statement not covered" >return { type: 'video', thumb: e.thumbnail || null, playlist: e.playlist || null, aspect: e.aspectRatio || null };</span></span>
+<span class="cstat-no" title="statement not covered" >  if (e?.$type === 'app.bsky.embed.external#view' &amp;&amp; e.external?.uri) {</span>
+<span class="cstat-no" title="statement not covered" >    return { type: 'link', url: e.external.uri, title: e.external.title || '', description: clip(e.external.description || '', 200), thumb: e.external.thumb || null };</span>
+  }
+<span class="cstat-no" title="statement not covered" >  return null;</span>
+};
+&nbsp;
+// One author feed -&gt; social posts. Reposts are skipped: they would duplicate the original author's post.
+const fetchBluesky = <span class="fstat-no" title="function not covered" >as</span>ync (account) =&gt; {
+  const { data } = <span class="cstat-no" title="statement not covered" >await http.get(BLUESKY_API, { params: { actor: account.handle, limit: 30, filter: 'posts_no_replies' } });</span>
+<span class="cstat-no" title="statement not covered" >  return (data.feed || []).filter(<span class="fstat-no" title="function not covered" >(f</span>) =&gt; <span class="cstat-no" title="statement not covered" >!f.reason &amp;&amp; f.post?.record?.text)</span>.map(<span class="fstat-no" title="function not covered" >({</span> post }) =&gt; {</span>
+    const rkey = <span class="cstat-no" title="statement not covered" >String(post.uri || '').split('/').pop();</span>
+    const handle = <span class="cstat-no" title="statement not covered" >post.author?.handle || account.handle;</span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      id: `bsky-${rkey}`,
+      platform: 'bluesky',
+      account: account.handle,
+      author: { name: post.author?.displayName || account.name || handle, handle: `@${handle}`, avatar: post.author?.avatar || null, url: `https://bsky.app/profile/${handle}` },
+      text: post.record.text,
+      segments: blueskySegments(post.record.text, post.record.facets),
+      url: `https://bsky.app/profile/${handle}/post/${rkey}`,
+      published: post.record.createdAt || post.indexedAt,
+      media: blueskyMedia(post.embed),
+      metrics: { likes: post.likeCount || 0, reposts: post.repostCount || 0, replies: post.replyCount || 0 },
+      insider: !!account.insider,
+      account_team: account.team || null
+    };
+  });
+};
+&nbsp;
+// --- YouTube -------------------------------------------------------------------------
+&nbsp;
+const fetchYoutube = <span class="fstat-no" title="function not covered" >as</span>ync (channel) =&gt; {
+  const { data } = <span class="cstat-no" title="statement not covered" >await http.get(YOUTUBE_RSS, { params: { channel_id: channel.channel_id }, responseType: 'text' });</span>
+  const feed = <span class="cstat-no" title="statement not covered" >xml.parse(data)?.feed;</span>
+<span class="cstat-no" title="statement not covered" >  if (!feed) <span class="cstat-no" title="statement not covered" >throw new Error('not a YouTube feed');</span></span>
+<span class="cstat-no" title="statement not covered" >  return [].concat(feed.entry || []).map(<span class="fstat-no" title="function not covered" >(e</span>) =&gt; {</span>
+    const videoId = <span class="cstat-no" title="statement not covered" >e['yt:videoId'];</span>
+    const group = <span class="cstat-no" title="statement not covered" >e['media:group'] || {};</span>
+    const href = <span class="cstat-no" title="statement not covered" >[].concat(e.link || [])[0]?.href || `https://www.youtube.com/watch?v=${videoId}`;</span>
+    const title = <span class="cstat-no" title="statement not covered" >decode(e.title?.['#text'] ?? e.title);</span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      id: `yt-${videoId}`,
+      platform: 'youtube',
+      account: channel.channel_id,
+      author: { name: e.author?.name || channel.name, handle: channel.name, avatar: null, url: `https://www.youtube.com/channel/${channel.channel_id}` },
+      text: title,
+      segments: null,
+      url: href,
+      published: e.published,
+      media: { type: 'youtube', video_id: videoId, short: /\/shorts\//.test(href), thumb: group['media:thumbnail']?.url || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` },
+      metrics: { views: Number(group['media:community']?.['media:statistics']?.views || 0) },
+      insider: false,
+      account_team: channel.team || null
+    };
+  }).filter(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.media.video_id &amp;&amp; p.published)</span>;
+};
+&nbsp;
+// --- Reddit (OAuth app-only; disabled without keys) -----------------------------------
+&nbsp;
+const redditConfigured = <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >Boolean(process.env.REDDIT_CLIENT_ID &amp;&amp; process.env.REDDIT_CLIENT_SECRET);</span>
+let redditToken = null;
+&nbsp;
+const redditAuth = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (redditToken &amp;&amp; redditToken.expires &gt; Date.now() + 60e3) <span class="cstat-no" title="statement not covered" >return redditToken.value;</span></span>
+  const { data } = <span class="cstat-no" title="statement not covered" >await http.post(REDDIT_TOKEN_URL, 'grant_type=client_credentials', {</span>
+    auth: { username: process.env.REDDIT_CLIENT_ID, password: process.env.REDDIT_CLIENT_SECRET },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': REDDIT_UA }
+  });
+<span class="cstat-no" title="statement not covered" >  if (!data.access_token) <span class="cstat-no" title="statement not covered" >throw new Error(data.error || 'no access_token');</span></span>
+<span class="cstat-no" title="statement not covered" >  redditToken = { value: data.access_token, expires: Date.now() + Number(data.expires_in || 3600) * 1000 };</span>
+<span class="cstat-no" title="statement not covered" >  return redditToken.value;</span>
+};
+&nbsp;
+const fetchReddit = <span class="fstat-no" title="function not covered" >as</span>ync (sub) =&gt; {
+  const token = <span class="cstat-no" title="statement not covered" >await redditAuth();</span>
+  const { data } = <span class="cstat-no" title="statement not covered" >await http.get(`${REDDIT_API}/r/${sub.subreddit}/${sub.listing || 'hot'}`, {</span>
+    params: { limit: sub.limit || 30, raw_json: 1 },
+    headers: { Authorization: `Bearer ${token}`, 'User-Agent': REDDIT_UA }
+  });
+<span class="cstat-no" title="statement not covered" >  return (data?.data?.children || []).map(<span class="fstat-no" title="function not covered" >(c</span>) =&gt; <span class="cstat-no" title="statement not covered" >c.data)</span>.filter(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p &amp;&amp; !p.over_18 &amp;&amp; !p.stickied)</span>.map(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; {</span>
+    const preview = <span class="cstat-no" title="statement not covered" >p.preview?.images?.[0]?.resolutions?.slice(-1)[0]?.url || p.preview?.images?.[0]?.source?.url;</span>
+    const thumb = <span class="cstat-no" title="statement not covered" >preview || (/^https?:/.test(p.thumbnail || '') ? p.thumbnail : null);</span>
+    const external = <span class="cstat-no" title="statement not covered" >p.is_self ? null : p.url_overridden_by_dest || p.url;</span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      id: `rd-${p.id}`,
+      platform: 'reddit',
+      account: `r/${sub.subreddit}`,
+      author: { name: `r/${p.subreddit || sub.subreddit}`, handle: `u/${p.author}`, avatar: null, url: `https://www.reddit.com/r/${p.subreddit || sub.subreddit}` },
+      text: decode(p.title),
+      body: p.selftext ? clip(decode(p.selftext), 400) : null,
+      segments: null,
+      url: `https://www.reddit.com${p.permalink}`,
+      published: new Date(p.created_utc * 1000).toISOString(),
+      media: thumb || external ? { type: thumb ? 'image' : 'link', thumb: thumb ? decode(thumb) : null, url: external } : null,
+      flair: p.link_flair_text || null,
+      metrics: { score: p.score || 0, comments: p.num_comments || 0 },
+      insider: false,
+      account_team: null
+    };
+  });
+};
+&nbsp;
+// --- Store ---------------------------------------------------------------------------
+&nbsp;
+let memo = null;
+const load = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (memo) <span class="cstat-no" title="statement not covered" >return memo;</span></span>
+  const row = <span class="cstat-no" title="statement not covered" >await db.loadDataset(DATASET).catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >null)</span>;</span>
+<span class="cstat-no" title="statement not covered" >  memo = row?.data || { posts: {}, sources: {} };</span>
+<span class="cstat-no" title="statement not covered" >  memo.posts ||= {};</span>
+<span class="cstat-no" title="statement not covered" >  memo.sources ||= {};</span>
+<span class="cstat-no" title="statement not covered" >  return memo;</span>
+};
+&nbsp;
+// Team tags from the post text (team names + rostered player names) via the news tagger.
+// The index needs 32 rosters, so it is rebuilt at most hourly.
+let tagIndex = null;
+const getIndex = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (tagIndex &amp;&amp; tagIndex.at &gt; Date.now() - 3600e3) <span class="cstat-no" title="statement not covered" >return tagIndex.index;</span></span>
+  const { buildIndex } = <span class="cstat-no" title="statement not covered" >require('./newsService');</span>
+<span class="cstat-no" title="statement not covered" >  tagIndex = { index: await buildIndex(), at: Date.now() };</span>
+<span class="cstat-no" title="statement not covered" >  return tagIndex.index;</span>
+};
+&nbsp;
+const tagTeams = <span class="fstat-no" title="function not covered" >(p</span>ost, index) =&gt; {
+  const teams = <span class="cstat-no" title="statement not covered" >new Set(post.account_team ? [post.account_team] : []);</span>
+<span class="cstat-no" title="statement not covered" >  if (index) {</span>
+    const { tagItem } = <span class="cstat-no" title="statement not covered" >require('./newsService');</span>
+    const text = <span class="cstat-no" title="statement not covered" >[post.text, post.body, post.media?.title].filter(Boolean).join(' ');</span>
+<span class="cstat-no" title="statement not covered" >    tagItem({ title: '', description: text, espn_team_ids: [], espn_athletes: [] }, index).teams.forEach(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >teams.add(t))</span>;</span>
+  }
+<span class="cstat-no" title="statement not covered" >  return [...teams];</span>
+};
+&nbsp;
+const accountKey = <span class="fstat-no" title="function not covered" >(p</span>latform, a) =&gt; (<span class="cstat-no" title="statement not covered" >platform === 'bluesky' ? a.handle : platform === 'youtube' ? a.channel_id : `r/${a.subreddit}`)</span>;
+&nbsp;
+// Runs one platform: fetch every active account, merge posts, record per-account health, save.
+const runPlatform = <span class="fstat-no" title="function not covered" >as</span>ync (platform, list, fetcher) =&gt; {
+  const state = <span class="cstat-no" title="statement not covered" >await load();</span>
+  const src = <span class="cstat-no" title="statement not covered" >state.sources[platform] ||= { accounts: {} };</span>
+<span class="cstat-no" title="statement not covered" >  src.accounts ||= {};</span>
+  const started = <span class="cstat-no" title="statement not covered" >new Date().toISOString();</span>
+<span class="cstat-no" title="statement not covered" >  src.last_run = started;</span>
+  const enabled = <span class="cstat-no" title="statement not covered" >list.filter(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; <span class="cstat-no" title="statement not covered" >a.enabled !== false)</span>;</span>
+  const due = <span class="cstat-no" title="statement not covered" >enabled.filter(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; {</span>
+    const h = <span class="cstat-no" title="statement not covered" >src.accounts[accountKey(platform, a)];</span>
+<span class="cstat-no" title="statement not covered" >    return !h || h.failures &lt; FAILURE_LIMIT || Date.now() - Date.parse(h.last_error_at || 0) &gt;= PARK_RETRY_MS;</span>
+  });
+  let index = <span class="cstat-no" title="statement not covered" >null;</span>
+<span class="cstat-no" title="statement not covered" >  try { <span class="cstat-no" title="statement not covered" >index = await getIndex(); </span>} catch (error) { <span class="cstat-no" title="statement not covered" >console.warn('[social] team tagging unavailable:', error.message); </span>}</span>
+  let fetched = <span class="cstat-no" title="statement not covered" >0;</span>
+  let added = <span class="cstat-no" title="statement not covered" >0;</span>
+  const errors = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >  await Promise.all(due.map(<span class="fstat-no" title="function not covered" >as</span>ync (a) =&gt; {</span>
+    const key = <span class="cstat-no" title="statement not covered" >accountKey(platform, a);</span>
+    const prior = <span class="cstat-no" title="statement not covered" >src.accounts[key] || {};</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+      const posts = <span class="cstat-no" title="statement not covered" >await fetcher(a);</span>
+<span class="cstat-no" title="statement not covered" >      fetched += posts.length;</span>
+<span class="cstat-no" title="statement not covered" >      posts.forEach(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; {</span>
+        const t = <span class="cstat-no" title="statement not covered" >Date.parse(p.published);</span>
+<span class="cstat-no" title="statement not covered" >        if (Number.isNaN(t)) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        p.published = new Date(t).toISOString();</span>
+<span class="cstat-no" title="statement not covered" >        p.teams = tagTeams(p, index);</span>
+<span class="cstat-no" title="statement not covered" >        delete p.account_team;</span>
+        const existing = <span class="cstat-no" title="statement not covered" >state.posts[p.id];</span>
+<span class="cstat-no" title="statement not covered" >        if (!existing) <span class="cstat-no" title="statement not covered" >added += 1;</span></span>
+<span class="cstat-no" title="statement not covered" >        state.posts[p.id] = { ...p, first_seen: existing?.first_seen || started };</span>
+      });
+<span class="cstat-no" title="statement not covered" >      src.accounts[key] = { name: a.name, failures: 0, last_success: new Date().toISOString(), last_error: prior.last_error || null, last_error_at: prior.last_error_at || null, posts: posts.length, latest_post: posts.map(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.published)</span>.sort().pop() || prior.latest_post || null };</span>
+    } catch (error) {
+      const failures = <span class="cstat-no" title="statement not covered" >Number(prior.failures || 0) + 1;</span>
+<span class="cstat-no" title="statement not covered" >      src.accounts[key] = { ...prior, name: a.name, failures, last_error: errorText(error), last_error_at: new Date().toISOString() };</span>
+<span class="cstat-no" title="statement not covered" >      errors.push(`${a.name || key}: ${errorText(error)}`);</span>
+<span class="cstat-no" title="statement not covered" >      if (failures === FAILURE_LIMIT) <span class="cstat-no" title="statement not covered" >console.warn(`[social] parking ${platform} ${key} after ${failures} consecutive failures`);</span></span>
+    }
+  }));
+  // Accounts removed from the config drop out of the health view.
+  const keys = <span class="cstat-no" title="statement not covered" >new Set(list.map(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; <span class="cstat-no" title="statement not covered" >accountKey(platform, a))</span>);</span>
+<span class="cstat-no" title="statement not covered" >  Object.keys(src.accounts).forEach(<span class="fstat-no" title="function not covered" >(k</span>) =&gt; { <span class="cstat-no" title="statement not covered" >if (!keys.has(k)) <span class="cstat-no" title="statement not covered" >delete src.accounts[k]; </span></span>});</span>
+&nbsp;
+  const now = <span class="cstat-no" title="statement not covered" >new Date().toISOString();</span>
+<span class="cstat-no" title="statement not covered" >  if (due.length &amp;&amp; errors.length === due.length) {</span>
+<span class="cstat-no" title="statement not covered" >    src.last_error = errors[0];</span>
+<span class="cstat-no" title="statement not covered" >    src.last_error_at = now;</span>
+<span class="cstat-no" title="statement not covered" >    src.failures = Number(src.failures || 0) + 1;</span>
+  } else {
+<span class="cstat-no" title="statement not covered" >    src.last_success = now;</span>
+<span class="cstat-no" title="statement not covered" >    src.failures = 0;</span>
+<span class="cstat-no" title="statement not covered" >    if (errors.length) { <span class="cstat-no" title="statement not covered" >src.last_error = errors.join('; '); <span class="cstat-no" title="statement not covered" ></span>src.last_error_at = now; </span>}</span>
+  }
+<span class="cstat-no" title="statement not covered" >  src.fetched = fetched;</span>
+<span class="cstat-no" title="statement not covered" >  src.new_posts = added;</span>
+&nbsp;
+  // Retention: per-platform age, then a global cap (oldest first).
+<span class="cstat-no" title="statement not covered" >  Object.entries(state.posts).forEach(<span class="fstat-no" title="function not covered" >([</span>id, p]) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (Date.parse(p.published) &lt; Date.now() - (KEEP_DAYS[p.platform] || 7) * 864e5) <span class="cstat-no" title="statement not covered" >delete state.posts[id];</span></span>
+  });
+  const ids = <span class="cstat-no" title="statement not covered" >Object.keys(state.posts);</span>
+<span class="cstat-no" title="statement not covered" >  if (ids.length &gt; MAX_POSTS) <span class="cstat-no" title="statement not covered" >ids.sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >state.posts[a].published.localeCompare(state.posts[b].published))</span>.slice(0, ids.length - MAX_POSTS).forEach(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >delete state.posts[id])</span>;</span></span>
+<span class="cstat-no" title="statement not covered" >  state.updated_at = now;</span>
+<span class="cstat-no" title="statement not covered" >  await db.saveDataset(DATASET, state, { posts: Object.keys(state.posts).length });</span>
+<span class="cstat-no" title="statement not covered" >  console.log(`[social] ${platform}: ${due.length}/${enabled.length} accounts, ${fetched} posts fetched, ${added} new${errors.length ? `, ${errors.length} failed` : ''}`);</span>
+<span class="cstat-no" title="statement not covered" >  if (due.length &amp;&amp; errors.length === due.length) <span class="cstat-no" title="statement not covered" >throw new Error(`all ${platform} accounts failed: ${errors[0]}`);</span></span>
+<span class="cstat-no" title="statement not covered" >  return { accounts: due.length - errors.length, new_posts: added, error: errors.length ? errors.join('; ') : undefined };</span>
+};
+&nbsp;
+// Jobs run one at a time against the shared in-memory store.
+let chain = Promise.resolve();
+const serial = <span class="fstat-no" title="function not covered" >(f</span>n) =&gt; { const run = <span class="cstat-no" title="statement not covered" >chain.then(fn, fn);</span> <span class="cstat-no" title="statement not covered" >chain = run.catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; {}); <span class="cstat-no" title="statement not covered" ></span>return run; </span>};
+&nbsp;
+const runBluesky = <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >serial(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >runPlatform('bluesky', accounts.bluesky, fetchBluesky))</span>;</span>
+const runYoutube = <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >serial(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >runPlatform('youtube', accounts.youtube, fetchYoutube))</span>;</span>
+const runReddit = <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (!redditConfigured()) <span class="cstat-no" title="statement not covered" >return Promise.resolve({ skipped: 'REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET not set' });</span></span>
+<span class="cstat-no" title="statement not covered" >  return serial(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >runPlatform('reddit', accounts.reddit, fetchReddit))</span>;</span>
+};
+&nbsp;
+// --- Read API ------------------------------------------------------------------------
+&nbsp;
+const isBreaking = (p, now = <span class="branch-0 cbranch-no" title="branch not covered" >Date.now())</span> =&gt; p.insider &amp;&amp; now - Date.parse(p.published) &lt;= BREAKING_MS &amp;&amp; (BREAKING_RE.test(p.text) || /\bIR\b/.test(p.text));
+&nbsp;
+const list = <span class="fstat-no" title="function not covered" >as</span>ync ({ platform = <span class="branch-0 cbranch-no" title="branch not covered" >null,</span> account = <span class="branch-0 cbranch-no" title="branch not covered" >null,</span> team = <span class="branch-0 cbranch-no" title="branch not covered" >null,</span> limit = <span class="branch-0 cbranch-no" title="branch not covered" >50 </span>} = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> =&gt; {
+  const state = <span class="cstat-no" title="statement not covered" >await load();</span>
+  const platforms = <span class="cstat-no" title="statement not covered" >platform ? String(platform).toLowerCase().split(',') : null;</span>
+  const teams = <span class="cstat-no" title="statement not covered" >team ? String(team).toUpperCase().split(',').filter(Boolean) : null;</span>
+  const now = <span class="cstat-no" title="statement not covered" >Date.now();</span>
+  const posts = <span class="cstat-no" title="statement not covered" >Object.values(state.posts)</span>
+    .filter(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >(!platforms || platforms.includes(p.platform)) &amp;&amp; (!account || p.account === account) &amp;&amp; (!teams || p.teams.some(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >teams.includes(t))</span>))</span>
+    .sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >b.published.localeCompare(a.published))</span>
+    .slice(0, limit)
+    .map(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; (<span class="cstat-no" title="statement not covered" >{ ...p, breaking: isBreaking(p, now) })</span>);
+<span class="cstat-no" title="statement not covered" >  return { posts, accounts: accountList(), platforms: platformList(), last_updated: state.updated_at || null };</span>
+};
+&nbsp;
+const accountList = <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >[</span>
+  ...accounts.bluesky.filter(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; <span class="cstat-no" title="statement not covered" >a.enabled !== false)</span>.map(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; (<span class="cstat-no" title="statement not covered" >{ platform: 'bluesky', account: a.handle, name: a.name, team: a.team || null })</span>),
+  ...accounts.youtube.map(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; (<span class="cstat-no" title="statement not covered" >{ platform: 'youtube', account: a.channel_id, name: a.name, team: a.team || null })</span>),
+  ...(redditConfigured() ? accounts.reddit.map(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; (<span class="cstat-no" title="statement not covered" >{ platform: 'reddit', account: `r/${a.subreddit}`, name: `r/${a.subreddit}`, team: null })</span>) : [])
+];
+&nbsp;
+const platformList = <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >[</span>
+  { platform: 'bluesky', label: 'Bluesky', enabled: true },
+  { platform: 'youtube', label: 'YouTube', enabled: true },
+  { platform: 'reddit', label: 'Reddit', enabled: redditConfigured() }
+];
+&nbsp;
+const status = <span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {
+  const state = <span class="cstat-no" title="statement not covered" >await load();</span>
+  const count = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(p</span>latform) =&gt; <span class="cstat-no" title="statement not covered" >Object.values(state.posts).filter(<span class="fstat-no" title="function not covered" >(p</span>) =&gt; <span class="cstat-no" title="statement not covered" >p.platform === platform)</span>.length;</span></span>
+  const describe = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(p</span>latform, list) =&gt; {</span>
+    const src = <span class="cstat-no" title="statement not covered" >state.sources[platform] || { accounts: {} };</span>
+    const health = <span class="cstat-no" title="statement not covered" >list.map(<span class="fstat-no" title="function not covered" >(a</span>) =&gt; {</span>
+      const key = <span class="cstat-no" title="statement not covered" >accountKey(platform, a);</span>
+      const h = <span class="cstat-no" title="statement not covered" >src.accounts?.[key] || {};</span>
+      const parked = <span class="cstat-no" title="statement not covered" >Number(h.failures || 0) &gt;= FAILURE_LIMIT;</span>
+<span class="cstat-no" title="statement not covered" >      return { account: key, name: a.name, state: a.enabled === false ? 'disabled' : parked ? 'parked' : h.last_success ? 'ok' : 'pending', failures: h.failures || 0, last_success: h.last_success || null, latest_post: h.latest_post || null, last_error: h.last_error || null, last_error_at: h.last_error_at || null };</span>
+    });
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      last_run: src.last_run || null,
+      last_success: src.last_success || null,
+      last_error: src.last_error || null,
+      last_error_at: src.last_error_at || null,
+      failures: src.failures || 0,
+      active_accounts: health.filter(<span class="fstat-no" title="function not covered" >(h</span>) =&gt; <span class="cstat-no" title="statement not covered" >h.state === 'ok')</span>.length,
+      configured_accounts: list.length,
+      posts: count(platform),
+      accounts: health
+    };
+  };
+<span class="cstat-no" title="statement not covered" >  return {</span>
+    bluesky: describe('bluesky', accounts.bluesky),
+    youtube: describe('youtube', accounts.youtube),
+    reddit: { enabled: redditConfigured(), ...(redditConfigured() ? describe('reddit', accounts.reddit) : { note: 'Set REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET to enable.' }) },
+    mastodon: { enabled: false, note: 'Skipped: only unofficial X-mirror bots post NFL content on Mastodon.' },
+    x: { enabled: false, note: 'No free X/Twitter API.' },
+    posts: Object.keys(state.posts).length,
+    last_updated: state.updated_at || null
+  };
+};
+&nbsp;
+module.exports = { runBluesky, runYoutube, runReddit, list, status, redditConfigured, fetchBluesky, fetchYoutube, fetchReddit, blueskySegments, isBreaking, DATASET };
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-10-09T21:28:29.860Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

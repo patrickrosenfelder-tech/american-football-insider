@@ -451,3 +451,7 @@ a.tag:hover { border-color: #b9c4d8; }
   .social-body.open { display: block; }
   .social-widget-head .section-title { display: none; }
 }
+
+th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+th.sortable:hover, th.sortable.active { color: var(--accent); }
+.filters input[type="search"] { margin-left: 6px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
