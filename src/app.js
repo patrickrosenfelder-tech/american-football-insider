@@ -84,6 +84,20 @@ if (fs.existsSync(CLIENT_DIST)) {
 }
 
 if (require.main === module) {
+  // Seed v2 predictions from local artifact if DB is empty
+  const {existsSync,readFileSync}=require('fs');
+  const predictionsPath=__dirname+'/scripts/model/predictions_current.json';
+  if(existsSync(predictionsPath))try {
+    const a=JSON.parse(readFileSync(predictionsPath,'utf-8'));
+    if(a&&a.predictions&&a.predictions.length)
+      db.loadDataset('model_predictions_current').catch(()=>null).then(async(existing)=>{
+        if(!existing||!existing.data){
+          await db.saveDataset('model_predictions_current',a,{model_version:a.model_version,generated_at:a.generated_at,games:a.predictions.length});
+          console.log('[predictions] seeded',a.predictions.length,'predictions');
+        }
+      }).catch(e=>console.error('[predictions] seed error',e.message));
+  }catch(e){console.error('[predictions] seed parse error',e.message)}
+
   app.listen(PORT, () => {
     console.log(`American Football Insider running on port ${PORT}`);
     refresh.loadStatus()
