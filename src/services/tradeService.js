@@ -14,7 +14,7 @@ const news = require('./newsService');
 const { currentSeason } = require('./rosterService');
 const profiles = require('./playerProfileService');
 
-const TRADES_KEY = (season) => `trades_v2_${season}`;
+const TRADES_KEY = (season) => `trades_v3_${season}`;
 const RUMORS_KEY = 'trade_rumors_v1';
 const TX_URL = `${ESPN_SITE}/transactions`;
 const UA = 'Mozilla/5.0 (compatible; American-Football-Insider/1.0; +https://american-football-insider.fly.dev)';
@@ -27,6 +27,8 @@ const DEADLINES = {
 };
 
 const dateOnly = (d) => String(d || '').slice(0, 10);
+// nflverse abbreviations -> ESPN's, so both sources de-duplicate and filter the same way.
+const espnAbbr = (t) => ({ LA: 'LAR', WAS: 'WSH' }[t] || t);
 const days = (a, b) => Math.abs(Date.parse(a) - Date.parse(b)) / 864e5;
 const ROUNDS = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7 };
 const ORD = ['', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th'];
@@ -149,7 +151,7 @@ const nflverseRecords = async (season) => {
     if (!asset) return;
     // Row semantics: `gave` sent the asset to `received`.
     const rec = byId.get(r.trade_id) || { id: `nfl-${r.trade_id}`, date: r.trade_date, rows: [] };
-    rec.rows.push({ gave: r.gave, received: r.received, asset });
+    rec.rows.push({ gave: espnAbbr(r.gave), received: espnAbbr(r.received), asset });
     byId.set(r.trade_id, rec);
   }, { columns: ['trade_id', 'season', 'trade_date', 'gave', 'received', 'pick_season', 'pick_round', 'pick_number', 'conditional', 'pfr_id', 'pfr_name'] });
   return [...byId.values()];

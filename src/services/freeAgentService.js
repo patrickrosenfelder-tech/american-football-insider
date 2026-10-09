@@ -28,6 +28,8 @@ const FORMULA = [
 const TARGET = { QB: 2, RB: 3, WR: 6, TE: 3, OT: 4, IOL: 5, EDGE: 5, IDL: 4, LB: 4, CB: 5, S: 4, K: 1, P: 1, LS: 1 };
 
 const dateOnly = (d) => String(d || '').slice(0, 10);
+// nflverse abbreviations -> ESPN's (used everywhere else on the site).
+const espnAbbr = (t) => ({ LA: 'LAR', WAS: 'WSH' }[t] || t);
 const POS_RE = /^(QB|RB|HB|FB|WR|TE|OT|T|G|OG|C|OL|IOL|DE|DT|NT|DL|EDGE|LB|ILB|OLB|MLB|CB|DB|S|FS|SS|K|PK|P|LS)\s+(.+)$/;
 // "Released DB X from the practice squad with an injury settlement" -> names ["X"], flags.
 const QUALIFIER = /\s+(?:from|off|with|to|after|due|on|following|as|in|at)\b.*$/i;
@@ -82,7 +84,7 @@ const teamNeeds = (roster, prof) => {
   roster.forEach((r) => {
     const g = profiles.groupOf(r.depth_chart_position) || profiles.groupOf(r.position);
     if (!g) return;
-    const t = (needs[r.team] ||= {});
+    const t = (needs[espnAbbr(r.team)] ||= {});
     const n = (t[g] ||= { healthy: 0, injured: 0, injured_starters: 0 });
     if (r.status === 'ACT') n.healthy += 1;
     else if (['RES', 'INA', 'PUP', 'NON'].includes(r.status)) {
@@ -215,7 +217,7 @@ async function buildFreeAgents(season) {
 
   const row = (c) => {
     const p = c.p;
-    const last = c.release?.team || p.seasons[2026]?.last_team || p.seasons[2025]?.last_team || p.latest_team || null;
+    const last = espnAbbr(c.release?.team || p.seasons[2026]?.last_team || p.seasons[2025]?.last_team || p.latest_team || null);
     return {
       id: p.espn_id, name: p.name, position: c.espn.position || p.position, group: p.group, age: c.espn.age ?? c.age,
       headshot: c.espn.headshot || p.headshot, last_team: last,
@@ -262,7 +264,9 @@ async function getFreeAgents() {
   let row = await db.loadDataset(FA_KEY(season));
   // Rebuild when missing or still in the pre-ranking shape (no practice_squad list).
   if (!row || !Array.isArray(row.data?.practice_squad)) { await refreshFreeAgents(season); row = await db.loadDataset(FA_KEY(season)); }
-  return { ...(row?.data || { season, agents: [], practice_squad: [], recently_signed: [] }), last_updated: row?.updated_at || null, formula: FORMULA };
+  const fix = (a) => ({ ...a, last_team: espnAbbr(a.last_team), team_fits: (a.team_fits || []).map((f) => ({ ...f, team: espnAbbr(f.team) })) });
+  const data = row?.data || { season, agents: [], practice_squad: [], recently_signed: [] };
+  return { ...data, agents: (data.agents || []).map(fix), practice_squad: (data.practice_squad || []).map(fix), last_updated: row?.updated_at || null, formula: FORMULA };
 }
 
 module.exports = { refreshFreeAgents, getFreeAgents, playersIn, scorePlayer };
