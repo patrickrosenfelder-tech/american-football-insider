@@ -52,7 +52,9 @@
           "win_probability": 0.164031,
           "home_margin": 2.936553
         }
-      ]
+      ],
+      "matchup_key": "PHI:JAX",
+      "matchup_key_rev": "JAX:PHI"
     },
     {
       "game_id": "2026_05_CHI_GB",
@@ -103,7 +105,9 @@
           "win_probability": 0.224166,
           "home_margin": 1.245346
         }
-      ]
+      ],
+      "matchup_key": "CHI:GB",
+      "matchup_key_rev": "GB:CHI"
     },
     {
       "game_id": "2026_05_CIN_MIA",
@@ -154,7 +158,9 @@
           "win_probability": 0.221514,
           "home_margin": 2.140147
         }
-      ]
+      ],
+      "matchup_key": "CIN:MIA",
+      "matchup_key_rev": "MIA:CIN"
     },
     {
       "game_id": "2026_05_CLE_NYJ",
@@ -205,7 +211,9 @@
           "win_probability": 0.005191,
           "home_margin": -0.705718
         }
-      ]
+      ],
+      "matchup_key": "CLE:NYJ",
+      "matchup_key_rev": "NYJ:CLE"
     },
     {
       "game_id": "2026_05_HOU_TEN",
@@ -256,7 +264,9 @@
           "win_probability": 0.617878,
           "home_margin": 3.836821
         }
-      ]
+      ],
+      "matchup_key": "HOU:TEN",
+      "matchup_key_rev": "TEN:HOU"
     },
     {
       "game_id": "2026_05_IND_PIT",
@@ -307,7 +317,9 @@
           "win_probability": -0.060019,
           "home_margin": -1.074492
         }
-      ]
+      ],
+      "matchup_key": "IND:PIT",
+      "matchup_key_rev": "PIT:IND"
     },
     {
       "game_id": "2026_05_LV_NE",
@@ -358,7 +370,9 @@
           "win_probability": -0.084137,
           "home_margin": -0.81289
         }
-      ]
+      ],
+      "matchup_key": "LV:NE",
+      "matchup_key_rev": "NE:LV"
     },
     {
       "game_id": "2026_05_MIN_NO",
@@ -409,7 +423,9 @@
           "win_probability": 0.139518,
           "home_margin": 0.775087
         }
-      ]
+      ],
+      "matchup_key": "MIN:NO",
+      "matchup_key_rev": "NO:MIN"
     },
     {
       "game_id": "2026_05_NYG_WAS",
@@ -460,7 +476,9 @@
           "win_probability": -0.132714,
           "home_margin": -1.282213
         }
-      ]
+      ],
+      "matchup_key": "NYG:WAS",
+      "matchup_key_rev": "WAS:NYG"
     },
     {
       "game_id": "2026_05_DEN_LAC",
@@ -511,7 +529,9 @@
           "win_probability": -0.168568,
           "home_margin": -1.628612
         }
-      ]
+      ],
+      "matchup_key": "DEN:LAC",
+      "matchup_key_rev": "LAC:DEN"
     },
     {
       "game_id": "2026_05_DET_ARI",
@@ -562,7 +582,9 @@
           "win_probability": 0.145457,
           "home_margin": 0.903243
         }
-      ]
+      ],
+      "matchup_key": "DET:ARI",
+      "matchup_key_rev": "ARI:DET"
     },
     {
       "game_id": "2026_05_SF_SEA",
@@ -613,7 +635,9 @@
           "win_probability": -0.215908,
           "home_margin": -1.199467
         }
-      ]
+      ],
+      "matchup_key": "SF:SEA",
+      "matchup_key_rev": "SEA:SF"
     },
     {
       "game_id": "2026_05_BAL_ATL",
@@ -664,7 +688,9 @@
           "win_probability": 0.113545,
           "home_margin": 1.097012
         }
-      ]
+      ],
+      "matchup_key": "BAL:ATL",
+      "matchup_key_rev": "ATL:BAL"
     },
     {
       "game_id": "2026_05_BUF_LA",
@@ -715,7 +741,9 @@
           "win_probability": -0.062484,
           "home_margin": -0.60369
         }
-      ]
+      ],
+      "matchup_key": "BUF:LAR",
+      "matchup_key_rev": "LAR:BUF"
     },
     {
       "game_id": "2026_06_SEA_DEN",
@@ -766,7 +794,9 @@
           "win_probability": 0.158451,
           "home_margin": 1.530868
         }
-      ]
+      ],
+      "matchup_key": "SEA:DEN",
+      "matchup_key_rev": "DEN:SEA"
     },
     {
       "game_id": "2026_06_HOU_JAX",
@@ -817,7 +847,9 @@
           "win_probability": 0.342571,
           "home_margin": 1.90314
         }
-      ]
+      ],
+      "matchup_key": "HOU:JAX",
+      "matchup_key_rev": "JAX:HOU"
     },
     {
       "game_id": "2026_06_BAL_CLE",
@@ -868,7 +900,9 @@
           "win_probability": 0.132182,
           "home_margin": 1.277069
         }
-      ]
+      ],
+      "matchup_key": "BAL:CLE",
+      "matchup_key_rev": "CLE:BAL"
     },
     {
       "game_id": "2026_06_CAR_PHI",
@@ -919,7 +953,9 @@
           "win_probability": 0.218147,
           "home_margin": 2.107622
         }
-      ]
+      ],
+      "matchup_key": "CAR:PHI",
+      "matchup_key_rev": "PHI:CAR"
     },
     {
       "game_id": "2026_06_CHI_ATL",
@@ -970,7 +1006,9 @@
           "win_probability": 0.098125,
           "home_margin": 0.948032
         }
-      ]
+      ],
+      "matchup_key": "CHI:ATL",
+      "matchup_key_rev": "ATL:CHI"
     },
     {
       "game_id": "2026_06_NO_NYG",
@@ -1021,7 +1059,9 @@
           "win_probability": 0.141176,
           "home_margin": 0.784296
         }
-      ]
+      ],
+      "matchup_key": "NO:NYG",
+      "matchup_key_rev": "NYG:NO"
     },
     {
       "game_id": "2026_06_NYJ_NE",
@@ -1072,7 +1112,9 @@
           "win_probability": 0.15926,
           "home_margin": 0.822082
         }
-      ]
+      ],
+      "matchup_key": "NYJ:NE",
+      "matchup_key_rev": "NE:NYJ"
     },
     {
       "game_id": "2026_06_PIT_TB",
@@ -1123,7 +1165,9 @@
           "win_probability": -0.080393,
           "home_margin": -0.499213
         }
-      ]
+      ],
+      "matchup_key": "PIT:TB",
+      "matchup_key_rev": "TB:PIT"
     },
     {
       "game_id": "2026_06_TEN_IND",
@@ -1174,7 +1218,9 @@
           "win_probability": 0.241157,
           "home_margin": 1.244827
         }
-      ]
+      ],
+      "matchup_key": "TEN:IND",
+      "matchup_key_rev": "IND:TEN"
     },
     {
       "game_id": "2026_06_ARI_LA",
@@ -1225,7 +1271,9 @@
           "win_probability": 0.142099,
           "home_margin": 1.372884
         }
-      ]
+      ],
+      "matchup_key": "ARI:LAR",
+      "matchup_key_rev": "LAR:ARI"
     },
     {
       "game_id": "2026_06_BUF_LV",
@@ -1276,7 +1324,9 @@
           "win_probability": 0.122234,
           "home_margin": 1.180956
         }
-      ]
+      ],
+      "matchup_key": "BUF:LV",
+      "matchup_key_rev": "LV:BUF"
     },
     {
       "game_id": "2026_06_LAC_KC",
@@ -1327,7 +1377,9 @@
           "win_probability": 0.102318,
           "home_margin": 0.635362
         }
-      ]
+      ],
+      "matchup_key": "LAC:KC",
+      "matchup_key_rev": "KC:LAC"
     },
     {
       "game_id": "2026_06_DAL_GB",
@@ -1378,7 +1430,9 @@
           "win_probability": 0.362983,
           "home_margin": 2.254006
         }
-      ]
+      ],
+      "matchup_key": "DAL:GB",
+      "matchup_key_rev": "GB:DAL"
     },
     {
       "game_id": "2026_06_WAS_SF",
@@ -1429,7 +1483,9 @@
           "win_probability": 0.347132,
           "home_margin": 2.155578
         }
-      ]
+      ],
+      "matchup_key": "WAS:SF",
+      "matchup_key_rev": "SF:WAS"
     },
     {
       "game_id": "2026_07_NE_CHI",
@@ -1480,7 +1536,9 @@
           "win_probability": -0.194238,
           "home_margin": -1.002638
         }
-      ]
+      ],
+      "matchup_key": "NE:CHI",
+      "matchup_key_rev": "CHI:NE"
     },
     {
       "game_id": "2026_07_PIT_NO",
@@ -1531,7 +1589,9 @@
           "win_probability": -0.246789,
           "home_margin": -1.273898
         }
-      ]
+      ],
+      "matchup_key": "PIT:NO",
+      "matchup_key_rev": "NO:PIT"
     },
     {
       "game_id": "2026_07_CIN_BAL",
@@ -1582,7 +1642,9 @@
           "win_probability": -0.251397,
           "home_margin": -1.39663
         }
-      ]
+      ],
+      "matchup_key": "CIN:BAL",
+      "matchup_key_rev": "BAL:CIN"
     },
     {
       "game_id": "2026_07_CLE_TEN",
@@ -1633,7 +1695,9 @@
           "win_probability": 0.182007,
           "home_margin": 1.130203
         }
-      ]
+      ],
+      "matchup_key": "CLE:TEN",
+      "matchup_key_rev": "TEN:CLE"
     },
     {
       "game_id": "2026_07_IND_MIN",
@@ -1684,7 +1748,9 @@
           "win_probability": -0.273704,
           "home_margin": -1.412833
         }
-      ]
+      ],
+      "matchup_key": "IND:MIN",
+      "matchup_key_rev": "MIN:IND"
     },
     {
       "game_id": "2026_07_MIA_NYJ",
@@ -1735,7 +1801,9 @@
           "win_probability": -0.162352,
           "home_margin": -0.838043
         }
-      ]
+      ],
+      "matchup_key": "MIA:NYJ",
+      "matchup_key_rev": "NYJ:MIA"
     },
     {
       "game_id": "2026_07_NYG_HOU",
@@ -1786,7 +1854,9 @@
           "win_probability": -0.351741,
           "home_margin": -2.184196
         }
-      ]
+      ],
+      "matchup_key": "NYG:HOU",
+      "matchup_key_rev": "HOU:NYG"
     },
     {
       "game_id": "2026_07_SF_ATL",
@@ -1837,7 +1907,9 @@
           "win_probability": -0.193113,
           "home_margin": -0.996829
         }
-      ]
+      ],
+      "matchup_key": "SF:ATL",
+      "matchup_key_rev": "ATL:SF"
     },
     {
       "game_id": "2026_07_TB_CAR",
@@ -1888,7 +1960,9 @@
           "win_probability": -0.184506,
           "home_margin": -1.782599
         }
-      ]
+      ],
+      "matchup_key": "TB:CAR",
+      "matchup_key_rev": "CAR:TB"
     },
     {
       "game_id": "2026_07_DEN_ARI",
@@ -1939,7 +2013,9 @@
           "win_probability": -0.310758,
           "home_margin": -3.00238
         }
-      ]
+      ],
+      "matchup_key": "DEN:ARI",
+      "matchup_key_rev": "ARI:DEN"
     },
     {
       "game_id": "2026_07_GB_DET",
@@ -1990,7 +2066,9 @@
           "win_probability": 0.091573,
           "home_margin": 1.639369
         }
-      ]
+      ],
+      "matchup_key": "GB:DET",
+      "matchup_key_rev": "DET:GB"
     },
     {
       "game_id": "2026_07_LA_LV",
@@ -2041,7 +2119,9 @@
           "win_probability": 0.184718,
           "home_margin": 1.784647
         }
-      ]
+      ],
+      "matchup_key": "LAR:LV",
+      "matchup_key_rev": "LV:LAR"
     },
     {
       "game_id": "2026_07_KC_SEA",
@@ -2092,7 +2172,9 @@
           "win_probability": -0.031179,
           "home_margin": -0.558185
         }
-      ]
+      ],
+      "matchup_key": "KC:SEA",
+      "matchup_key_rev": "SEA:KC"
     },
     {
       "game_id": "2026_07_DAL_PHI",
@@ -2143,7 +2225,9 @@
           "win_probability": 0.270937,
           "home_margin": 2.617647
         }
-      ]
+      ],
+      "matchup_key": "DAL:PHI",
+      "matchup_key_rev": "PHI:DAL"
     },
     {
       "game_id": "2026_08_CAR_GB",
@@ -2194,7 +2278,9 @@
           "win_probability": -0.109591,
           "home_margin": -1.961947
         }
-      ]
+      ],
+      "matchup_key": "CAR:GB",
+      "matchup_key_rev": "GB:CAR"
     },
     {
       "game_id": "2026_08_ARI_DAL",
@@ -2245,7 +2331,9 @@
           "win_probability": -0.061878,
           "home_margin": -1.107771
         }
-      ]
+      ],
+      "matchup_key": "ARI:DAL",
+      "matchup_key_rev": "DAL:ARI"
     },
     {
       "game_id": "2026_08_ATL_TB",
@@ -2296,7 +2384,9 @@
           "win_probability": 0.165519,
           "home_margin": 0.854394
         }
-      ]
+      ],
+      "matchup_key": "ATL:TB",
+      "matchup_key_rev": "TB:ATL"
     },
     {
       "game_id": "2026_08_BAL_BUF",
@@ -2347,7 +2437,9 @@
           "win_probability": -0.087937,
           "home_margin": -1.574289
         }
-      ]
+      ],
+      "matchup_key": "BAL:BUF",
+      "matchup_key_rev": "BUF:BAL"
     },
     {
       "game_id": "2026_08_CLE_PIT",
@@ -2398,7 +2490,9 @@
           "win_probability": 0.183277,
           "home_margin": 1.138089
         }
-      ]
+      ],
+      "matchup_key": "CLE:PIT",
+      "matchup_key_rev": "PIT:CLE"
     },
     {
       "game_id": "2026_08_IND_JAX",
@@ -2449,7 +2543,9 @@
           "win_probability": 0.187208,
           "home_margin": 2.643348
         }
-      ]
+      ],
+      "matchup_key": "IND:JAX",
+      "matchup_key_rev": "JAX:IND"
     },
     {
       "game_id": "2026_08_LV_NYJ",
@@ -2500,7 +2596,9 @@
           "win_probability": -0.020049,
           "home_margin": -0.358931
         }
-      ]
+      ],
+      "matchup_key": "LV:NYJ",
+      "matchup_key_rev": "NYJ:LV"
     },
     {
       "game_id": "2026_08_MIN_DET",
@@ -2551,7 +2649,9 @@
           "win_probability": -0.28378,
           "home_margin": -1.762184
         }
-      ]
+      ],
+      "matchup_key": "MIN:DET",
+      "matchup_key_rev": "DET:MIN"
     },
     {
       "game_id": "2026_08_TEN_CIN",
@@ -2602,7 +2702,9 @@
           "win_probability": -0.21313,
           "home_margin": -2.059146
         }
-      ]
+      ],
+      "matchup_key": "TEN:CIN",
+      "matchup_key_rev": "CIN:TEN"
     },
     {
       "game_id": "2026_08_LAC_LA",
@@ -2653,7 +2755,9 @@
           "win_probability": -0.177426,
           "home_margin": -0.985686
         }
-      ]
+      ],
+      "matchup_key": "LAC:LAR",
+      "matchup_key_rev": "LAR:LAC"
     },
     {
       "game_id": "2026_08_KC_DEN",
@@ -2704,7 +2808,9 @@
           "win_probability": 0.119021,
           "home_margin": 1.149915
         }
-      ]
+      ],
+      "matchup_key": "KC:DEN",
+      "matchup_key_rev": "DEN:KC"
     },
     {
       "game_id": "2026_08_NE_MIA",
@@ -2755,7 +2861,9 @@
           "win_probability": 0.026725,
           "home_margin": 0.47845
         }
-      ]
+      ],
+      "matchup_key": "NE:MIA",
+      "matchup_key_rev": "MIA:NE"
     },
     {
       "game_id": "2026_08_PHI_WAS",
@@ -2806,7 +2914,9 @@
           "win_probability": -0.204457,
           "home_margin": -1.975349
         }
-      ]
+      ],
+      "matchup_key": "PHI:WAS",
+      "matchup_key_rev": "WAS:PHI"
     },
     {
       "game_id": "2026_08_CHI_SEA",
@@ -2857,7 +2967,9 @@
           "win_probability": 0.104118,
           "home_margin": 0.646538
         }
-      ]
+      ],
+      "matchup_key": "CHI:SEA",
+      "matchup_key_rev": "SEA:CHI"
     },
     {
       "game_id": "2026_09_JAX_BAL",
@@ -2908,7 +3020,9 @@
           "win_probability": 0.180584,
           "home_margin": 1.744705
         }
-      ]
+      ],
+      "matchup_key": "JAX:BAL",
+      "matchup_key_rev": "BAL:JAX"
     },
     {
       "game_id": "2026_09_CIN_ATL",
@@ -2959,7 +3073,9 @@
           "win_probability": 0.235833,
           "home_margin": 2.278497
         }
-      ]
+      ],
+      "matchup_key": "CIN:ATL",
+      "matchup_key_rev": "ATL:CIN"
     },
     {
       "game_id": "2026_09_CLE_NO",
@@ -3010,7 +3126,9 @@
           "win_probability": -0.054025,
           "home_margin": -0.521964
         }
-      ]
+      ],
+      "matchup_key": "CLE:NO",
+      "matchup_key_rev": "NO:CLE"
     },
     {
       "game_id": "2026_09_DAL_IND",
@@ -3061,7 +3179,9 @@
           "win_probability": 0.412246,
           "home_margin": 2.127969
         }
-      ]
+      ],
+      "matchup_key": "DAL:IND",
+      "matchup_key_rev": "IND:DAL"
     },
     {
       "game_id": "2026_09_DEN_CAR",
@@ -3112,7 +3232,9 @@
           "win_probability": 0.112454,
           "home_margin": 2.013193
         }
-      ]
+      ],
+      "matchup_key": "DEN:CAR",
+      "matchup_key_rev": "CAR:DEN"
     },
     {
       "game_id": "2026_09_DET_MIA",
@@ -3163,7 +3285,9 @@
           "win_probability": 0.187056,
           "home_margin": 1.807237
         }
-      ]
+      ],
+      "matchup_key": "DET:MIA",
+      "matchup_key_rev": "MIA:DET"
     },
     {
       "game_id": "2026_09_LA_WAS",
@@ -3214,7 +3338,9 @@
           "win_probability": 0.035632,
           "home_margin": 0.637903
         }
-      ]
+      ],
+      "matchup_key": "LAR:WAS",
+      "matchup_key_rev": "WAS:LAR"
     },
     {
       "game_id": "2026_09_NYG_PHI",
@@ -3265,7 +3391,9 @@
           "win_probability": 0.16174,
           "home_margin": 0.834883
         }
-      ]
+      ],
+      "matchup_key": "NYG:PHI",
+      "matchup_key_rev": "PHI:NYG"
     },
     {
       "game_id": "2026_09_NYJ_KC",
@@ -3316,7 +3444,9 @@
           "win_probability": -0.109207,
           "home_margin": -1.055103
         }
-      ]
+      ],
+      "matchup_key": "NYJ:KC",
+      "matchup_key_rev": "KC:NYJ"
     },
     {
       "game_id": "2026_09_HOU_LAC",
@@ -3367,7 +3497,9 @@
           "win_probability": 0.676137,
           "home_margin": 3.756258
         }
-      ]
+      ],
+      "matchup_key": "HOU:LAC",
+      "matchup_key_rev": "LAC:HOU"
     },
     {
       "game_id": "2026_09_LV_SF",
@@ -3418,7 +3550,9 @@
           "win_probability": -0.075476,
           "home_margin": -1.351196
         }
-      ]
+      ],
+      "matchup_key": "LV:SF",
+      "matchup_key_rev": "SF:LV"
     },
     {
       "game_id": "2026_09_ARI_SEA",
@@ -3469,7 +3603,9 @@
           "win_probability": 0.152307,
           "home_margin": 1.471513
         }
-      ]
+      ],
+      "matchup_key": "ARI:SEA",
+      "matchup_key_rev": "SEA:ARI"
     },
     {
       "game_id": "2026_09_GB_NE",
@@ -3520,7 +3656,9 @@
           "win_probability": -0.038141,
           "home_margin": -0.682817
         }
-      ]
+      ],
+      "matchup_key": "GB:NE",
+      "matchup_key_rev": "NE:GB"
     },
     {
       "game_id": "2026_09_TB_CHI",
@@ -3571,7 +3709,9 @@
           "win_probability": -0.163779,
           "home_margin": -1.582348
         }
-      ]
+      ],
+      "matchup_key": "TB:CHI",
+      "matchup_key_rev": "CHI:TB"
     },
     {
       "game_id": "2026_09_BUF_MIN",
@@ -3622,7 +3762,9 @@
           "win_probability": -0.068148,
           "home_margin": -0.351772
         }
-      ]
+      ],
+      "matchup_key": "BUF:MIN",
+      "matchup_key_rev": "MIN:BUF"
     },
     {
       "game_id": "2026_10_WAS_NYG",
@@ -3673,7 +3815,9 @@
           "win_probability": 0.132714,
           "home_margin": 1.282213
         }
-      ]
+      ],
+      "matchup_key": "WAS:NYG",
+      "matchup_key_rev": "NYG:WAS"
     },
     {
       "game_id": "2026_10_NE_DET",
@@ -3724,7 +3868,9 @@
           "win_probability": -0.19887,
           "home_margin": -1.921378
         }
-      ]
+      ],
+      "matchup_key": "NE:DET",
+      "matchup_key_rev": "DET:NE"
     },
     {
       "game_id": "2026_10_BUF_NYJ",
@@ -3775,7 +3921,9 @@
           "win_probability": 0.096362,
           "home_margin": 0.930995
         }
-      ]
+      ],
+      "matchup_key": "BUF:NYJ",
+      "matchup_key_rev": "NYJ:BUF"
     },
     {
       "game_id": "2026_10_CAR_NO",
@@ -3826,7 +3974,9 @@
           "win_probability": -0.045601,
           "home_margin": -0.81636
         }
-      ]
+      ],
+      "matchup_key": "CAR:NO",
+      "matchup_key_rev": "NO:CAR"
     },
     {
       "game_id": "2026_10_HOU_CLE",
@@ -3877,7 +4027,9 @@
           "win_probability": 0.435864,
           "home_margin": 2.706574
         }
-      ]
+      ],
+      "matchup_key": "HOU:CLE",
+      "matchup_key_rev": "CLE:HOU"
     },
     {
       "game_id": "2026_10_JAX_TEN",
@@ -3928,7 +4080,9 @@
           "win_probability": 0.271425,
           "home_margin": 2.622366
         }
-      ]
+      ],
+      "matchup_key": "JAX:TEN",
+      "matchup_key_rev": "TEN:JAX"
     },
     {
       "game_id": "2026_10_KC_ATL",
@@ -3979,7 +4133,9 @@
           "win_probability": 0.053448,
           "home_margin": 0.516384
         }
-      ]
+      ],
+      "matchup_key": "KC:ATL",
+      "matchup_key_rev": "ATL:KC"
     },
     {
       "game_id": "2026_10_MIA_IND",
@@ -4030,7 +4186,9 @@
           "win_probability": 0.122503,
           "home_margin": 0.632346
         }
-      ]
+      ],
+      "matchup_key": "MIA:IND",
+      "matchup_key_rev": "IND:MIA"
     },
     {
       "game_id": "2026_10_MIN_GB",
@@ -4081,7 +4239,9 @@
           "win_probability": -0.050617,
           "home_margin": -0.906161
         }
-      ]
+      ],
+      "matchup_key": "MIN:GB",
+      "matchup_key_rev": "GB:MIN"
     },
     {
       "game_id": "2026_10_LA_ARI",
@@ -4132,7 +4292,9 @@
           "win_probability": -0.142099,
           "home_margin": -1.372884
         }
-      ]
+      ],
+      "matchup_key": "LAR:ARI",
+      "matchup_key_rev": "ARI:LAR"
     },
     {
       "game_id": "2026_10_SEA_LV",
@@ -4183,7 +4345,9 @@
           "win_probability": 0.17451,
           "home_margin": 1.686018
         }
-      ]
+      ],
+      "matchup_key": "SEA:LV",
+      "matchup_key_rev": "LV:SEA"
     },
     {
       "game_id": "2026_10_SF_DAL",
@@ -4234,7 +4398,9 @@
           "win_probability": -0.416203,
           "home_margin": -2.3122
         }
-      ]
+      ],
+      "matchup_key": "SF:DAL",
+      "matchup_key_rev": "DAL:SF"
     },
     {
       "game_id": "2026_10_PIT_CIN",
@@ -4285,7 +4451,9 @@
           "win_probability": -0.465969,
           "home_margin": -2.405281
         }
-      ]
+      ],
+      "matchup_key": "PIT:CIN",
+      "matchup_key_rev": "CIN:PIT"
     },
     {
       "game_id": "2026_10_LAC_BAL",
@@ -4336,7 +4504,9 @@
           "win_probability": -0.084972,
           "home_margin": -0.52765
         }
-      ]
+      ],
+      "matchup_key": "LAC:BAL",
+      "matchup_key_rev": "BAL:LAC"
     },
     {
       "game_id": "2026_11_IND_HOU",
@@ -4387,7 +4557,9 @@
           "win_probability": -0.524015,
           "home_margin": -3.253963
         }
-      ]
+      ],
+      "matchup_key": "IND:HOU",
+      "matchup_key_rev": "HOU:IND"
     },
     {
       "game_id": "2026_11_ARI_KC",
@@ -4438,7 +4610,9 @@
           "win_probability": 0.191738,
           "home_margin": 1.852466
         }
-      ]
+      ],
+      "matchup_key": "ARI:KC",
+      "matchup_key_rev": "KC:ARI"
     },
     {
       "game_id": "2026_11_BAL_CAR",
@@ -4489,7 +4663,9 @@
           "win_probability": -0.004231,
           "home_margin": 0.575158
         }
-      ]
+      ],
+      "matchup_key": "BAL:CAR",
+      "matchup_key_rev": "CAR:BAL"
     },
     {
       "game_id": "2026_11_JAX_NYG",
@@ -4540,7 +4716,9 @@
           "win_probability": 0.321682,
           "home_margin": 3.107919
         }
-      ]
+      ],
+      "matchup_key": "JAX:NYG",
+      "matchup_key_rev": "NYG:JAX"
     },
     {
       "game_id": "2026_11_MIA_BUF",
@@ -4591,7 +4769,9 @@
           "win_probability": -0.074158,
           "home_margin": -1.327602
         }
-      ]
+      ],
+      "matchup_key": "MIA:BUF",
+      "matchup_key_rev": "BUF:MIA"
     },
     {
       "game_id": "2026_11_NO_CHI",
@@ -4642,7 +4822,9 @@
           "win_probability": -0.062736,
           "home_margin": -0.606124
         }
-      ]
+      ],
+      "matchup_key": "NO:CHI",
+      "matchup_key_rev": "CHI:NO"
     },
     {
       "game_id": "2026_11_TB_DET",
@@ -4693,7 +4875,9 @@
           "win_probability": 0.160859,
           "home_margin": 2.271313
         }
-      ]
+      ],
+      "matchup_key": "TB:DET",
+      "matchup_key_rev": "DET:TB"
     },
     {
       "game_id": "2026_11_TEN_DAL",
@@ -4744,7 +4928,9 @@
           "win_probability": -0.362546,
           "home_margin": -2.014112
         }
-      ]
+      ],
+      "matchup_key": "TEN:DAL",
+      "matchup_key_rev": "DAL:TEN"
     },
     {
       "game_id": "2026_11_NYJ_LAC",
@@ -4795,7 +4981,9 @@
           "win_probability": -0.158754,
           "home_margin": -1.5338
         }
-      ]
+      ],
+      "matchup_key": "NYJ:LAC",
+      "matchup_key_rev": "LAC:NYJ"
     },
     {
       "game_id": "2026_11_LV_DEN",
@@ -4846,7 +5034,9 @@
           "win_probability": 0.075167,
           "home_margin": 0.466764
         }
-      ]
+      ],
+      "matchup_key": "LV:DEN",
+      "matchup_key_rev": "DEN:LV"
     },
     {
       "game_id": "2026_11_PIT_PHI",
@@ -4897,7 +5087,9 @@
           "win_probability": -0.136066,
           "home_margin": -0.844925
         }
-      ]
+      ],
+      "matchup_key": "PIT:PHI",
+      "matchup_key_rev": "PHI:PIT"
     },
     {
       "game_id": "2026_11_MIN_SF",
@@ -4948,7 +5140,9 @@
           "win_probability": 0.329502,
           "home_margin": 1.700853
         }
-      ]
+      ],
+      "matchup_key": "MIN:SF",
+      "matchup_key_rev": "SF:MIN"
     },
     {
       "game_id": "2026_11_CIN_WAS",
@@ -4999,7 +5193,9 @@
           "win_probability": 0.130672,
           "home_margin": 1.262486
         }
-      ]
+      ],
+      "matchup_key": "CIN:WAS",
+      "matchup_key_rev": "WAS:CIN"
     },
     {
       "game_id": "2026_12_GB_LA",
@@ -5050,7 +5246,9 @@
           "win_probability": -0.129109,
           "home_margin": -0.666448
         }
-      ]
+      ],
+      "matchup_key": "GB:LAR",
+      "matchup_key_rev": "LAR:GB"
     },
     {
       "game_id": "2026_12_CHI_DET",
@@ -5101,7 +5299,9 @@
           "win_probability": -0.223136,
           "home_margin": -1.3856
         }
-      ]
+      ],
+      "matchup_key": "CHI:DET",
+      "matchup_key_rev": "DET:CHI"
     },
     {
       "game_id": "2026_12_PHI_DAL",
@@ -5152,7 +5352,9 @@
           "win_probability": -0.446662,
           "home_margin": -2.305624
         }
-      ]
+      ],
+      "matchup_key": "PHI:DAL",
+      "matchup_key_rev": "DAL:PHI"
     },
     {
       "game_id": "2026_12_KC_BUF",
@@ -5203,7 +5405,9 @@
           "win_probability": -0.054356,
           "home_margin": -0.973099
         }
-      ]
+      ],
+      "matchup_key": "KC:BUF",
+      "matchup_key_rev": "BUF:KC"
     },
     {
       "game_id": "2026_12_DEN_PIT",
@@ -5254,7 +5458,9 @@
           "win_probability": 0.106914,
           "home_margin": 0.551881
         }
-      ]
+      ],
+      "matchup_key": "DEN:PIT",
+      "matchup_key_rev": "PIT:DEN"
     },
     {
       "game_id": "2026_12_ATL_MIN",
@@ -5305,7 +5511,9 @@
           "win_probability": -0.136389,
           "home_margin": -0.704024
         }
-      ]
+      ],
+      "matchup_key": "ATL:MIN",
+      "matchup_key_rev": "MIN:ATL"
     },
     {
       "game_id": "2026_12_BAL_HOU",
@@ -5356,7 +5564,9 @@
           "win_probability": -0.34303,
           "home_margin": -1.905694
         }
-      ]
+      ],
+      "matchup_key": "BAL:HOU",
+      "matchup_key_rev": "HOU:BAL"
     },
     {
       "game_id": "2026_12_LV_CLE",
@@ -5407,7 +5617,9 @@
           "win_probability": -0.293245,
           "home_margin": -1.513702
         }
-      ]
+      ],
+      "matchup_key": "LV:CLE",
+      "matchup_key_rev": "CLE:LV"
     },
     {
       "game_id": "2026_12_NO_CIN",
@@ -5458,7 +5670,9 @@
           "win_probability": -0.200445,
           "home_margin": -1.936589
         }
-      ]
+      ],
+      "matchup_key": "NO:CIN",
+      "matchup_key_rev": "CIN:NO"
     },
     {
       "game_id": "2026_12_NYG_IND",
@@ -5509,7 +5723,9 @@
           "win_probability": -0.039823,
           "home_margin": -0.712936
         }
-      ]
+      ],
+      "matchup_key": "NYG:IND",
+      "matchup_key_rev": "IND:NYG"
     },
     {
       "game_id": "2026_12_NYJ_MIA",
@@ -5560,7 +5776,9 @@
           "win_probability": 0.162352,
           "home_margin": 0.838043
         }
-      ]
+      ],
+      "matchup_key": "NYJ:MIA",
+      "matchup_key_rev": "MIA:NYJ"
     },
     {
       "game_id": "2026_12_TEN_JAX",
@@ -5611,7 +5829,9 @@
           "win_probability": -0.271425,
           "home_margin": -2.622366
         }
-      ]
+      ],
+      "matchup_key": "TEN:JAX",
+      "matchup_key_rev": "JAX:TEN"
     },
     {
       "game_id": "2026_12_SEA_SF",
@@ -5662,7 +5882,9 @@
           "win_probability": -0.075097,
           "home_margin": -1.344408
         }
-      ]
+      ],
+      "matchup_key": "SEA:SF",
+      "matchup_key_rev": "SF:SEA"
     },
     {
       "game_id": "2026_12_WAS_ARI",
@@ -5713,7 +5935,9 @@
           "win_probability": -0.140024,
           "home_margin": -1.35284
         }
-      ]
+      ],
+      "matchup_key": "WAS:ARI",
+      "matchup_key_rev": "ARI:WAS"
     },
     {
       "game_id": "2026_12_NE_LAC",
@@ -5764,7 +5988,9 @@
           "win_probability": -0.100489,
           "home_margin": -0.970873
         }
-      ]
+      ],
+      "matchup_key": "NE:LAC",
+      "matchup_key_rev": "LAC:NE"
     },
     {
       "game_id": "2026_12_CAR_TB",
@@ -5815,7 +6041,9 @@
           "win_probability": 0.354063,
           "home_margin": 2.198618
         }
-      ]
+      ],
+      "matchup_key": "CAR:TB",
+      "matchup_key_rev": "TB:CAR"
     },
     {
       "game_id": "2026_13_KC_LA",
@@ -5866,7 +6094,9 @@
           "win_probability": -0.124425,
           "home_margin": -0.691241
         }
-      ]
+      ],
+      "matchup_key": "KC:LAR",
+      "matchup_key_rev": "LAR:KC"
     },
     {
       "game_id": "2026_13_CIN_CLE",
@@ -5917,7 +6147,9 @@
           "win_probability": 0.25447,
           "home_margin": 2.458554
         }
-      ]
+      ],
+      "matchup_key": "CIN:CLE",
+      "matchup_key_rev": "CLE:CIN"
     },
     {
       "game_id": "2026_13_DET_ATL",
@@ -5968,7 +6200,9 @@
           "win_probability": 0.201376,
           "home_margin": 1.945587
         }
-      ]
+      ],
+      "matchup_key": "DET:ATL",
+      "matchup_key_rev": "ATL:DET"
     },
     {
       "game_id": "2026_13_GB_NO",
@@ -6019,7 +6253,9 @@
           "win_probability": -0.154867,
           "home_margin": -0.860356
         }
-      ]
+      ],
+      "matchup_key": "GB:NO",
+      "matchup_key_rev": "NO:GB"
     },
     {
       "game_id": "2026_13_JAX_CHI",
@@ -6070,7 +6306,9 @@
           "win_probability": 0.196004,
           "home_margin": 1.893685
         }
-      ]
+      ],
+      "matchup_key": "JAX:CHI",
+      "matchup_key_rev": "CHI:JAX"
     },
     {
       "game_id": "2026_13_LAC_TB",
@@ -6121,7 +6359,9 @@
           "win_probability": 0.168649,
           "home_margin": 1.629397
         }
-      ]
+      ],
+      "matchup_key": "LAC:TB",
+      "matchup_key_rev": "TB:LAC"
     },
     {
       "game_id": "2026_13_SF_NYG",
@@ -6172,7 +6412,9 @@
           "win_probability": 0.052909,
           "home_margin": 0.947205
         }
-      ]
+      ],
+      "matchup_key": "SF:NYG",
+      "matchup_key_rev": "NYG:SF"
     },
     {
       "game_id": "2026_13_WAS_TEN",
@@ -6223,7 +6465,9 @@
           "win_probability": 0.18637,
           "home_margin": 1.035375
         }
-      ]
+      ],
+      "matchup_key": "WAS:TEN",
+      "matchup_key_rev": "TEN:WAS"
     },
     {
       "game_id": "2026_13_MIA_DEN",
@@ -6274,7 +6518,9 @@
           "win_probability": 0.305256,
           "home_margin": 1.895539
         }
-      ]
+      ],
+      "matchup_key": "MIA:DEN",
+      "matchup_key_rev": "DEN:MIA"
     },
     {
       "game_id": "2026_13_PHI_ARI",
@@ -6325,7 +6571,9 @@
           "win_probability": 0.162592,
           "home_margin": 2.910789
         }
-      ]
+      ],
+      "matchup_key": "PHI:ARI",
+      "matchup_key_rev": "ARI:PHI"
     },
     {
       "game_id": "2026_13_BUF_NE",
@@ -6376,7 +6624,9 @@
           "win_probability": -0.03076,
           "home_margin": -0.550673
         }
-      ]
+      ],
+      "matchup_key": "BUF:NE",
+      "matchup_key_rev": "NE:BUF"
     },
     {
       "game_id": "2026_13_CAR_MIN",
@@ -6427,7 +6677,9 @@
           "win_probability": -0.085039,
           "home_margin": -1.522394
         }
-      ]
+      ],
+      "matchup_key": "CAR:MIN",
+      "matchup_key_rev": "MIN:CAR"
     },
     {
       "game_id": "2026_13_HOU_PIT",
@@ -6478,7 +6730,9 @@
           "win_probability": 0.561183,
           "home_margin": 3.117636
         }
-      ]
+      ],
+      "matchup_key": "HOU:PIT",
+      "matchup_key_rev": "PIT:HOU"
     },
     {
       "game_id": "2026_13_DAL_SEA",
@@ -6529,7 +6783,9 @@
           "win_probability": -0.120087,
           "home_margin": -2.149843
         }
-      ]
+      ],
+      "matchup_key": "DAL:SEA",
+      "matchup_key_rev": "SEA:DAL"
     },
     {
       "game_id": "2026_14_MIN_NE",
@@ -6580,7 +6836,9 @@
           "win_probability": -0.062694,
           "home_margin": -1.12237
         }
-      ]
+      ],
+      "matchup_key": "MIN:NE",
+      "matchup_key_rev": "NE:MIN"
     },
     {
       "game_id": "2026_14_ATL_CLE",
@@ -6631,7 +6889,9 @@
           "win_probability": -0.125419,
           "home_margin": -0.778811
         }
-      ]
+      ],
+      "matchup_key": "ATL:CLE",
+      "matchup_key_rev": "CLE:ATL"
     },
     {
       "game_id": "2026_14_CHI_MIA",
@@ -6682,7 +6942,9 @@
           "win_probability": -0.048962,
           "home_margin": -0.876531
         }
-      ]
+      ],
+      "matchup_key": "CHI:MIA",
+      "matchup_key_rev": "MIA:CHI"
     },
     {
       "game_id": "2026_14_DEN_NYJ",
@@ -6733,7 +6995,9 @@
           "win_probability": 0.051115,
           "home_margin": 0.915089
         }
-      ]
+      ],
+      "matchup_key": "DEN:NYJ",
+      "matchup_key_rev": "NYJ:DEN"
     },
     {
       "game_id": "2026_14_HOU_WAS",
@@ -6784,7 +7048,9 @@
           "win_probability": 0.432714,
           "home_margin": 2.687014
         }
-      ]
+      ],
+      "matchup_key": "HOU:WAS",
+      "matchup_key_rev": "WAS:HOU"
     },
     {
       "game_id": "2026_14_IND_PHI",
@@ -6835,7 +7101,9 @@
           "win_probability": -0.248941,
           "home_margin": -1.382983
         }
-      ]
+      ],
+      "matchup_key": "IND:PHI",
+      "matchup_key_rev": "PHI:IND"
     },
     {
       "game_id": "2026_14_NO_CAR",
@@ -6886,7 +7154,9 @@
           "win_probability": -0.083463,
           "home_margin": -0.806375
         }
-      ]
+      ],
+      "matchup_key": "NO:CAR",
+      "matchup_key_rev": "CAR:NO"
     },
     {
       "game_id": "2026_14_TB_BAL",
@@ -6937,7 +7207,9 @@
           "win_probability": -0.179199,
           "home_margin": -1.731328
         }
-      ]
+      ],
+      "matchup_key": "TB:BAL",
+      "matchup_key_rev": "BAL:TB"
     },
     {
       "game_id": "2026_14_TEN_DET",
@@ -6988,7 +7260,9 @@
           "win_probability": -0.178672,
           "home_margin": -1.726236
         }
-      ]
+      ],
+      "matchup_key": "TEN:DET",
+      "matchup_key_rev": "DET:TEN"
     },
     {
       "game_id": "2026_14_LAC_LV",
@@ -7039,7 +7313,9 @@
           "win_probability": 0.184626,
           "home_margin": 1.783762
         }
-      ]
+      ],
+      "matchup_key": "LAC:LV",
+      "matchup_key_rev": "LV:LAC"
     },
     {
       "game_id": "2026_14_KC_CIN",
@@ -7090,7 +7366,9 @@
           "win_probability": -0.182386,
           "home_margin": -1.762112
         }
-      ]
+      ],
+      "matchup_key": "KC:CIN",
+      "matchup_key_rev": "CIN:KC"
     },
     {
       "game_id": "2026_14_LA_SF",
@@ -7141,7 +7419,9 @@
           "win_probability": 0.283564,
           "home_margin": 1.463729
         }
-      ]
+      ],
+      "matchup_key": "LAR:SF",
+      "matchup_key_rev": "SF:LAR"
     },
     {
       "game_id": "2026_14_NYG_SEA",
@@ -7192,7 +7472,9 @@
           "win_probability": -0.120431,
           "home_margin": -1.163541
         }
-      ]
+      ],
+      "matchup_key": "NYG:SEA",
+      "matchup_key_rev": "SEA:NYG"
     },
     {
       "game_id": "2026_14_BUF_GB",
@@ -7243,7 +7525,9 @@
           "win_probability": -0.199316,
           "home_margin": -1.237689
         }
-      ]
+      ],
+      "matchup_key": "BUF:GB",
+      "matchup_key_rev": "GB:BUF"
     },
     {
       "game_id": "2026_14_PIT_JAX",
@@ -7294,7 +7578,9 @@
           "win_probability": 0.122986,
           "home_margin": 2.201752
         }
-      ]
+      ],
+      "matchup_key": "PIT:JAX",
+      "matchup_key_rev": "JAX:PIT"
     },
     {
       "game_id": "2026_15_SF_LAC",
@@ -7345,7 +7631,9 @@
           "win_probability": -0.123567,
           "home_margin": -1.193841
         }
-      ]
+      ],
+      "matchup_key": "SF:LAC",
+      "matchup_key_rev": "LAC:SF"
     },
     {
       "game_id": "2026_15_SEA_PHI",
@@ -7396,7 +7684,9 @@
           "win_probability": 0.192173,
           "home_margin": 1.856676
         }
-      ]
+      ],
+      "matchup_key": "SEA:PHI",
+      "matchup_key_rev": "PHI:SEA"
     },
     {
       "game_id": "2026_15_CHI_BUF",
@@ -7447,7 +7737,9 @@
           "win_probability": 0.257196,
           "home_margin": 1.597102
         }
-      ]
+      ],
+      "matchup_key": "CHI:BUF",
+      "matchup_key_rev": "BUF:CHI"
     },
     {
       "game_id": "2026_15_ATL_WAS",
@@ -7498,7 +7790,9 @@
           "win_probability": -0.105161,
           "home_margin": -1.016011
         }
-      ]
+      ],
+      "matchup_key": "ATL:WAS",
+      "matchup_key_rev": "WAS:ATL"
     },
     {
       "game_id": "2026_15_BAL_PIT",
@@ -7549,7 +7843,9 @@
           "win_probability": 0.151826,
           "home_margin": 1.466861
         }
-      ]
+      ],
+      "matchup_key": "BAL:PIT",
+      "matchup_key_rev": "PIT:BAL"
     },
     {
       "game_id": "2026_15_CIN_CAR",
@@ -7600,7 +7896,9 @@
           "win_probability": -0.084709,
           "home_margin": -1.516487
         }
-      ]
+      ],
+      "matchup_key": "CIN:CAR",
+      "matchup_key_rev": "CAR:CIN"
     },
     {
       "game_id": "2026_15_CLE_NYG",
@@ -7651,7 +7949,9 @@
           "win_probability": 0.174072,
           "home_margin": 0.898541
         }
-      ]
+      ],
+      "matchup_key": "CLE:NYG",
+      "matchup_key_rev": "NYG:CLE"
     },
     {
       "game_id": "2026_15_IND_TEN",
@@ -7702,7 +8002,9 @@
           "win_probability": 0.093863,
           "home_margin": 0.582858
         }
-      ]
+      ],
+      "matchup_key": "IND:TEN",
+      "matchup_key_rev": "TEN:IND"
     },
     {
       "game_id": "2026_15_JAX_HOU",
@@ -7753,7 +8055,9 @@
           "win_probability": -0.342571,
           "home_margin": -1.90314
         }
-      ]
+      ],
+      "matchup_key": "JAX:HOU",
+      "matchup_key_rev": "HOU:JAX"
     },
     {
       "game_id": "2026_15_MIA_GB",
@@ -7804,7 +8108,9 @@
           "win_probability": -0.045255,
           "home_margin": -0.437231
         }
-      ]
+      ],
+      "matchup_key": "MIA:GB",
+      "matchup_key_rev": "GB:MIA"
     },
     {
       "game_id": "2026_15_NO_TB",
@@ -7855,7 +8161,9 @@
           "win_probability": 0.251968,
           "home_margin": 1.300635
         }
-      ]
+      ],
+      "matchup_key": "NO:TB",
+      "matchup_key_rev": "TB:NO"
     },
     {
       "game_id": "2026_15_NYJ_ARI",
@@ -7906,7 +8214,9 @@
           "win_probability": 0.175516,
           "home_margin": 2.47826
         }
-      ]
+      ],
+      "matchup_key": "NYJ:ARI",
+      "matchup_key_rev": "ARI:NYJ"
     },
     {
       "game_id": "2026_15_DAL_LA",
@@ -7957,7 +8267,9 @@
           "win_probability": 0.289166,
           "home_margin": 1.795624
         }
-      ]
+      ],
+      "matchup_key": "DAL:LAR",
+      "matchup_key_rev": "LAR:DAL"
     },
     {
       "game_id": "2026_15_DEN_LV",
@@ -8008,7 +8320,9 @@
           "win_probability": -0.075167,
           "home_margin": -0.466764
         }
-      ]
+      ],
+      "matchup_key": "DEN:LV",
+      "matchup_key_rev": "LV:DEN"
     },
     {
       "game_id": "2026_15_DET_MIN",
@@ -8059,7 +8373,9 @@
           "win_probability": -0.377217,
           "home_margin": -2.095615
         }
-      ]
+      ],
+      "matchup_key": "DET:MIN",
+      "matchup_key_rev": "MIN:DET"
     },
     {
       "game_id": "2026_15_NE_KC",
@@ -8110,7 +8426,9 @@
           "win_probability": -0.050942,
           "home_margin": -0.492175
         }
-      ]
+      ],
+      "matchup_key": "NE:KC",
+      "matchup_key_rev": "KC:NE"
     },
     {
       "game_id": "2026_16_HOU_PHI",
@@ -8161,7 +8479,9 @@
           "win_probability": 0.546874,
           "home_margin": 3.038143
         }
-      ]
+      ],
+      "matchup_key": "HOU:PHI",
+      "matchup_key_rev": "PHI:HOU"
     },
     {
       "game_id": "2026_16_GB_CHI",
@@ -8212,7 +8532,9 @@
           "win_probability": -0.221175,
           "home_margin": -1.141683
         }
-      ]
+      ],
+      "matchup_key": "GB:CHI",
+      "matchup_key_rev": "CHI:GB"
     },
     {
       "game_id": "2026_16_BUF_DEN",
@@ -8263,7 +8585,9 @@
           "win_probability": 0.106175,
           "home_margin": 1.025806
         }
-      ]
+      ],
+      "matchup_key": "BUF:DEN",
+      "matchup_key_rev": "DEN:BUF"
     },
     {
       "game_id": "2026_16_LA_SEA",
@@ -8314,7 +8638,9 @@
           "win_probability": -0.030015,
           "home_margin": -0.537334
         }
-      ]
+      ],
+      "matchup_key": "LAR:SEA",
+      "matchup_key_rev": "SEA:LAR"
     },
     {
       "game_id": "2026_16_ARI_NO",
@@ -8365,7 +8691,9 @@
           "win_probability": 0.209797,
           "home_margin": 2.026943
         }
-      ]
+      ],
+      "matchup_key": "ARI:NO",
+      "matchup_key_rev": "NO:ARI"
     },
     {
       "game_id": "2026_16_CAR_PIT",
@@ -8416,7 +8744,9 @@
           "win_probability": -0.11157,
           "home_margin": -1.997377
         }
-      ]
+      ],
+      "matchup_key": "CAR:PIT",
+      "matchup_key_rev": "PIT:CAR"
     },
     {
       "game_id": "2026_16_CIN_IND",
@@ -8467,7 +8797,9 @@
           "win_probability": 0.254359,
           "home_margin": 2.457477
         }
-      ]
+      ],
+      "matchup_key": "CIN:IND",
+      "matchup_key_rev": "IND:CIN"
     },
     {
       "game_id": "2026_16_CLE_BAL",
@@ -8518,7 +8850,9 @@
           "win_probability": -0.132182,
           "home_margin": -1.277069
         }
-      ]
+      ],
+      "matchup_key": "CLE:BAL",
+      "matchup_key_rev": "BAL:CLE"
     },
     {
       "game_id": "2026_16_LAC_MIA",
@@ -8569,7 +8903,9 @@
           "win_probability": 0.088675,
           "home_margin": 0.856731
         }
-      ]
+      ],
+      "matchup_key": "LAC:MIA",
+      "matchup_key_rev": "MIA:LAC"
     },
     {
       "game_id": "2026_16_NE_NYJ",
@@ -8620,7 +8956,9 @@
           "win_probability": -0.124568,
           "home_margin": -0.692036
         }
-      ]
+      ],
+      "matchup_key": "NE:NYJ",
+      "matchup_key_rev": "NYJ:NE"
     },
     {
       "game_id": "2026_16_TB_ATL",
@@ -8671,7 +9009,9 @@
           "win_probability": -0.065654,
           "home_margin": -0.634316
         }
-      ]
+      ],
+      "matchup_key": "TB:ATL",
+      "matchup_key_rev": "ATL:TB"
     },
     {
       "game_id": "2026_16_WAS_MIN",
@@ -8722,7 +9062,9 @@
           "win_probability": 0.189402,
           "home_margin": 1.176126
         }
-      ]
+      ],
+      "matchup_key": "WAS:MIN",
+      "matchup_key_rev": "MIN:WAS"
     },
     {
       "game_id": "2026_16_TEN_LV",
@@ -8773,7 +9115,9 @@
           "win_probability": 0.208889,
           "home_margin": 1.297133
         }
-      ]
+      ],
+      "matchup_key": "TEN:LV",
+      "matchup_key_rev": "LV:TEN"
     },
     {
       "game_id": "2026_16_SF_KC",
@@ -8824,7 +9168,9 @@
           "win_probability": -0.165348,
           "home_margin": -0.918584
         }
-      ]
+      ],
+      "matchup_key": "SF:KC",
+      "matchup_key_rev": "KC:SF"
     },
     {
       "game_id": "2026_16_JAX_DAL",
@@ -8875,7 +9221,9 @@
           "win_probability": 0.122487,
           "home_margin": 1.183408
         }
-      ]
+      ],
+      "matchup_key": "JAX:DAL",
+      "matchup_key_rev": "DAL:JAX"
     },
     {
       "game_id": "2026_16_NYG_DET",
@@ -8926,7 +9274,9 @@
           "win_probability": -0.228929,
           "home_margin": -2.21179
         }
-      ]
+      ],
+      "matchup_key": "NYG:DET",
+      "matchup_key_rev": "DET:NYG"
     },
     {
       "game_id": "2026_17_BAL_CIN",
@@ -8977,7 +9327,9 @@
           "win_probability": -0.122288,
           "home_margin": -1.181485
         }
-      ]
+      ],
+      "matchup_key": "BAL:CIN",
+      "matchup_key_rev": "CIN:BAL"
     },
     {
       "game_id": "2026_17_BUF_MIA",
@@ -9028,7 +9380,9 @@
           "win_probability": 0.183771,
           "home_margin": 1.020933
         }
-      ]
+      ],
+      "matchup_key": "BUF:MIA",
+      "matchup_key_rev": "MIA:BUF"
     },
     {
       "game_id": "2026_17_DEN_NE",
@@ -9079,7 +9433,9 @@
           "win_probability": -0.120215,
           "home_margin": -0.746498
         }
-      ]
+      ],
+      "matchup_key": "DEN:NE",
+      "matchup_key_rev": "NE:DEN"
     },
     {
       "game_id": "2026_17_IND_CLE",
@@ -9130,7 +9486,9 @@
           "win_probability": -0.301395,
           "home_margin": -1.555769
         }
-      ]
+      ],
+      "matchup_key": "IND:CLE",
+      "matchup_key_rev": "CLE:IND"
     },
     {
       "game_id": "2026_17_KC_LAC",
@@ -9181,7 +9539,9 @@
           "win_probability": -0.00427,
           "home_margin": 0.580508
         }
-      ]
+      ],
+      "matchup_key": "KC:LAC",
+      "matchup_key_rev": "LAC:KC"
     },
     {
       "game_id": "2026_17_LA_TB",
@@ -9232,7 +9592,9 @@
           "win_probability": 0.168741,
           "home_margin": 1.630282
         }
-      ]
+      ],
+      "matchup_key": "LAR:TB",
+      "matchup_key_rev": "TB:LAR"
     },
     {
       "game_id": "2026_17_MIN_NYJ",
@@ -9283,7 +9645,9 @@
           "win_probability": 0.122864,
           "home_margin": 1.187044
         }
-      ]
+      ],
+      "matchup_key": "MIN:NYJ",
+      "matchup_key_rev": "NYJ:MIN"
     },
     {
       "game_id": "2026_17_NO_ATL",
@@ -9334,7 +9698,9 @@
           "win_probability": -0.053924,
           "home_margin": -0.965374
         }
-      ]
+      ],
+      "matchup_key": "NO:ATL",
+      "matchup_key_rev": "ATL:NO"
     },
     {
       "game_id": "2026_17_NYG_DAL",
@@ -9385,7 +9751,9 @@
           "win_probability": -0.199195,
           "home_margin": -1.924511
         }
-      ]
+      ],
+      "matchup_key": "NYG:DAL",
+      "matchup_key_rev": "DAL:NYG"
     },
     {
       "game_id": "2026_17_PIT_TEN",
@@ -9436,7 +9804,9 @@
           "win_probability": 0.059404,
           "home_margin": 1.063479
         }
-      ]
+      ],
+      "matchup_key": "PIT:TEN",
+      "matchup_key_rev": "TEN:PIT"
     },
     {
       "game_id": "2026_17_SEA_CAR",
@@ -9487,7 +9857,9 @@
           "win_probability": -0.168799,
           "home_margin": -0.937756
         }
-      ]
+      ],
+      "matchup_key": "SEA:CAR",
+      "matchup_key_rev": "CAR:SEA"
     },
     {
       "game_id": "2026_17_WAS_JAX",
@@ -9538,7 +9910,9 @@
           "win_probability": -0.188968,
           "home_margin": -1.825706
         }
-      ]
+      ],
+      "matchup_key": "WAS:JAX",
+      "matchup_key_rev": "JAX:WAS"
     },
     {
       "game_id": "2026_17_LV_ARI",
@@ -9589,7 +9963,9 @@
           "win_probability": 0.167389,
           "home_margin": 2.363515
         }
-      ]
+      ],
+      "matchup_key": "LV:ARI",
+      "matchup_key_rev": "ARI:LV"
     },
     {
       "game_id": "2026_17_DET_CHI",
@@ -9640,7 +10016,9 @@
           "win_probability": -0.080091,
           "home_margin": -1.433813
         }
-      ]
+      ],
+      "matchup_key": "DET:CHI",
+      "matchup_key_rev": "CHI:DET"
     },
     {
       "game_id": "2026_17_PHI_SF",
@@ -9691,7 +10069,9 @@
           "win_probability": 0.241609,
           "home_margin": 1.342253
         }
-      ]
+      ],
+      "matchup_key": "PHI:SF",
+      "matchup_key_rev": "SF:PHI"
     },
     {
       "game_id": "2026_17_HOU_GB",
@@ -9742,7 +10122,9 @@
           "win_probability": 0.619351,
           "home_margin": 3.84597
         }
-      ]
+      ],
+      "matchup_key": "HOU:GB",
+      "matchup_key_rev": "GB:HOU"
     },
     {
       "game_id": "2026_18_ATL_CAR",
@@ -9793,7 +10175,9 @@
           "win_probability": -0.219261,
           "home_margin": -1.218095
         }
-      ]
+      ],
+      "matchup_key": "ATL:CAR",
+      "matchup_key_rev": "CAR:ATL"
     },
     {
       "game_id": "2026_18_CHI_MIN",
@@ -9844,7 +10228,9 @@
           "win_probability": -0.070226,
           "home_margin": -0.390139
         }
-      ]
+      ],
+      "matchup_key": "CHI:MIN",
+      "matchup_key_rev": "MIN:CHI"
     },
     {
       "game_id": "2026_18_CLE_CIN",
@@ -9895,7 +10281,9 @@
           "win_probability": -0.25447,
           "home_margin": -2.458554
         }
-      ]
+      ],
+      "matchup_key": "CLE:CIN",
+      "matchup_key_rev": "CIN:CLE"
     },
     {
       "game_id": "2026_18_DAL_WAS",
@@ -9946,7 +10334,9 @@
           "win_probability": 0.176183,
           "home_margin": 0.978779
         }
-      ]
+      ],
+      "matchup_key": "DAL:WAS",
+      "matchup_key_rev": "WAS:DAL"
     },
     {
       "game_id": "2026_18_DET_GB",
@@ -9997,7 +10387,9 @@
           "win_probability": 0.281008,
           "home_margin": 1.744968
         }
-      ]
+      ],
+      "matchup_key": "DET:GB",
+      "matchup_key_rev": "GB:DET"
     },
     {
       "game_id": "2026_18_JAX_IND",
@@ -10048,7 +10440,9 @@
           "win_probability": 0.312654,
           "home_margin": 3.020696
         }
-      ]
+      ],
+      "matchup_key": "JAX:IND",
+      "matchup_key_rev": "IND:JAX"
     },
     {
       "game_id": "2026_18_LAC_DEN",
@@ -10099,7 +10493,9 @@
           "win_probability": 0.27751,
           "home_margin": 1.723246
         }
-      ]
+      ],
+      "matchup_key": "LAC:DEN",
+      "matchup_key_rev": "DEN:LAC"
     },
     {
       "game_id": "2026_18_LV_KC",
@@ -10150,7 +10546,9 @@
           "win_probability": -0.135079,
           "home_margin": -1.305065
         }
-      ]
+      ],
+      "matchup_key": "LV:KC",
+      "matchup_key_rev": "KC:LV"
     },
     {
       "game_id": "2026_18_MIA_NE",
@@ -10201,7 +10599,9 @@
           "win_probability": 0.18504,
           "home_margin": 1.149041
         }
-      ]
+      ],
+      "matchup_key": "MIA:NE",
+      "matchup_key_rev": "NE:MIA"
     },
     {
       "game_id": "2026_18_NYJ_BUF",
@@ -10252,7 +10652,9 @@
           "win_probability": -0.096362,
           "home_margin": -0.930995
         }
-      ]
+      ],
+      "matchup_key": "NYJ:BUF",
+      "matchup_key_rev": "BUF:NYJ"
     },
     {
       "game_id": "2026_18_PHI_NYG",
@@ -10303,7 +10705,9 @@
           "win_probability": -0.16174,
           "home_margin": -0.834883
         }
-      ]
+      ],
+      "matchup_key": "PHI:NYG",
+      "matchup_key_rev": "NYG:PHI"
     },
     {
       "game_id": "2026_18_PIT_BAL",
@@ -10354,7 +10758,9 @@
           "win_probability": -0.151826,
           "home_margin": -1.466861
         }
-      ]
+      ],
+      "matchup_key": "PIT:BAL",
+      "matchup_key_rev": "BAL:PIT"
     },
     {
       "game_id": "2026_18_SEA_LA",
@@ -10405,7 +10811,9 @@
           "win_probability": 0.10197,
           "home_margin": 0.526361
         }
-      ]
+      ],
+      "matchup_key": "SEA:LAR",
+      "matchup_key_rev": "LAR:SEA"
     },
     {
       "game_id": "2026_18_SF_ARI",
@@ -10456,7 +10864,9 @@
           "win_probability": -0.265758,
           "home_margin": -2.56761
         }
-      ]
+      ],
+      "matchup_key": "SF:ARI",
+      "matchup_key_rev": "ARI:SF"
     },
     {
       "game_id": "2026_18_TB_NO",
@@ -10507,7 +10917,9 @@
           "win_probability": -0.174742,
           "home_margin": -1.08509
         }
-      ]
+      ],
+      "matchup_key": "TB:NO",
+      "matchup_key_rev": "NO:TB"
     },
     {
       "game_id": "2026_18_TEN_HOU",
@@ -10558,7 +10970,9 @@
           "win_probability": -0.617878,
           "home_margin": -3.836821
         }
-      ]
+      ],
+      "matchup_key": "TEN:HOU",
+      "matchup_key_rev": "HOU:TEN"
     }
   ]
 }
