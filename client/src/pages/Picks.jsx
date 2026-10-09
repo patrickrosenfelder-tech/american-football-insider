@@ -91,15 +91,24 @@ function ConfidenceRecord({ rows }) {
 
 function Backtest({ data }) {
   if (!data) return null;
-  const cell = (r) => r?.pct == null ? '–' : `${r.wins}-${r.games - r.wins} (${r.pct}%)`;
+  const cell = (r) => r?.pct == null ? '–' : `${r.w}-${r.l}${r.p ? `-${r.p}` : ''} (${r.pct}%)`;
+  const row = (label, x, bold) => <tr key={label}><td className="left">{bold ? <b>{label}</b> : label}</td><td>{x.games}</td>
+    <td>{cell(x.v2_su)}</td><td>{cell(x.v2_ats)}</td><td>{cell(x.v2_ou)}</td>
+    <td>{cell(x.v1_su)}</td><td>{cell(x.v1_ats)}</td><td>{cell(x.v1_ou)}</td>
+    <td>{cell(x.vegas_su)}</td><td>{cell(x.home_su)}</td><td>{cell(x.home_ats)}</td></tr>;
   return <>
     <h2 className="section-title">{data.label}</h2>
-    <p className="muted small">Historical model rerun using only information available before each kickoff. It is not part of the live tracked record.</p>
-    <div className="card table-card"><table><thead><tr><th className="left">Week</th><th>Games</th><th>SU</th><th>ATS</th><th>O/U</th></tr></thead><tbody>
-      {data.weeks.map((w) => <tr key={w.week}><td className="left">Week {w.week}</td><td>{w.games}</td><td>{cell(w.su)}</td><td>{cell(w.ats)}</td><td>{cell(w.ou)}</td></tr>)}
-      <tr><td className="left"><b>Total</b></td><td>{data.total.games}</td><td>{cell(data.total.su)}</td><td>{cell(data.total.ats)}</td><td>{cell(data.total.ou)}</td></tr>
-    </tbody></table></div>
-    <p className="muted small">Baselines — always favorite: {cell(data.baselines.always_favorite_su)} SU; always home: {cell(data.baselines.always_home_su)} SU.</p>
+    <p className="disclaimer"><b>Verdict:</b> {data.verdict.text}</p>
+    <p className="muted small">{data.method} Not part of the live tracked record.</p>
+    {data.seasons.map((s) => <div key={s.season} className="card table-card table-wrap"><table>
+      <thead>
+        <tr><th className="left">{s.season}</th><th></th><th colSpan="3">AFI v2</th><th colSpan="3">AFI v1</th><th>Vegas fav.</th><th colSpan="2">Always home</th></tr>
+        <tr><th className="left">Week</th><th>Games</th><th>SU</th><th>ATS</th><th>O/U</th><th>SU</th><th>ATS</th><th>O/U</th><th>SU</th><th>SU</th><th>ATS</th></tr>
+      </thead>
+      <tbody>{s.weeks.map((w) => row(`Week ${w.week}`, w))}{row(`${s.season} total`, s.total, true)}</tbody>
+    </table></div>)}
+    <div className="card table-card table-wrap"><table><tbody>{row('All backtested games', data.total, true)}</tbody></table></div>
+    <p className="muted small">Win probability quality (same games): v2 log loss {data.calibration.v2.log_loss}, Brier {data.calibration.v2.brier} · Vegas closing line log loss {data.calibration.vegas.log_loss}, Brier {data.calibration.vegas.brier}. Lower is better.</p>
   </>;
 }
 

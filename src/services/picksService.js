@@ -299,78 +299,15 @@ const record = (picks) => {
 
 const segmentedRecord = (picks, key, value) => record(picks.filter((p) => key === 'stars' ? p.confidence_stars === value : [p.momentum?.home?.label, p.momentum?.away?.label].includes(value)));
 
-// --- Historical re-run ----------------------------------------------------------
-// The backtest uses only rows dated before each kickoff.  `schedules_played`
-// supplies nflverse closing spread/total values and is never used as a feature
-// for the game being graded.
-const historicalTeam = (team, kickoff, games) => {
-  const past = games.filter((g) => g.date < kickoff && (g.home === team || g.away === team));
-  const margins = past.map((g) => g.home === team ? g.home_score - g.away_score : g.away_score - g.home_score);
-  const pf = past.map((g) => g.home === team ? g.home_score : g.away_score);
-  const pa = past.map((g) => g.home === team ? g.away_score : g.home_score);
-  const recent = margins.slice(-3);
-  const prior = games.filter((g) => g.season === 2025 && (g.home === team || g.away === team)).slice(-4)
-    .map((g) => g.home === team ? g.home_score - g.away_score : g.away_score - g.home_score);
-  const blend = (values, fallback) => values.length ? avg(values) : avg(fallback);
-  return { margin: 0.75 * blend(recent, margins) + 0.25 * blend(prior, []), pf: blend(pf, []), pa: blend(pa, []), games: past.length };
-};
-
-const historicalRow = (g, allGames) => {
-  const h = historicalTeam(g.home, g.date, allGames); const a = historicalTeam(g.away, g.date, allGames);
-  const margin = round1((h.margin - a.margin) * 0.6 + ((h.pf - a.pa) - (a.pf - h.pa)) * 0.1 + 1.5);
-  const modelHome = margin >= 0;
-  const total = round1(((h.pf + a.pa) + (a.pf + h.pa)) / 2 || 44);
-  // nflverse schedules use a positive spread_line when the home side lays
-  // points (e.g. SEA 3 means SEA -3), unlike ESPN's signed home spread.
-  const homeCover = g.home_score - g.away_score - (g.spread_line || 0);
-  const su = (modelHome ? g.home_score > g.away_score : g.away_score > g.home_score) ? 'W' : 'L';
-  const ats = g.spread_line == null ? null : (homeCover === 0 ? 'P' : ((homeCover > 0) === modelHome ? 'W' : 'L'));
-  const ou = g.total_line == null ? null : (g.home_score + g.away_score === g.total_line ? 'P' : ((g.home_score + g.away_score > g.total_line) === (total > g.total_line) ? 'W' : 'L'));
-  const favoriteHome = (g.spread_line || 0) > 0;
-  const favorite = favoriteHome ? g.home : g.away;
-  const favoriteSu = (favorite === g.home ? g.home_score > g.away_score : g.away_score > g.home_score) ? 'W' : 'L';
-  const homeSu = g.home_score > g.away_score ? 'W' : 'L';
-  const stars = Math.max(1, Math.min(5, Math.ceil(Math.abs(margin - (g.spread_line || 0)) / 1.5)));
-  return { game_id: `${g.season}-${g.week}-${g.away}-${g.home}`, season: g.season, week: g.week, kickoff: g.date, away: g.away, home: g.home,
-    model: { home_margin: margin, total, pick: modelHome ? g.home : g.away, stars, prior_games: { home: h.games, away: a.games } },
-    closing_spread: g.spread_line, closing_total: g.total_line, home_score: g.home_score, away_score: g.away_score,
-    results: { su, ats, ou, favorite_su: favoriteSu, home_su: homeSu } };
-};
-
-const pctRecord = (rows, field, wanted = 'W') => {
-  const eligible = rows.filter((r) => r.results[field] != null);
-  const wins = eligible.filter((r) => r.results[field] === wanted).length;
-  return { wins, games: eligible.length, pct: eligible.length ? round1(wins * 100 / eligible.length) : null };
-};
-
-const shapeBacktest = (rows) => ({
-  label: 'Backtest Weeks 1-3 (model re-run, not live picks)',
-  weeks: [1, 2, 3].map((week) => { const games = rows.filter((r) => r.week === week); return { week, games: games.length, su: pctRecord(games, 'su'), ats: pctRecord(games, 'ats'), ou: pctRecord(games, 'ou') }; }),
-  total: { games: rows.length, su: pctRecord(rows, 'su'), ats: pctRecord(rows, 'ats'), ou: pctRecord(rows, 'ou') },
-  by_stars: [1, 2, 3, 4, 5].map((stars) => { const games = rows.filter((r) => r.model.stars === stars); return { stars, games: games.length, su: pctRecord(games, 'su'), ats: pctRecord(games, 'ats'), ou: pctRecord(games, 'ou') }; }),
-  baselines: { always_favorite_su: pctRecord(rows, 'favorite_su'), always_home_su: pctRecord(rows, 'home_su') }, rows
-});
-
-const refreshBacktest = async () => {
-  const played = await getPlayedGames();
-  const games = (played || []).filter((g) => g.season === 2026 && g.game_type === 'REG' && g.week >= 1 && g.week <= 3 && g.home_score != null)
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const history = (played || []).filter((g) => g.game_type === 'REG' && (g.season === 2025 || (g.season === 2026 && g.date < '2026-10-01')));
-  const rows = games.map((g) => historicalRow(g, history));
-  await Promise.all(rows.map((r) => db.run(`INSERT OR REPLACE INTO picks_backtest (game_id, season, week, kickoff, away, home, model_json, closing_spread, closing_total, home_score, away_score, results_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [r.game_id, r.season, r.week, r.kickoff, r.away, r.home, JSON.stringify(r.model), r.closing_spread, r.closing_total, r.home_score, r.away_score, JSON.stringify(r.results), new Date().toISOString()])));
-  return shapeBacktest(rows);
-};
-
-// Weeks 1-3 are final, so the backtest only needs recomputing when the played
-// games feed changes; cache it rather than re-running it (and 48 upserts) per request.
-let backtestMemo = null;
-const getBacktest = async () => {
-  if (backtestMemo && Date.now() - backtestMemo.at < 6 * 3600e3) return backtestMemo.promise;
-  const entry = { at: Date.now(), promise: refreshBacktest() };
-  backtestMemo = entry;
-  entry.promise.catch(() => { if (backtestMemo === entry) backtestMemo = null; });
-  return entry.promise;
+// --- v2 walk-forward backtest ---------------------------------------------------
+// Produced offline by scripts/model/backtest_v2.py (point-in-time features, each
+// game predicted by a model refit only on earlier games) and shipped with the image.
+const getBacktest = () => {
+  try {
+    const b = JSON.parse(require('fs').readFileSync(`${__dirname}/../../scripts/model/backtest_v2.json`, 'utf-8'));
+    const weeks = b.seasons.find((x) => x.season === currentSeason())?.weeks.length;
+    return { label: `Backtest: AFI ${b.model_version} walk-forward (${b.seasons.map((x) => x.season === currentSeason() ? `${x.season} weeks 1-${weeks}` : `${x.season} full season`).join(' + ')})`, ...b };
+  } catch (e) { return null; }
 };
 
 // Re-picks unstarted games, locks started ones (keeps the last pre-kickoff pick) and grades finals.
@@ -451,8 +388,8 @@ const getPicks = async ({ week = null } = {}) => {
     disclaimer: DISCLAIMER,
     method: 'Margin = 60% weighted recency (45% last 3 games, 30% games 4–7, 15% games 8+, 10% last season’s final four) + 30% efficiency power rating (YPP, turnovers, third down and red zone) + 10% momentum. Teams with fewer than three current-season games use a season-plus-prior fallback. Momentum is capped at ±3 points. Home field (+1.5) and injuries are then applied. AFI Confidence Rating compares the model margin to the market: 1★ under 1.5 points through 5★ at 7+ points.',
     last_updated: state.updated_at
-    , backtest: await getBacktest()
+    , backtest: getBacktest()
   };
 };
 
-module.exports = { refreshPicks, getPicks, makePick, buildModel, refreshBacktest, predictionStatus, publicPredictionStatus, DISCLAIMER };
+module.exports = { refreshPicks, getPicks, makePick, buildModel, getBacktest, predictionStatus, publicPredictionStatus, DISCLAIMER };

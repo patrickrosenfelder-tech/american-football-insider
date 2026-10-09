@@ -22,19 +22,39 @@ const LAYOUTS = {
   ]
 };
 
+// Players who will not play this week. Questionable/Doubtful stay in place with a badge.
+const UNAVAILABLE = /^(out|injured reserve|physically unable|suspen|non-football|reserve)/i;
+const isOut = (p) => Boolean(p?.injury?.status && UNAVAILABLE.test(p.injury.status));
+
+// Promote the next healthy player when the listed starter is out. A backup who already
+// starts at another spot (e.g. RG listed as backup C) is skipped so nobody plays twice.
+function withReplacements(slots) {
+  const starting = new Set(slots.map((s) => s.players[0]).filter((p) => p && !isOut(p)).map((p) => p.id));
+  return slots.map((s) => {
+    const [listed] = s.players;
+    if (!listed || !isOut(listed)) return s;
+    const sub = s.players.slice(1).find((p) => !isOut(p) && !starting.has(p.id));
+    if (!sub) return { ...s, replaced: listed, players: s.players };
+    starting.add(sub.id);
+    return { ...s, replaced: listed, players: [sub, ...s.players.filter((p) => p.id !== sub.id)] };
+  });
+}
+
 function PlayerCard({ slot, expanded }) {
   const [starter, ...backups] = slot.players;
+  const sub = slot.replaced && slot.replaced.id !== starter?.id;
   if (!starter) {
     return <div className="dc-card empty"><span className="dc-pos">{slot.label}</span><span className="muted small">Vacant</span></div>;
   }
   return (
     <div className="dc-slot">
-      <Link to={`/players/${starter.id}`} className="dc-card" title={`${starter.name} — ${slot.espn_position_name || slot.label}`}>
+      <Link to={`/players/${starter.id}`} className={`dc-card ${sub ? 'dc-sub' : ''}`} title={`${starter.name} — ${slot.espn_position_name || slot.label}${sub ? ` (replacing ${slot.replaced.name}, ${slot.replaced.injury.status})` : ''}`}>
         <span className="dc-pos">{slot.label}</span>
         <img className="dc-headshot" src={starter.headshot} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
         <span className="dc-name">{starter.short_name}</span>
         {starter.jersey && <span className="dc-num">#{starter.jersey}</span>}
         <InjuryBadge injury={starter.injury} />
+        {sub && <span className="dc-for">for {slot.replaced.short_name} <InjuryBadge injury={slot.replaced.injury} small /></span>}
       </Link>
       {expanded && backups.slice(0, 2).map((p) => (
         <Link key={p.id} to={`/players/${p.id}`} className="dc-backup">
@@ -49,13 +69,14 @@ function PlayerCard({ slot, expanded }) {
 
 function Formation({ unit, layoutKey, expanded }) {
   const layout = LAYOUTS[layoutKey];
-  const bySlot = Object.fromEntries(unit.slots.map((s) => [s.key, s]));
+  const slots = withReplacements(unit.slots);
+  const bySlot = Object.fromEntries(slots.map((s) => [s.key, s]));
   const placed = new Set();
   const cells = layout.filter(([key]) => bySlot[key]).map(([key, col, row]) => {
     placed.add(key);
     return <div key={key} style={{ gridColumn: col, gridRow: row }}><PlayerCard slot={bySlot[key]} expanded={expanded} /></div>;
   });
-  const extra = unit.slots.filter((s) => !placed.has(s.key));
+  const extra = slots.filter((s) => !placed.has(s.key));
   return (
     <>
       <div className={`field field-${layoutKey === 'offense' ? 'offense' : 'defense'}`}>
@@ -100,11 +121,11 @@ export default function DepthChart({ teamId }) {
       {unit && tab === 'offense' && <Formation unit={unit} layoutKey="offense" expanded={expanded} />}
       {unit && tab === 'defense' && <Formation unit={unit} layoutKey={d.base_defense || '4-3'} expanded={expanded} />}
       {unit && tab === 'special' && (
-        <div className="dc-row">{unit.slots.map((s) => <PlayerCard key={s.key} slot={s} expanded={expanded} />)}</div>
+        <div className="dc-row">{withReplacements(unit.slots).map((s) => <PlayerCard key={s.key} slot={s} expanded={expanded} />)}</div>
       )}
       <p className="muted small note">
         {unit?.formation && <>ESPN depth chart formation: {unit.formation}. </>}
-        Tap a card for the player page. Badges show current injury status (O / D / Q / IR / PUP).
+        Tap a card for the player page. Badges show current injury status (O / D / Q / IR / PUP). When a listed starter is Out, IR, PUP or suspended, the next healthy player on the depth chart is shown as the starter ("for …").
       </p>
       <Updated at={d.last_updated} />
     </div>

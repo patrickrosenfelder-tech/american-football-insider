@@ -455,3 +455,7 @@ a.tag:hover { border-color: #b9c4d8; }
 th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
 th.sortable:hover, th.sortable.active { color: var(--accent); }
 .filters input[type="search"] { margin-left: 6px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+
+.dc-card.dc-sub { outline: 2px dashed var(--accent); outline-offset: -2px; }
+.dc-for { display: flex; align-items: center; gap: 3px; font-size: .62rem; color: var(--muted); line-height: 1.1; }
+.dc-for .inj { position: static; }
