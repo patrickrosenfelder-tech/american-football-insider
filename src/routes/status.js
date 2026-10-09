@@ -15,8 +15,9 @@ const SOURCES = [
   { key: 'stats', label: 'Stats (players + teams)', provider: 'nflverse', jobs: ['player_stats', 'pbp_derived'], dataset: (s) => `player_stats_${s}` },
   { key: 'tendencies', label: 'Tendencies', provider: 'nflverse pbp + FTN', jobs: ['pbp_derived'], dataset: (s) => `tendencies_${s}` },
   { key: 'news', label: 'News', provider: 'RSS feeds + ESPN + LLM summaries', jobs: ['news'], dataset: () => 'news_v1' },
-  { key: 'transactions', label: 'Trades & transactions', provider: 'nflverse trades.csv + ESPN', jobs: ['transactions'], dataset: (s) => `trades_${s}` },
-  { key: 'free_agents', label: 'Free agents', provider: 'ESPN transactions', jobs: ['free_agents'], dataset: (s) => `free_agents_${s}` },
+  { key: 'transactions', label: 'Trades & transactions', provider: 'nflverse trades.csv + ESPN transactions', jobs: ['transactions'], dataset: (s) => `trades_${s}` },
+  { key: 'trade_rumors', label: 'Trade rumors', provider: 'ProFootballRumors + Google News + AFI news feed', jobs: ['trade_rumors'], dataset: () => 'trade_rumors_v1' },
+  { key: 'free_agents', label: 'Free agents', provider: 'ESPN transactions + athlete status, nflverse stats/snaps/rosters', jobs: ['free_agents'], dataset: (s) => `free_agents_${s}` },
   { key: 'weather', label: 'Weather', provider: 'Open-Meteo', jobs: ['weather'] },
   { key: 'odds', label: 'Odds / lines', provider: 'ESPN (DraftKings)', jobs: ['odds'] },
   { key: 'picks', label: 'AFI Picks', provider: 'AFI model', jobs: ['picks'] },
@@ -24,7 +25,7 @@ const SOURCES = [
 ];
 
 // Details worth showing per job (counts, data-through week); everything else is bookkeeping.
-const DETAIL_KEYS = ['data_through_week', 'ftn_through_week', 'latest_week', 'week', 'teams', 'players', 'games', 'games_with_lines', 'plays', 'summarized', 'new_stories', 'providers_used', 'missing_keys'];
+const DETAIL_KEYS = ['data_through_week', 'ftn_through_week', 'latest_week', 'week', 'teams', 'players', 'games', 'games_with_lines', 'plays', 'summarized', 'new_stories', 'providers_used', 'missing_keys', 'trades', 'rumors', 'candidates', 'recently_signed'];
 
 const latest = (values) => values.filter(Boolean).sort().pop() || null;
 const earliest = (values) => values.filter(Boolean).sort()[0] || null;

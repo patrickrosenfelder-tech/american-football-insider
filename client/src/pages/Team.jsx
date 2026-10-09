@@ -6,6 +6,7 @@ import Roster from './Roster.jsx';
 import { TeamInjuries } from './Injuries.jsx';
 import { TeamTendencies } from './Tendencies.jsx';
 import { NewsFeed } from './News.jsx';
+import { TradeCard } from './Trades.jsx';
 
 const TABS = [['overview', 'Overview'], ['news', 'News'], ['trades', 'Trades'], ['depth', 'Depth chart'], ['roster', 'Roster'], ['injuries', 'Injuries'], ['tendencies', 'Tendencies']];
 
@@ -96,7 +97,8 @@ function TeamTrades({ team }) {
   const trades = useApi(`/trades?team=${team}`);
   if (trades.loading) return <Loading label="Loading trades…" />;
   if (trades.error) return <ErrorBox error={trades.error} />;
-  return <div className="card list-card">{trades.data.data.trades.length ? trades.data.data.trades.map((x) => <div className="news" key={x.id}><b>{x.date}</b> · {x.teams.map((s) => `${s.team} received ${s.receives.join(', ') || 'considerations'}`).join(' / ')}</div>) : <div className="news muted">No recorded trades for this team in this season.</div>}</div>;
+  const list = trades.data.data.trades;
+  return list.length ? <div className="trade-grid">{list.map((x) => <TradeCard trade={x} key={x.id} />)}</div> : <div className="card muted">No recorded trades for this team this season.</div>;
 }
 
 function Overview({ t, teamId }) {

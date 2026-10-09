@@ -10,6 +10,7 @@ const sportsDataService = require('../services/sportsDataService');
 const cache = require('../cache/cacheManager');
 const db = require('../db/database');
 const tradeService = require('../services/tradeService');
+const freeAgentService = require('../services/freeAgentService');
 
 const { currentSeason } = rosterService;
 
@@ -136,7 +137,8 @@ const refreshNews = () => runJob('news', async () => {
 // AFI Picks: re-pick unstarted games, lock started ones, grade finals.
 const refreshPicks = () => runJob('picks', async () => picksService.refreshPicks());
 const refreshTrades = () => runJob('transactions', async () => tradeService.refreshTrades());
-const refreshFreeAgents = () => runJob('free_agents', async () => tradeService.refreshFreeAgents());
+const refreshTradeRumors = () => runJob('trade_rumors', async () => tradeService.refreshRumors());
+const refreshFreeAgents = () => runJob('free_agents', async () => freeAgentService.refreshFreeAgents());
 
 // On boot: build anything missing (SQLite on Fly lives in /tmp, so a fresh machine starts empty).
 const bootstrap = async () => {
@@ -145,8 +147,10 @@ const bootstrap = async () => {
   if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
   await refreshNews();
-  await refreshTrades();
-  await refreshFreeAgents();
+  if (!(await db.loadDataset(`trades_${currentSeason()}`))) await refreshTrades();
+  if (!(await db.loadDataset('trade_rumors_v1'))) await refreshTradeRumors();
+  const fa = await db.loadDataset(`free_agents_${currentSeason()}`);
+  if (!Array.isArray(fa?.data?.practice_squad)) await refreshFreeAgents();
 };
 
-module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshFreeAgents, status };
+module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, status };

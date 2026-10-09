@@ -21,6 +21,7 @@ const SCHEDULE = [
   // Headlines every 3h; LLM summaries are capped at NEWS_DAILY_LLM_CAP (40) stories per day.
   { job: 'news', run: refresh.refreshNews, everyHours: 3 },
   { job: 'transactions', run: refresh.refreshTrades, everyHours: 1 },
+  { job: 'trade_rumors', run: refresh.refreshTradeRumors, everyHours: 3 },
   { job: 'free_agents', run: refresh.refreshFreeAgents, days: null, hour: 6 },
   { job: 'picks', run: refresh.refreshPicks, everyHours: 1 }
 ];
