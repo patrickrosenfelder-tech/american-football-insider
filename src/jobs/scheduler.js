@@ -18,8 +18,8 @@ const SCHEDULE = [
   // nflverse publishes pbp + FTN charting overnight after MNF, so tendencies/team stats run Tuesday.
   { job: 'pbp_derived', run: refresh.refreshPbpDerived, days: [2], hour: 8 },
   { job: 'schedules', run: refresh.refreshSchedules, days: null, hour: 6 },
-  // Headlines every 3h; LLM summaries are capped at NEWS_DAILY_LLM_CAP (40) stories per day.
-  { job: 'news', run: refresh.refreshNews, everyHours: 3 },
+  // Includes direct Bluesky posts; 15-minute polling keeps breaking news fresh.
+  { job: 'news', run: refresh.refreshNews, everyHours: 0.25 },
   { job: 'transactions', run: refresh.refreshTrades, everyHours: 1 },
   { job: 'trade_rumors', run: refresh.refreshTradeRumors, everyHours: 3 },
   { job: 'free_agents', run: refresh.refreshFreeAgents, days: null, hour: 6 },

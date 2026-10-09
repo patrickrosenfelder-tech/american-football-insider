@@ -27,6 +27,18 @@ const RSS_FEEDS = [
   { name: 'ProFootballTalk', url: 'https://profootballtalk.nbcsports.com/feed/' }
 ];
 
+// The public Bluesky AppView API does not require an access token. Keep this
+// deliberately small and conservative: a handle that fails three consecutive
+// checks is parked until the next deployment/configuration change instead of
+// slowing every news refresh down.
+const BLUESKY_HANDLES = [
+  'rapsheet.bsky.social',
+  'nflnewsposter.bsky.social',
+  'adamschefter.bsky.social'
+];
+const BLUESKY_API = 'https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed';
+const BLUESKY_FAILURE_LIMIT = 3;
+
 // Not news: fantasy/betting columns, rankings, video shows.
 const SKIP = /promo code|bonus code|bonus bets|sportsbook|fantasy|rankings?\b|start[/ -]sit|\bdfs\b|best bets?|\bparlay|\bprops?\b|betting|odds\b|mock draft|podcast|\bwatch:|livestream|how to watch|power rankings/i;
 
@@ -70,7 +82,35 @@ const fetchRss = async (feed) => {
   }));
 };
 
-const fetchAllSources = async () => {
+const blueskyPostUrl = (handle, uri) => {
+  const rkey = String(uri || '').split('/').pop();
+  return rkey ? `https://bsky.app/profile/${handle}/post/${rkey}` : null;
+};
+
+// Exported for a small, independently testable source adapter.  A post is a
+// first-class feed item rather than an article to be LLM-summarised, preserving
+// the author's complete public text in the UI.
+const blueskyNews = async (handle) => {
+  const { data } = await http.get(BLUESKY_API, { params: { actor: handle, limit: 20 } });
+  return (data.feed || []).map(({ post }) => {
+    const text = stripHtml(post?.record?.text || '').trim();
+    return {
+      source: 'Bluesky',
+      type: 'X (Bluesky)',
+      kind: 'bluesky',
+      title: clip(text.replace(/\s+/g, ' '), 140) || `Post from @${handle}`,
+      description: text,
+      url: blueskyPostUrl(handle, post?.uri),
+      uri: post?.uri || null,
+      handle: `@${handle}`,
+      published: post?.record?.createdAt || post?.indexedAt,
+      espn_team_ids: [],
+      espn_athletes: []
+    };
+  }).filter((post) => post.description && post.url && post.published);
+};
+
+const fetchAllSources = async (state = {}) => {
   const fetched = {};
   const errors = {};
   const jobs = [{ name: 'ESPN API', run: fetchEspnNews }, ...RSS_FEEDS.map((f) => ({ name: `${f.name} RSS`, run: () => fetchRss(f) }))];
@@ -84,9 +124,34 @@ const fetchAllSources = async () => {
       return [];
     }
   }));
+  const bluesky = state.bluesky ||= { handles: {} };
+  bluesky.handles ||= {};
+  bluesky.last_run = new Date().toISOString();
+  const activeHandles = BLUESKY_HANDLES.filter((handle) => Number(bluesky.handles[handle]?.failures || 0) < BLUESKY_FAILURE_LIMIT);
+  const blueskyResults = await Promise.all(activeHandles.map(async (handle) => {
+    try {
+      const posts = await blueskyNews(handle);
+      if (!posts.length) throw new Error('no posts returned');
+      bluesky.handles[handle] = { ...bluesky.handles[handle], failures: 0, last_success: new Date().toISOString(), last_error: null };
+      return posts;
+    } catch (error) {
+      const prior = bluesky.handles[handle] || {};
+      const failures = Number(prior.failures || 0) + 1;
+      const message = error.response ? `HTTP ${error.response.status}` : error.message;
+      bluesky.handles[handle] = { ...prior, failures, last_error: message, last_error_at: new Date().toISOString(), disabled_at: failures >= BLUESKY_FAILURE_LIMIT ? new Date().toISOString() : prior.disabled_at || null };
+      errors[`Bluesky @${handle}`] = message;
+      if (failures >= BLUESKY_FAILURE_LIMIT) console.warn(`[news] disabling Bluesky @${handle} after ${failures} consecutive failures`);
+      return [];
+    }
+  }));
+  fetched.Bluesky = blueskyResults.reduce((total, posts) => total + posts.length, 0);
+  bluesky.active_handles = activeHandles;
+  bluesky.disabled_handles = BLUESKY_HANDLES.filter((handle) => !activeHandles.includes(handle));
+
   const cutoff = Date.now() - MAX_AGE_HOURS * 3600e3;
   const seen = new Set();
-  const items = results.flat().filter((i) => {
+  const contentHashes = new Set();
+  const items = [...results.flat(), ...blueskyResults.flat()].filter((i) => {
     if (!i.title || !i.url || SKIP.test(i.title)) return false;
     const t = Date.parse(i.published);
     if (Number.isNaN(t) || t < cutoff) return false;
@@ -94,6 +159,14 @@ const fetchAllSources = async () => {
     i.url_key = canonicalUrl(i.url);
     if (seen.has(i.url_key)) return false;
     seen.add(i.url_key);
+    // Reposts and feed mirrors can present the same text with different URIs.
+    // Content-hash dedupe is intentionally limited to Bluesky; article feeds
+    // retain their existing canonical-URL semantics.
+    if (i.kind === 'bluesky') {
+      i.content_hash = hash(i.description.toLowerCase().replace(/\s+/g, ' ').trim());
+      if (contentHashes.has(i.content_hash)) return false;
+      contentHashes.add(i.content_hash);
+    }
     return true;
   });
   return { items, fetched, errors };
@@ -406,11 +479,12 @@ const runNewsOnce = async ({ summarizeStories = true } = {}) => {
   const index = await buildIndex();
 
   // 1. Headlines -> tagged items -> groups -> merged into stored stories.
-  const { items, fetched, errors } = await fetchAllSources();
+  const { items, fetched, errors } = await fetchAllSources(state);
   log.fetched = fetched;
   if (Object.keys(errors).length) log.source_errors = errors;
   items.forEach((i) => tagItem(i, index));
-  const groups = cluster(items, index);
+  const blueskyItems = items.filter((i) => i.kind === 'bluesky');
+  const groups = cluster(items.filter((i) => i.kind !== 'bluesky'), index);
   const byUrl = {};
   Object.values(state.stories).forEach((s) => { if (s.kind === 'headline') s.sources.forEach((x) => { byUrl[canonicalUrl(x.url)] = s; }); });
   let created = 0;
@@ -428,6 +502,31 @@ const runNewsOnce = async ({ summarizeStories = true } = {}) => {
       i.players.forEach((p) => { if (!story.players.some((q) => q.id === p.id || q.name === p.name)) story.players.push(p); });
     });
     story.published = story.sources.map((x) => x.published).sort().pop();
+  });
+  // Bluesky is displayed as a primary source. Do not combine it into an
+  // article cluster or hand its post text to the article-summary pipeline.
+  blueskyItems.forEach((item) => {
+    const id = `bluesky-${item.content_hash}`;
+    const story = state.stories[id] || {
+      id,
+      kind: 'bluesky',
+      type: 'X (Bluesky)',
+      title: item.title,
+      full_text: item.description,
+      handle: item.handle,
+      uri: item.uri,
+      summary: null,
+      ai: null,
+      teams: [],
+      players: [],
+      sources: [],
+      first_seen: new Date().toISOString()
+    };
+    if (!state.stories[id]) { state.stories[id] = story; created += 1; }
+    if (!story.sources.some((x) => x.url === item.url)) story.sources.push({ ...sourceOf(item), uri: item.uri, handle: item.handle });
+    item.teams.forEach((t) => { if (!story.teams.includes(t)) story.teams.push(t); });
+    item.players.forEach((p) => { if (!story.players.some((q) => q.id === p.id || q.name === p.name)) story.players.push(p); });
+    story.published = item.published;
   });
   log.items = items.length;
   log.groups = groups.length;
@@ -502,10 +601,12 @@ const teaser = (s) => ({
   kind: s.kind,
   type: s.type,
   title: s.ai_title || s.title,
-  excerpt: s.summary ? clip(s.summary, 220) : s.list?.length ? clip(s.list.map((x) => x.text).join(' · '), 220) : s.body ? clip(s.body.join(' '), 220) : null,
+  excerpt: s.full_text || (s.summary ? clip(s.summary, 220) : s.list?.length ? clip(s.list.map((x) => x.text).join(' · '), 220) : s.body ? clip(s.body.join(' '), 220) : null),
   teams: s.teams,
   published: s.published,
   source_count: s.sources.length,
+  handle: s.handle || null,
+  url: s.sources[0]?.url || null,
   ai: s.ai ? { provider: s.ai.provider } : null
 });
 
@@ -518,7 +619,7 @@ const list = async ({ team = null, limit = 60, kind = null } = {}) => {
     .filter((s) => (!want.length || hits(s) > 0) && (!kind || s.kind === kind))
     .sort((a, b) => hits(b) - hits(a) || b.published.localeCompare(a.published));
   // Readable stories (AI summary or data story) first; unsummarised headlines listed separately.
-  const readable = stories.filter((s) => s.kind === 'data' || s.summary).slice(0, limit).map(teaser);
+  const readable = stories.filter((s) => s.kind === 'data' || s.kind === 'bluesky' || s.summary).slice(0, limit).map(teaser);
   const headlines = stories.filter((s) => s.kind === 'headline' && !s.summary).slice(0, 30)
     .map((s) => ({ id: s.id, title: s.title, published: s.published, teams: s.teams, sources: s.sources.map(({ name, url }) => ({ name, url })) }));
   return { stories: readable, headlines, last_updated: state.updated_at || null, last_run: state.runs?.[0] || null };
@@ -538,17 +639,17 @@ const get = async (id) => {
     teams: s.teams.map((a) => ({ abbreviation: a, name: byAbbr[a]?.name || a, logo: byAbbr[a]?.logo || null })),
     ai_note: s.ai ? 'Summary generated by AI from linked sources.' : null,
     related: Object.values(state.stories)
-      .filter((o) => o.id !== s.id && o.teams.some((t) => s.teams.includes(t)) && (o.summary || o.kind === 'data'))
+      .filter((o) => o.id !== s.id && o.teams.some((t) => s.teams.includes(t)) && (o.summary || o.kind === 'data' || o.kind === 'bluesky'))
       .sort((a, b) => b.published.localeCompare(a.published)).slice(0, 5).map(teaser)
   };
 };
 
 const status = async () => {
   const state = await load();
-  return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, daily_request_cap: DAILY_LLM_REQUEST_CAP, requests_today: Number(state.requests?.[etDate()] || 0), summarized_today: Math.min(Number(state.daily?.[etDate()] || 0), DAILY_LLM_CAP), runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
+  return { llm: llm.configured(), missing_keys: llm.missingKeys(), daily_cap: DAILY_LLM_CAP, daily_request_cap: DAILY_LLM_REQUEST_CAP, requests_today: Number(state.requests?.[etDate()] || 0), summarized_today: Math.min(Number(state.daily?.[etDate()] || 0), DAILY_LLM_CAP), bluesky: state.bluesky || { handles: {}, last_run: null }, runs: state.runs || [], stories: Object.keys(state.stories).length, last_updated: state.updated_at || null };
 };
 
 const usage = async (days = 7) => db.llmUsage(days);
 const allStories = async () => Object.values((await load()).stories || {});
 
-module.exports = { runNews, list, get, status, usage, allStories, cluster, tokens, jaccard, buildIndex, tagItem, fetchRss, stripHtml, DATASET };
+module.exports = { runNews, list, get, status, usage, allStories, cluster, tokens, jaccard, buildIndex, tagItem, fetchRss, blueskyNews, stripHtml, DATASET };
