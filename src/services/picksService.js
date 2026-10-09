@@ -30,7 +30,7 @@ const predictionArtifact = async () => {
   const row = await db.loadDataset('model_predictions_current');
   if (row && row.data?.generated_at && Date.now() - Date.parse(row.data.generated_at) <= 48 * 3600e3) return row.data;
   const {existsSync,readFileSync}=require('fs');
-  const pp=__dirname+'/scripts/model/predictions_current.json';
+  const pp=__dirname+'/../../scripts/model/predictions_current.json';
   if(existsSync(pp))try{
     const a=JSON.parse(readFileSync(pp,'utf-8'));
     if(a&&a.predictions&&a.predictions.length) return a;
