@@ -3,6 +3,7 @@ const injuryService = require('../services/injuryService');
 const teamStatsService = require('../services/teamStatsService');
 const tendencyService = require('../services/tendencyService');
 const newsService = require('../services/newsService');
+const socialService = require('../services/socialService');
 const picksService = require('../services/picksService');
 const rosterService = require('../services/rosterService');
 const weatherService = require('../services/weatherService');
@@ -134,6 +135,11 @@ const refreshNews = () => runJob('news', async () => {
   return { summarized: log.summarized, providers_used: used, new_stories: log.new_stories, missing_keys: log.missing_keys };
 });
 
+// Social feed, one job per platform (each keeps its own per-account health in social_v1).
+const refreshSocialBluesky = () => runJob('social_bluesky', () => socialService.runBluesky());
+const refreshSocialYoutube = () => runJob('social_youtube', () => socialService.runYoutube());
+const refreshSocialReddit = () => runJob('social_reddit', () => socialService.runReddit());
+
 // AFI Picks: re-pick unstarted games, lock started ones, grade finals.
 const refreshPicks = () => runJob('picks', async () => picksService.refreshPicks());
 const refreshTrades = () => runJob('transactions', async () => tradeService.refreshTrades());
@@ -147,10 +153,13 @@ const bootstrap = async () => {
   if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
   await refreshNews();
+  await refreshSocialBluesky();
+  await refreshSocialYoutube();
+  await refreshSocialReddit();
   if (!(await db.loadDataset(`trades_v3_${currentSeason()}`))) await refreshTrades();
   if (!(await db.loadDataset('trade_rumors_v1'))) await refreshTradeRumors();
   const fa = await db.loadDataset(`free_agents_${currentSeason()}`);
   if (!Array.isArray(fa?.data?.practice_squad)) await refreshFreeAgents();
 };
 
-module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, status };
+module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshSocialBluesky, refreshSocialYoutube, refreshSocialReddit, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, status };

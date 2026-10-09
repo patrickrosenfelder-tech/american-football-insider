@@ -6,6 +6,7 @@ import Roster from './Roster.jsx';
 import { TeamInjuries } from './Injuries.jsx';
 import { TeamTendencies } from './Tendencies.jsx';
 import { NewsFeed } from './News.jsx';
+import { SocialWidget } from './Social.jsx';
 import { TradeCard } from './Trades.jsx';
 
 const TABS = [['overview', 'Overview'], ['news', 'News'], ['trades', 'Trades'], ['depth', 'Depth chart'], ['roster', 'Roster'], ['injuries', 'Injuries'], ['tendencies', 'Tendencies']];
@@ -87,7 +88,12 @@ export default function Team() {
       {tab === 'roster' && <Roster teamId={teamId} />}
       {tab === 'injuries' && <TeamInjuries teamId={teamId} />}
       {tab === 'tendencies' && <TeamTendencies teamId={teamId} />}
-      {tab === 'news' && <NewsFeed team={t.abbreviation} compact />}
+      {tab === 'news' && (
+        <div className="news-layout">
+          <div className="news-main"><NewsFeed team={t.abbreviation} compact /></div>
+          <SocialWidget team={t.abbreviation} limit={8} title={`Social · ${t.abbreviation}`} />
+        </div>
+      )}
       {tab === 'trades' && <TeamTrades team={t.abbreviation} />}
     </section>
   );
@@ -105,9 +111,14 @@ function Overview({ t, teamId }) {
   const stats = useApi(`/stats/team/${teamId}`);
   return (
     <>
-      <h2 className="section-title">Schedule</h2>
-      <div className="card list-card">
-        {t.schedule.map((g) => <ScheduleRow key={g.game_id} game={g} teamId={t.id} />)}
+      <div className="news-layout">
+        <div className="news-main">
+          <h2 className="section-title">Schedule</h2>
+          <div className="card list-card">
+            {t.schedule.map((g) => <ScheduleRow key={g.game_id} game={g} teamId={t.id} />)}
+          </div>
+        </div>
+        <SocialWidget team={t.abbreviation} limit={6} title={`Social · ${t.abbreviation}`} />
       </div>
 
       <h2 className="section-title">Season stats{stats.data?.data?.games_played ? ` · ${stats.data.data.games_played} games` : ''}</h2>

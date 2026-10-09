@@ -4,6 +4,7 @@ const scheduler = require('../jobs/scheduler');
 const db = require('../db/database');
 const { currentSeason } = require('../services/rosterService');
 const newsService = require('../services/newsService');
+const socialService = require('../services/socialService');
 
 // Public data-status view: one row per data source, built from the scheduler's job state.
 // `dataset` is a fallback for last_success when a job has not run since status tracking began.
@@ -14,8 +15,10 @@ const SOURCES = [
   { key: 'practice_report', label: 'Practice report', provider: 'nflverse', jobs: ['practice_report'], dataset: (s) => `practice_${s}` },
   { key: 'stats', label: 'Stats (players + teams)', provider: 'nflverse', jobs: ['player_stats', 'pbp_derived'], dataset: (s) => `player_stats_${s}` },
   { key: 'tendencies', label: 'Tendencies', provider: 'nflverse pbp + FTN', jobs: ['pbp_derived'], dataset: (s) => `tendencies_${s}` },
-  { key: 'news', label: 'News', provider: 'RSS feeds + ESPN + Bluesky + LLM summaries', jobs: ['news'], dataset: () => 'news_v1' },
-  { key: 'bluesky', label: 'Bluesky insider posts', provider: 'Bluesky public API (no key)', jobs: ['news'], dataset: () => 'news_v1' },
+  { key: 'news', label: 'News', provider: 'RSS feeds + ESPN + LLM summaries', jobs: ['news'], dataset: () => 'news_v1' },
+  { key: 'social_bluesky', label: 'Social: Bluesky', provider: 'Bluesky public API (no key)', jobs: ['social_bluesky'], dataset: () => 'social_v1' },
+  { key: 'social_youtube', label: 'Social: YouTube', provider: 'YouTube channel RSS (no key)', jobs: ['social_youtube'], dataset: () => 'social_v1' },
+  { key: 'social_reddit', label: 'Social: Reddit', provider: 'Reddit OAuth API (app-only)', jobs: ['social_reddit'], disabled: () => !socialService.redditConfigured() },
   { key: 'transactions', label: 'Trades & transactions', provider: 'nflverse trades.csv + ESPN transactions', jobs: ['transactions'], dataset: (s) => `trades_v3_${s}` },
   { key: 'trade_rumors', label: 'Trade rumors', provider: 'ProFootballRumors + Google News + AFI news feed', jobs: ['trade_rumors'], dataset: () => 'trade_rumors_v1' },
   { key: 'free_agents', label: 'Free agents', provider: 'ESPN transactions + athlete status, nflverse stats/snaps/rosters', jobs: ['free_agents'], dataset: (s) => `free_agents_${s}` },
@@ -26,7 +29,7 @@ const SOURCES = [
 ];
 
 // Details worth showing per job (counts, data-through week); everything else is bookkeeping.
-const DETAIL_KEYS = ['data_through_week', 'ftn_through_week', 'latest_week', 'week', 'teams', 'players', 'games', 'games_with_lines', 'plays', 'summarized', 'new_stories', 'providers_used', 'missing_keys', 'trades', 'rumors', 'candidates', 'recently_signed'];
+const DETAIL_KEYS = ['data_through_week', 'ftn_through_week', 'latest_week', 'week', 'teams', 'players', 'games', 'games_with_lines', 'plays', 'summarized', 'new_stories', 'providers_used', 'missing_keys', 'trades', 'rumors', 'candidates', 'recently_signed', 'accounts', 'new_posts', 'skipped'];
 
 const latest = (values) => values.filter(Boolean).sort().pop() || null;
 const earliest = (values) => values.filter(Boolean).sort()[0] || null;
@@ -48,7 +51,7 @@ const buildStatus = async () => {
       source: src.key,
       label: src.label,
       provider: src.provider,
-      state: runs.some((r) => r.running) ? 'running' : failing ? 'error' : lastSuccess ? 'ok' : 'pending',
+      state: src.disabled?.() ? 'disabled' : runs.some((r) => r.running) ? 'running' : failing ? 'error' : lastSuccess ? 'ok' : 'pending',
       last_success: lastSuccess,
       last_run: latest(runs.map((r) => r.last_run)),
       next_run: earliest(runs.map((r) => r.next_run)),
@@ -67,6 +70,7 @@ const buildStatus = async () => {
     };
   }));
   const news = await newsService.status();
+  const social = await socialService.status().catch((error) => ({ error: error.message }));
   const lastRun = news.runs?.[0] || {};
   const providers = lastRun.llm?.providers || [];
   const providerUsed = providers.find((p) => p.used)?.name || null;
@@ -81,6 +85,8 @@ const buildStatus = async () => {
       providers_healthy: providerHealth.every((p) => !p.configured || p.healthy),
       providers: providerHealth
     },
+    // Per social platform: last success, failures, active vs configured accounts, per-account health.
+    social,
     last_updated: latest(sources.map((s) => s.last_success)), server_time: new Date().toISOString()
   };
 };

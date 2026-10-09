@@ -46,12 +46,14 @@ All responses are JSON: `{ success, data, timestamp }`. Team ids accept abbrevia
 | `GET /api/playoffs/odds` | Monte Carlo playoff odds (10k sims) |
 | `POST /api/playoffs/scenario` `{ "picks": { "<gameId>": "H"\|"A"\|"T" } }` | Standings / seeds / bracket for picks |
 | `GET /api/news[?team=PHI&kind=headline\|data]`, `GET /api/news/:id` | News feed, story |
+| `GET /api/social[?platform=bluesky\|youtube\|reddit&account=&team=PHI&limit=50]` | Social feed (separate store `social_v1`), newest first, `breaking` flag per post |
+| `GET /api/social/status` | Per-platform and per-account health (also included in `GET /api/status` as `social`) |
 | `GET /api/news/status`, `GET /api/status` | News run state; the latter includes `N/40 today`, last provider and health |
 | `GET /api/weather[?week=]`, `GET /api/weather/game/:gameId` | Kickoff forecasts + impact |
 | `GET /api/trends/team/:team`, `GET /api/trends/game/:gameId` | ATS / O-U / SU splits, key trends |
 | `GET /api/picks[?week=]` | AFI Picks + season record |
 | `GET /api/admin/jobs` | Job schedule + last run |
-| `POST /api/admin/jobs/:job/run[?wait=1]` (Bearer `ADMIN_TOKEN`) | Run a job now (`news`, `picks`, `pbp_derived`, `schedules`, `player_stats`, `practice_report`) |
+| `POST /api/admin/jobs/:job/run[?wait=1]` (Bearer `ADMIN_TOKEN`) | Run a job now (`news`, `social_bluesky`, `social_youtube`, `social_reddit`, `picks`, `pbp_derived`, `schedules`, `player_stats`, `practice_report`) |
 | `GET /admin/llm` (Bearer `ADMIN_TOKEN`) | Today and seven-day provider usage, errors/429s and latest observed limits |
 
 ```bash
@@ -67,6 +69,20 @@ curl -s -X POST -H "Authorization: Bearer $ADMIN_TOKEN" "https://american-footba
 - **nflverse** (GitHub releases, free): play-by-play, FTN charting, participation, player stats, snap counts, official injury/practice reports, and `nfldata/games.csv` (results + closing spread/total lines since 1999).
 - **Open-Meteo** (free, no key, non-commercial terms): weather forecast + geocoding.
 - **News feeds**: ESPN NFL news API and the RSS feeds of ESPN, CBS Sports, Yahoo Sports and ProFootballTalk. We use headlines and snippets only.
+- **Social feed** (`/social`, sidebar on `/news` and team pages): accounts live in `src/config/socialAccounts.js`.
+  - Bluesky public AppView API (no key), every 5 min. Posts shown in full; reposts skipped. Accounts failing 3 times in a row are parked and retried hourly.
+  - YouTube channel RSS (`/feeds/videos.xml?channel_id=`, no key), every 30 min. Videos play inline on `/social`.
+  - Reddit r/nfl via OAuth app-only (free tier), every 15 min, **disabled until `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` are set** (see below). Unauthenticated JSON returns 403, so we never scrape.
+  - Not included: X/Twitter (no free API); Mastodon (only unofficial X-mirror bots post NFL content).
+  - "Breaking": a post from an `insider: true` account in the last 30 minutes mentioning trade, signing, injury, out, IR, released or agree.
+
+### Reddit setup
+
+1. Sign in at https://www.reddit.com/prefs/apps with the Reddit account that should own the app, then click **create another app…**.
+2. Name `american-football-insider`, type **script** (app-only / client-credentials), redirect URI `https://american-football-insider.fly.dev` (unused but required). Create.
+3. Copy the client id (the string under the app name) and the **secret**.
+4. If Reddit shows an API-access / Responsible Builder approval step, complete it for non-commercial use. The free tier allows 100 requests/min; we use about 4 per hour.
+5. `fly secrets set REDDIT_CLIENT_ID=... REDDIT_CLIENT_SECRET=... REDDIT_USERNAME=<your reddit username> -a american-football-insider`. The app restarts, the Reddit tab enables itself and `GET /api/status` shows `social_reddit` as `ok`.
 
 ### News: legal approach and LLM summaries
 
@@ -101,7 +117,8 @@ Model IDs are discovered from each provider's model list (cached 6 h), because f
 | `practice_report`, `player_stats` (nflverse) | daily 07:00 |
 | `schedules` (results + lines for trends, H2H) | daily 06:00 |
 | `pbp_derived` (team stats + tendencies) | Tuesday 08:00 (after MNF) |
-| `news` | every 3 h |
+| `news` | every 15 min |
+| `social_bluesky` / `social_reddit` / `social_youtube` | every 5 / 15 / 30 min |
 | `picks` | hourly |
 
 Every job also runs at boot if its data is missing. Every page shows "last updated".

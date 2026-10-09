@@ -405,3 +405,49 @@ a.tag:hover { border-color: #b9c4d8; }
 .trend-list li { line-height: 1.5; font-size: .9rem; }
 .mt { margin-top: 14px; }
 .card > a.headline-row { padding: 8px 0; color: inherit; text-decoration: none; }
+
+/* Social feed */
+.news-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+.news-main { min-width: 0; }
+.social-widget { position: sticky; top: 72px; max-height: calc(100vh - 88px); overflow-y: auto; }
+.social-widget .section-title { margin: 0; }
+.social-widget-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 10px; }
+.social-toggle { display: none; }
+.social-list { display: flex; flex-direction: column; gap: 10px; }
+.social-feed { display: flex; flex-direction: column; gap: 12px; max-width: 680px; }
+.social-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; }
+.social-card.breaking { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.social-head { display: flex; align-items: center; gap: 8px; }
+.social-who { line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9rem; }
+.social-who a:hover b { text-decoration: underline; }
+.social-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex: none; display: inline-flex; align-items: center; justify-content: center; background: var(--line); font-size: 1rem; }
+.social-avatar.fallback.youtube { background: #ff0000; color: #fff; font-size: .85rem; }
+.social-avatar.fallback.reddit { background: #ff4500; color: #fff; }
+.social-badge { font-size: .64rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; padding: 2px 6px; border-radius: 6px; color: #fff; white-space: nowrap; }
+.social-badge.bluesky { background: #0a7aff; }
+.social-badge.youtube { background: #ff0000; }
+.social-badge.reddit { background: #ff4500; }
+.social-breaking { align-self: flex-start; font-size: .66rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; color: #fff; background: var(--accent); }
+.social-breaking.inline { margin-left: 8px; }
+.social-text { margin: 0; font-size: .9rem; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.social-link { color: #2563eb; }
+.social-link:hover { text-decoration: underline; }
+.social-media { position: relative; display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); padding: 0; background: none; cursor: pointer; width: 100%; }
+.social-media img { display: block; width: 100%; max-height: 320px; object-fit: cover; }
+.social-play { position: absolute; inset: 0; margin: auto; width: 52px; height: 52px; border-radius: 50%; background: rgba(0,0,0,.65); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+.social-count { position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.65); color: #fff; font-size: .75rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+.social-video { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; }
+.social-video.short { aspect-ratio: 9 / 16; max-width: 360px; }
+.social-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.social-linkcard { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-size: .84rem; }
+.social-linkcard img { width: 72px; height: 54px; object-fit: cover; border-radius: 6px; flex: none; }
+.social-linkcard:hover b { text-decoration: underline; }
+.social-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+@media (max-width: 900px) {
+  .news-layout { grid-template-columns: minmax(0, 1fr); }
+  .social-widget { position: static; max-height: none; overflow: visible; order: -1; }
+  .social-toggle { display: flex; width: 100%; justify-content: space-between; align-items: center; font: inherit; font-weight: 800; padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .social-body { display: none; margin-top: 10px; }
+  .social-body.open { display: block; }
+  .social-widget-head .section-title { display: none; }
+}

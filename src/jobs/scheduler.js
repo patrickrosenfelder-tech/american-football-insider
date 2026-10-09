@@ -1,11 +1,14 @@
-// In-app scheduler (no external cron): checks every 10 minutes which jobs are due.
+// In-app scheduler (no external cron): checks every 5 minutes which jobs are due.
 // Times are US Eastern. A job is due once its slot for today has passed and it has not run since.
 // ESPN rosters/depth charts (6h) and injuries (1h) also refresh on demand via cache TTL; the jobs
 // below re-warm them on a fixed schedule so the status page has a real last-success time.
 
 const refresh = require('./refresh');
 
-const TICK_MS = 10 * 60 * 1000;
+const TICK_MS = 5 * 60 * 1000;
+// Interval jobs are due slightly early so a 5-minute job is not pushed to every other tick
+// by the time its previous run took.
+const SLACK_MS = 60 * 1000;
 
 // days: 0=Sun..6=Sat (null = every day); hour: Eastern hour of day; everyHours: interval jobs.
 const SCHEDULE = [
@@ -18,8 +21,11 @@ const SCHEDULE = [
   // nflverse publishes pbp + FTN charting overnight after MNF, so tendencies/team stats run Tuesday.
   { job: 'pbp_derived', run: refresh.refreshPbpDerived, days: [2], hour: 8 },
   { job: 'schedules', run: refresh.refreshSchedules, days: null, hour: 6 },
-  // Includes direct Bluesky posts; 15-minute polling keeps breaking news fresh.
   { job: 'news', run: refresh.refreshNews, everyHours: 0.25 },
+  // Social feed: Bluesky every 5 min, Reddit every 15 min (only with keys), YouTube every 30 min.
+  { job: 'social_bluesky', run: refresh.refreshSocialBluesky, everyHours: 5 / 60 },
+  { job: 'social_reddit', run: refresh.refreshSocialReddit, everyHours: 0.25 },
+  { job: 'social_youtube', run: refresh.refreshSocialYoutube, everyHours: 0.5 },
   { job: 'transactions', run: refresh.refreshTrades, everyHours: 1 },
   { job: 'trade_rumors', run: refresh.refreshTradeRumors, everyHours: 3 },
   { job: 'free_agents', run: refresh.refreshFreeAgents, days: null, hour: 6 },
@@ -41,7 +47,7 @@ const register = (entry) => SCHEDULE.push(entry);
 
 let started = null;
 
-// Earliest time the scheduler will start this job (ticks run every 10 minutes after boot).
+// Earliest time the scheduler will start this job (ticks run every 5 minutes after boot).
 const nextTick = (after) => {
   if (!started) return new Date(after);
   return new Date(started + Math.ceil((after - started) / TICK_MS) * TICK_MS);
@@ -63,7 +69,7 @@ const nextRun = (entry) => {
 
 const isDue = (entry, now = eastern()) => {
   const last = refresh.status[entry.job]?.last_run;
-  if (entry.everyHours) return !last || Date.now() - Date.parse(last) >= entry.everyHours * 3600e3;
+  if (entry.everyHours) return !last || Date.now() - Date.parse(last) >= entry.everyHours * 3600e3 - SLACK_MS;
   if (entry.days && !entry.days.includes(now.dow)) return false;
   if (now.hour < entry.hour) return false;
   return !last || eastern(new Date(last)).date !== now.date;
@@ -92,7 +98,7 @@ const start = () => {
 
 const describe = () => SCHEDULE.map(({ job, days, hour, everyHours }) => ({
   job,
-  when: everyHours ? `every ${everyHours}h` : `${days ? days.map((d) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]).join(',') : 'daily'} ${String(hour).padStart(2, '0')}:00 ET`,
+  when: everyHours ? (everyHours < 1 ? `every ${Math.round(everyHours * 60)}m` : `every ${everyHours}h`) : `${days ? days.map((d) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]).join(',') : 'daily'} ${String(hour).padStart(2, '0')}:00 ET`,
   ...(refresh.status[job] || {}),
   next_run: nextRun(SCHEDULE.find((s) => s.job === job))?.toISOString() || null
 }));
