@@ -71,6 +71,10 @@ main { padding-top: 20px; padding-bottom: 32px; min-height: 70vh; }
 .trade-sides > div + div { border-left: 1px solid var(--line); padding-left: 14px; }
 .trade-sides p { margin: 6px 0 2px; }
 .trade-sides ul { margin: 4px 0; padding-left: 18px; font-size: .9rem; }
+.trade-player { display:flex; gap:6px; align-items:center; margin:5px 0; }
+.trade-player .headshot { width:32px; height:32px; }
+.trade-player small { display:block; color:var(--muted); font-size:.72rem; }
+.headshot.mini { width:28px; height:28px; vertical-align:middle; margin-right:6px; }
 .sources { display: flex; flex-wrap: wrap; gap: 8px; }
 .sources a { color: #2f6fec; font-size: .82rem; font-weight: 700; text-decoration: underline; }
 .table-card { padding: 0; overflow-x: auto; margin-bottom: 12px; }

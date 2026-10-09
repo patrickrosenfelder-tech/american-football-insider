@@ -549,5 +549,6 @@ const status = async () => {
 };
 
 const usage = async (days = 7) => db.llmUsage(days);
+const allStories = async () => Object.values((await load()).stories || {});
 
-module.exports = { runNews, list, get, status, usage, cluster, tokens, jaccard };
+module.exports = { runNews, list, get, status, usage, allStories, cluster, tokens, jaccard };

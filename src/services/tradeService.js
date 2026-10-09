@@ -4,78 +4,20 @@ const { assetUrl, streamCsv } = require('./nflverseService');
 const { ESPN_SITE, getTeams } = require('./sportsDataService');
 const news = require('./newsService');
 const { currentSeason } = require('./rosterService');
-
-const TRADES_KEY = (season) => `trades_${season}`;
-const FA_KEY = (season) => `free_agents_${season}`;
-const TX_URL = `${ESPN_SITE}/transactions`;
-const rumorWords = /trade talks|shopping|interest in|could trade|deadline|sources say|available for trade|trade candidate/i;
-const completeWords = /traded to|acquire[ds]?|deal sends|lands with/i;
-
-const dateOnly = (d) => String(d || '').slice(0, 10);
-const pickText = (r) => r.pick_round ? `${r.pick_season} Round ${r.pick_round}${r.pick_number ? `, Pick ${r.pick_number}` : ''}${r.conditional === '1' ? ' (conditional)' : ''}` : null;
-
-async function refreshTrades(season = currentSeason()) {
-  const grouped = new Map();
-  await streamCsv(assetUrl('trades', 'trades.csv'), (r) => {
-    if (Number(r.season) !== Number(season)) return;
-    const t = grouped.get(r.trade_id) || { id: String(r.trade_id), date: r.trade_date, teams: {} };
-    const side = t.teams[r.gave] || { team: r.gave, receives: [] };
-    const item = r.pfr_name || pickText(r);
-    if (item) side.receives.push(item);
-    t.teams[r.gave] = side; grouped.set(r.trade_id, t);
-  }, { columns: ['trade_id', 'season', 'trade_date', 'gave', 'received', 'pick_season', 'pick_round', 'pick_number', 'conditional', 'pfr_name'] });
-  const trades = [...grouped.values()].map((t) => ({ ...t, teams: Object.values(t.teams), status: 'Completed' })).sort((a, b) => b.date.localeCompare(a.date));
-  await db.saveDataset(TRADES_KEY(season), { season, trades, source: 'nflverse trades.csv', updated_at: new Date().toISOString() });
-  return { trades: trades.length };
-}
-
-async function transactions() {
-  const { data } = await axios.get(TX_URL, { timeout: 15000, params: { limit: 1000 }, headers: { 'User-Agent': 'American-Football-Insider/1.0' } });
-  return data.transactions || [];
-}
-
-async function refreshFreeAgents(season = currentSeason()) {
-  const tx = await transactions();
-  const released = tx.filter((x) => /released|waived/i.test(x.description || ''));
-  const signed = tx.filter((x) => /signed/i.test(x.description || ''));
-  const signedNames = new Set(signed.map((x) => (x.description.match(/(?:signed|re-signed)\s+(?:[A-Z]{1,3}\s+)?([^,.]+?)(?:\s+to|\.|$)/i)?.[1] || '').toLowerCase()).filter(Boolean));
-  const agents = released.map((x, i) => {
-    const m = x.description.match(/(?:released|waived)\s+(?:[A-Z]{1,3}\s+)?([^,.]+?)(?:\.|$)/i);
-    const name = m?.[1]?.trim() || x.description;
-    return { id: `${dateOnly(x.date)}-${i}`, name, position: (x.description.match(/(?:released|waived)\s+([A-Z]{1,3})\s+/i)?.[1] || 'FA'), age: null,
-      last_team: x.team?.abbreviation || null, status: `Released ${dateOnly(x.date)}`, released_date: x.date, score: 50 - i / 10, key_stats: 'Transaction-based listing; seasonal production refreshes with nflverse stats.', headshot: null,
-      signed: signedNames.has(name.toLowerCase()), team_fits: [] };
-  }).filter((a) => !a.signed).slice(0, 100);
-  await db.saveDataset(FA_KEY(season), { season, agents, source: 'ESPN transactions (released/waived)', updated_at: new Date().toISOString() });
-  return { players: agents.length };
-}
-
-async function getTrades({ season = currentSeason(), team, position } = {}) {
-  let row = await db.loadDataset(TRADES_KEY(season));
-  if (!row) { await refreshTrades(season); row = await db.loadDataset(TRADES_KEY(season)); }
-  let trades = row?.data?.trades || [];
-  if (team) trades = trades.filter((t) => t.teams.some((s) => s.team === String(team).toUpperCase()));
-  if (position) trades = trades.filter((t) => t.teams.some((s) => s.receives.some((x) => new RegExp(`\\b${position}\\b`, 'i').test(x))));
-  return { season: Number(season), trades, source: row?.data?.source || 'nflverse trades.csv', last_updated: row?.updated_at || null };
-}
-
-async function getRumors() {
-  const feed = await news.list({ limit: 200 });
-  const all = [...(feed.stories || []), ...(feed.headlines || [])];
-  const byTitle = new Map();
-  all.filter((s) => rumorWords.test(s.title || '')).forEach((s) => {
-    const key = (s.title || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').slice(0, 8).join(' ');
-    const r = byTitle.get(key) || { id: s.id, title: s.title, summary: s.excerpt || 'Reported trade interest; see linked source for details.', teams: s.teams || [], first_seen: s.published, last_updated: s.published, sources: [], mentions: 0, status: 'Active' };
-    r.sources.push(...(s.sources || [])); r.mentions += s.source_count || 1; if (s.published > r.last_updated) r.last_updated = s.published; byTitle.set(key, r);
-  });
-  return { rumors: [...byTitle.values()].map((r) => ({ ...r, status: Date.now() - Date.parse(r.last_updated) > 21 * 864e5 ? 'Cold' : r.status })).sort((a, b) => b.last_updated.localeCompare(a.last_updated)), source: 'AFI news feed (RSS + ESPN)' };
-}
-
-async function getFreeAgents() {
-  const season = currentSeason(); let row = await db.loadDataset(FA_KEY(season));
-  if (!row) { await refreshFreeAgents(season); row = await db.loadDataset(FA_KEY(season)); }
-  return { ...(row?.data || { season, agents: [] }), last_updated: row?.updated_at || null,
-    formula: 'AFI FA score = last two seasons’ snaps × positional value × production, adjusted for age. During initial data collection, released/waived players are ranked by recency; production components fill as nflverse stats refresh.' };
-}
-
+const key = (n, s) => `${n}_${s}`;
+const posValue = { QB: 2.3, EDGE: 1.8, DE: 1.8, CB: 1.65, WR: 1.5, OT: 1.45, T: 1.45, TE: 1.25, RB: 1, LB: 1.2, DT: 1.3, S: 1.2, G: 1.15, C: 1.15 };
+const clean = (s = '') => s.replace(/^(?:QB|RB|WR|TE|FB|OT|OG|G|C|DL|DT|DE|EDGE|LB|CB|DB|S|K|P)\s+/i, '').replace(/\s+(?:from the practice squad|with an injury settlement|from injured reserve|to the practice squad).*$/i, '').replace(/\s+(?:and|,).*$/i, '').trim();
+const norm = (s) => clean(s).toLowerCase().replace(/[^a-z]/g, ''); const date = (s) => String(s || '').slice(0, 10);
+const shot = (id) => id ? `https://a.espncdn.com/i/headshots/nfl/players/full/${id}.png` : null;
+async function transactions() { return (await axios.get(`${ESPN_SITE}/transactions`, { params: { limit: 1000 }, timeout: 20000 })).data.transactions || []; }
+async function directory() { const out = new Map(); await streamCsv(assetUrl('players', 'players.csv'), r => out.set(norm(r.display_name), r), { columns: ['display_name', 'espn_id', 'birth_date', 'position', 'headshot'] }); return out; }
+async function stats() { const out = new Map(); for (const season of [2025, 2026]) await streamCsv(assetUrl('stats_player', `stats_player_reg_${season}.csv`), r => { const p = out.get(norm(r.player_display_name)) || { snaps: 0, pass: 0, epa: 0, rec: 0, tar: 0, sacks: 0, games: 0 }; p.pass += +r.passing_yards || 0; p.epa += +r.passing_epa || 0; p.rec += +r.receiving_yards || 0; p.tar += +r.targets || 0; p.sacks += +r.def_sacks || 0; p.games += +r.games || 0; out.set(norm(r.player_display_name), p); }, { columns: ['player_display_name', 'passing_yards', 'passing_epa', 'receiving_yards', 'targets', 'def_sacks', 'games'] }); for (const season of [2025, 2026]) await streamCsv(assetUrl('snap_counts', `snap_counts_${season}.csv`), r => { if (r.game_type !== 'REG') return; const p = out.get(norm(r.player)) || { snaps: 0, pass: 0, epa: 0, rec: 0, tar: 0, sacks: 0, games: 0 }; p.snaps += (+r.offense_snaps || 0) + (+r.defense_snaps || 0); out.set(norm(r.player), p); }, { columns: ['game_type', 'player', 'offense_snaps', 'defense_snaps'] }); return out; }
+function enrich(name, people, lines) { const d = people.get(norm(name)) || {}, s = lines.get(norm(name)) || { snaps: 0 }; const age = d.birth_date ? Math.floor((Date.now() - Date.parse(d.birth_date)) / 31557600000) : null; const keyStats = s.pass ? `${s.pass.toLocaleString()} pass yds, ${s.epa.toFixed(1)} EPA` : s.rec ? `${s.rec} rec yds / ${s.tar} targets` : s.sacks ? `${s.sacks} sacks` : 'No NFL snaps in 2025–26'; return { type: 'player', name: clean(name), position: d.position || null, age, headshot: d.headshot || shot(d.espn_id), snap_share: s.snaps ? `${s.snaps} snaps (2025–26)` : 'No NFL snaps in 2025–26', key_stats: keyStats, stat: s }; }
+const sideItems = (v, people, lines) => v.split(/\s+and\s+|,\s*/).map(x => /(?:round|pick)/i.test(x) ? { type: 'pick', label: x } : enrich(x, people, lines));
+function espnTrade(x, people, lines) { const m = (x.description || '').match(/Traded\s+(.+?)\s+to\s+([^,.]+?)\s+in exchange for\s+(.+?)(?:\.|$)/i); if (!m) return null; const from = x.team?.abbreviation, aliases = { Baltimore: 'BAL', Dallas: 'DAL', Atlanta: 'ATL', Jacksonville: 'JAX', Philadelphia: 'PHI', Pittsburgh: 'PIT' }, to = aliases[m[2].trim()] || m[2].slice(0, 3).toUpperCase(); const a = sideItems(m[1], people, lines), b = sideItems(m[3], people, lines); return { id: `espn-${date(x.date)}-${from}-${to}`, date: date(x.date), status: 'Completed', source: 'ESPN transactions', teams: [{ team: from, gives: a, receives: b }, { team: to, gives: b, receives: a }] }; }
+async function refreshTrades(season = currentSeason()) { const [people, lines, tx] = await Promise.all([directory(), stats(), transactions()]); const group = new Map(); await streamCsv(assetUrl('trades', 'trades.csv'), r => { if (+r.season !== +season) return; const t = group.get(r.trade_id) || { id: `nflverse-${r.trade_id}`, date: r.trade_date, status: 'Completed', source: 'nflverse trades.csv', teams: {} }; const s = t.teams[r.gave] || { team: r.gave, gives: [], receives: [] }; if (r.pfr_name) s.receives.push(enrich(r.pfr_name, people, lines)); else if (r.pick_round) s.receives.push({ type: 'pick', label: `${r.pick_season} Round ${r.pick_round}${r.pick_number ? `, Pick ${r.pick_number}` : ''}${r.conditional === '1' ? ' (conditional)' : ''}` }); t.teams[r.gave] = s; group.set(r.trade_id, t); }, { columns: ['trade_id', 'season', 'trade_date', 'gave', 'pick_season', 'pick_round', 'pick_number', 'conditional', 'pfr_name'] }); const ledger = [...group.values()].map(t => ({ ...t, teams: Object.values(t.teams) })); ledger.forEach(t => t.teams.forEach(s => { s.gives = t.teams.find(x => x !== s)?.receives || []; })); const all = [...tx.map(x => espnTrade(x, people, lines)).filter(Boolean), ...ledger], seen = new Set(); const trades = all.filter(t => { const k = `${t.date}-${t.teams.map(x => x.team).sort().join('-')}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => b.date.localeCompare(a.date)); await db.saveDataset(key('trades', season), { season, trades, deadline: '2026-11-03T16:00:00-05:00', deadline_source: 'NFL Operations: Tuesday after Week 9, 4 p.m. ET' }); return { trades: trades.length }; }
+async function refreshFreeAgents(season = currentSeason()) { const [tx, people, lines] = await Promise.all([transactions(), directory(), stats()]); const signed = new Set(tx.filter(x => /(?:re-)?signed/i.test(x.description || '')).map(x => clean((x.description.match(/(?:re-)?signed\s+([^,.]+?)(?:\s+(?:to|from)|\.|,|$)/i) || [])[1] || '')).map(norm)); const released = new Map(); tx.filter(x => /released|waived/i.test(x.description || '') && !/practice squad/i.test(x.description || '')).forEach(x => { const m = (x.description || '').match(/(?:released|waived)\s+([^,.]+?)(?:\s+(?:from the practice squad|with an injury settlement)|\.|,|$)/i); if (m) released.set(norm(m[1]), { name: clean(m[1]), team: x.team?.abbreviation, when: x.date }); }); const teams = await getTeams(); const agents = [...released.values()].filter(x => !signed.has(norm(x.name))).map(x => { const p = enrich(x.name, people, lines), prod = p.stat.epa ? Math.max(0, p.stat.epa / Math.max(1, p.stat.games)) : p.stat.rec ? p.stat.rec / Math.max(1, p.stat.tar) : p.stat.sacks * 8, ageAdj = p.age ? Math.max(.55, 1.18 - Math.max(0, p.age - 25) * .035) : .7; return { id: norm(x.name), ...p, last_team: x.team, status: `Released ${date(x.when)}`, released_date: x.when, score: Math.round((p.stat.snaps ? p.stat.snaps * (posValue[p.position] || 1) * (1 + prod / 100) * ageAdj : 0) * 10) / 10, team_fits: teams.filter(t => t.abbreviation !== x.team).slice(0, 3).map(t => t.abbreviation) }; }).sort((a,b) => b.score - a.score || b.released_date.localeCompare(a.released_date)); await db.saveDataset(key('free_agents', season), { season, agents, source: 'ESPN transactions + nflverse stats/snap counts' }); return { players: agents.length }; }
+async function getTrades(q = {}) { const season = +q.season || currentSeason(); let row = await db.loadDataset(key('trades', season)); if (!row) { await refreshTrades(season); row = await db.loadDataset(key('trades', season)); } let trades = row.data.trades; if (q.team) trades = trades.filter(t => t.teams.some(s => s.team === String(q.team).toUpperCase())); if (q.position) trades = trades.filter(t => t.teams.some(s => s.receives.some(i => i.position === q.position))); return { ...row.data, trades, last_updated: row.updated_at }; }
+async function getRumors() { const words = /trade talks|shopping|interest in|could trade|deadline|sources say|available for trade|trade candidate|trade market|trade rumors?|open to trading|potential trade/i; const stories = (await news.allStories()).filter(s => words.test(`${s.title} ${s.summary || ''}`)).sort((a,b) => String(b.published).localeCompare(String(a.published))); return { rumors: stories.map(s => ({ id: s.id, player: s.players?.[0]?.name || null, title: s.ai_title || s.title, summary: s.summary || s.title, teams: s.teams || [], first_seen: s.published, last_updated: s.published, sources: s.sources || [], mentions: s.sources?.length || 1, status: Date.now() - Date.parse(s.published) > 21 * 864e5 ? 'Cold' : 'Active' })), source: 'AFI stored news feed (RSS + ESPN)' }; }
+async function getFreeAgents() { const s = currentSeason(); let row = await db.loadDataset(key('free_agents', s)); if (!row) { await refreshFreeAgents(s); row = await db.loadDataset(key('free_agents', s)); } return { ...row.data, last_updated: row.updated_at, formula: 'AFI FA score = 2025–26 snaps × position value × production (QB EPA, receiving yards/target, or sacks), age-adjusted. Players without NFL snaps rank below players with production.' }; }
 module.exports = { refreshTrades, refreshFreeAgents, getTrades, getRumors, getFreeAgents, transactions };
