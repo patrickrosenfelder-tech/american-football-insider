@@ -516,9 +516,10 @@ const list = async ({ team = null, limit = 60, kind = null } = {}) => {
   // team may be a comma list (matchup news): stories tagging both teams sort first.
   const want = team ? String(team).toUpperCase().split(',').filter(Boolean) : [];
   const hits = (s) => want.filter((t) => s.teams.includes(t)).length;
+  const rank = (s) => want.reduce((min, t) => Math.min(min, s.teams.indexOf(t) >= 0 ? s.teams.indexOf(t) : 99), 99);
   const stories = Object.values(state.stories)
     .filter((s) => s.kind !== 'bluesky' && (!want.length || hits(s) > 0) && (!kind || s.kind === kind))
-    .sort((a, b) => hits(b) - hits(a) || b.published.localeCompare(a.published));
+    .sort((a, b) => hits(b) - hits(a) || rank(a) - rank(b) || b.published.localeCompare(a.published));
   // Readable stories (AI summary or data story) first; unsummarised headlines listed separately.
   const readable = stories.filter((s) => s.kind === 'data' || s.summary).slice(0, limit).map(teaser);
   const headlines = stories.filter((s) => s.kind === 'headline' && !s.summary).slice(0, 30)

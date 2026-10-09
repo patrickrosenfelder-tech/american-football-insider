@@ -40,7 +40,7 @@ export default function Scores() {
     <section>
       <div className="page-head">
         <div>
-          <h1>{data.season} {data.season_type === 3 ? 'Playoffs' : `Week ${data.week}`}</h1>
+          <h1>{data.season} {(seasonType || data.season_type) === '3' || data.season_type === 3 ? 'Playoffs' : `Week ${week || data.week}`}</h1>
           <p className="muted">
             {games.length} games{liveCount > 0 && <> · <span className="live-text">{liveCount} live</span></>}
             {liveCount > 0 && ' · auto-refreshing'}

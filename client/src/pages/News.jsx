@@ -113,19 +113,21 @@ export default function News() {
   const { data } = useApi('/teams');
   const [params, setParams] = useSearchParams();
   const team = params.get('team');
+  const teamName = team && (data?.data || []).find((t) => t.abbreviation === team)?.name;
   const setTeam = (t) => { const next = new URLSearchParams(params); if (t) next.set('team', t); else next.delete('team'); setParams(next, { replace: true }); };
   return (
     <section>
       <div className="page-head">
-        <div><h1>News</h1><p className="muted small">League news in short, sourced summaries — plus stories built from live data.</p></div>
+        <div><h1>{teamName || 'News'}</h1><p className="muted small">{teamName ? `${teamName} news, insider posts and data stories` : 'League news in short, sourced summaries — plus stories built from live data.'}</p></div>
         <label className="week-select">
           <select value={team || ''} onChange={(e) => setTeam(e.target.value)}>
             <option value="">All teams</option>
             {(data?.data || []).map((t) => <option key={t.id} value={t.abbreviation}>{t.name}</option>)}
           </select>
-        </label>
+        </label>{team && <button className="link-btn" onClick={() => setTeam('')} title="Clear team filter">✕ Clear</button>}
       </div>
-      <div className="news-layout">
+      <div className="filter-banner" style={{ display: team ? 'flex' : 'none' }}><b>Showing:</b> {teamName || team} stories, tagged teams, social and data feeds matched. <button className="link-btn" onClick={() => setTeam('')} style={{ marginLeft: 10 }}>✕ Clear</button></div>
+<div className="news-layout">
         <div className="news-main"><NewsFeed team={team} /></div>
         <SocialWidget team={team} limit={15} title={team ? `Social · ${team}` : 'Social'} />
       </div>
