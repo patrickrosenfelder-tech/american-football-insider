@@ -57,7 +57,7 @@ const blueskyMedia = (embed) => {
   if (e?.$type === 'app.bsky.embed.images#view' && e.images?.length) {
     return { type: 'image', thumb: e.images[0].thumb, full: e.images[0].fullsize, alt: e.images[0].alt || '', count: e.images.length };
   }
-  if (e?.$type === 'app.bsky.embed.video#view') return { type: 'video', thumb: e.thumbnail || null };
+  if (e?.$type === 'app.bsky.embed.video#view') return { type: 'video', thumb: e.thumbnail || null, playlist: e.playlist || null, aspect: e.aspectRatio || null };
   if (e?.$type === 'app.bsky.embed.external#view' && e.external?.uri) {
     return { type: 'link', url: e.external.uri, title: e.external.title || '', description: clip(e.external.description || '', 200), thumb: e.external.thumb || null };
   }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox, Updated } from '../components.jsx';
@@ -35,22 +35,62 @@ function Avatar({ p }) {
   return <span className={`social-avatar fallback ${p.platform}`}>{PLATFORMS[p.platform]?.icon || p.author.name[0]}</span>;
 }
 
-function Media({ p, embed }) {
+// Bluesky videos are HLS (.m3u8). Safari plays HLS natively; other browsers use hls.js (loaded on demand).
+function HlsVideo({ src, poster, aspect }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return undefined;
+    let hls = null;
+    let cancelled = false;
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = src;
+      video.play().catch(() => {});
+    } else {
+      import('hls.js').then(({ default: Hls }) => {
+        if (cancelled || !Hls.isSupported()) return;
+        hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+      });
+    }
+    return () => { cancelled = true; if (hls) hls.destroy(); };
+  }, [src]);
+  const ratio = aspect?.width && aspect?.height ? `${aspect.width} / ${aspect.height}` : '16 / 9';
+  const portrait = aspect?.height > aspect?.width;
+  return (
+    <div className={`social-video ${portrait ? 'short' : ''}`} style={{ aspectRatio: ratio }}>
+      <video ref={ref} poster={poster || undefined} controls playsInline />
+    </div>
+  );
+}
+
+function Media({ p }) {
   const [playing, setPlaying] = useState(false);
   const m = p.media;
   if (!m) return null;
+  if (m.type === 'video' && m.playlist) {
+    if (playing) return <HlsVideo src={m.playlist} poster={m.thumb} aspect={m.aspect} />;
+    return (
+      <button type="button" className="social-media video" onClick={() => setPlaying(true)} aria-label="Play video">
+        {m.thumb && <img src={m.thumb} alt="" loading="lazy" />}<span className="social-play">▶</span>
+      </button>
+    );
+  }
   if (m.type === 'youtube') {
-    if (embed && playing) {
+    if (playing) {
       return (
         <div className={`social-video ${m.short ? 'short' : ''}`}>
           <iframe src={`https://www.youtube-nocookie.com/embed/${m.video_id}?autoplay=1`} title={p.text} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
         </div>
       );
     }
-    const thumb = <><img src={m.thumb} alt="" loading="lazy" /><span className="social-play">▶</span></>;
-    return embed
-      ? <button type="button" className="social-media video" onClick={() => setPlaying(true)} aria-label={`Play ${p.text}`}>{thumb}</button>
-      : <a href={p.url} target="_blank" rel="noreferrer" className="social-media video">{thumb}</a>;
+    return (
+      <button type="button" className="social-media video" onClick={() => setPlaying(true)} aria-label={`Play ${p.text}`}>
+        <img src={m.thumb} alt="" loading="lazy" /><span className="social-play">▶</span>
+      </button>
+    );
   }
   if (m.type === 'link') {
     return (
@@ -70,7 +110,7 @@ function Media({ p, embed }) {
   );
 }
 
-export function SocialCard({ p, embed = false }) {
+export function SocialCard({ p }) {
   const plat = PLATFORMS[p.platform] || { label: p.platform, icon: '•' };
   return (
     <article className={`social-card ${p.breaking ? 'breaking' : ''}`}>
@@ -87,7 +127,7 @@ export function SocialCard({ p, embed = false }) {
       {p.flair && <span className="tag">{p.flair}</span>}
       {p.platform === 'youtube' ? <p className="social-text"><b>{p.text}</b></p> : <PostText p={p} />}
       {p.body && <p className="social-text muted small">{p.body}</p>}
-      <Media p={p} embed={embed} />
+      <Media p={p} />
       <footer className="social-foot muted small">
         {p.teams.slice(0, 3).map((t) => <Link key={t} to={`/teams/${t}`} className="tag">{t}</Link>)}
         {p.platform === 'reddit' && <span>▲ {compact(p.metrics.score)} · 💬 {compact(p.metrics.comments)}</span>}
@@ -173,7 +213,7 @@ export default function Social() {
       {loading && <Loading label="Loading posts…" />}
       {error && <ErrorBox error={error} />}
       {d && !d.posts.length && <div className="state">No posts match these filters.</div>}
-      {d && <div className="social-feed">{d.posts.map((p) => <SocialCard key={p.id} p={p} embed />)}</div>}
+      {d && <div className="social-feed">{d.posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>}
       <p className="muted small note">
         Posts are shown in full from public feeds (Bluesky public API, YouTube channel RSS{d?.platforms?.find((x) => x.platform === 'reddit')?.enabled ? ', Reddit API' : ''}) with a link to every original.
         “Breaking” marks posts from national insiders in the last 30 minutes that mention a trade, signing, injury, IR, release or agreement.
