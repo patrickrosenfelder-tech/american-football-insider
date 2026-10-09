@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import { formatKickoff, isLive } from './api.js';
 
 export function Loading({ label = 'Loading…' }) {
-  return <div className="state"><span className="spinner" /> {label}</div>;
+  return <div className="state skeleton-state" role="status" aria-label={label}><div className="skeleton-line wide" /><div className="skeleton-line" /><span className="sr-only">{label}</span></div>;
 }
 
-export function ErrorBox({ error }) {
-  return <div className="state error">Couldn’t load data: {error?.message || String(error)}</div>;
+export function ErrorBox({ error, onRetry }) {
+  return <div className="state error" role="alert"><p>Couldn’t load data: {error?.message || String(error)}</p><button className="btn retry-btn" onClick={onRetry || (() => window.location.reload())}>Retry</button></div>;
 }
 
 export function Logo({ src, alt, size = 28 }) {
@@ -71,7 +71,16 @@ export function InjuryBadge({ injury, small }) {
   );
 }
 
-export function Updated({ at, label = 'Last updated' }) {
+export function Updated({ at, label = 'Last updated', staleHours = 6 }) {
   if (!at) return null;
-  return <p className="updated muted small">{label}: {new Date(at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>;
+  const date = new Date(at);
+  const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+  const relative = minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} minute${minutes === 1 ? '' : 's'} ago` : `${Math.round(minutes / 60)} hour${Math.round(minutes / 60) === 1 ? '' : 's'} ago`;
+  const stale = minutes >= staleHours * 60;
+  return <p className={`updated muted small ${stale ? 'stale-note' : ''}`}>{stale && 'Results may be stale — '}{label}: {relative} ({date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })})</p>;
+}
+
+export function StaleData({ at }) {
+  if (!at) return <div className="stale-banner">Results may be stale — refresh failed.</div>;
+  return <div className="stale-banner">Results may be stale — last updated at {new Date(at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}.</div>;
 }

@@ -1,4 +1,5 @@
-import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -20,6 +21,18 @@ import FreeAgents from './pages/FreeAgents.jsx';
 import Status from './pages/Status.jsx';
 
 export default function App() {
+  const location = useLocation();
+  const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => {
+    const route = location.pathname.split('/')[1];
+    const titles = { '': 'Scores', news: 'News', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
+    document.title = `${titles[route] || 'Football Insider'} | AFI`;
+    setMoreOpen(false);
+  }, [location.pathname]);
+
+  const overflowLinks = [
+    ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/teams', 'Teams'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies']
+  ];
   return (
     <>
       <header className="topbar">
@@ -38,11 +51,11 @@ export default function App() {
             <NavLink to="/picks">Picks</NavLink>
             <NavLink to="/model">AFI Model</NavLink>
             <NavLink to="/power-rankings">Rankings</NavLink>
-            <NavLink to="/weather">Weather</NavLink>
-            <NavLink to="/playoffs">Playoffs</NavLink>
-            <NavLink to="/teams">Teams</NavLink>
-            <NavLink to="/injuries">Injuries</NavLink>
-            <NavLink to="/tendencies">Tendencies</NavLink>
+            {overflowLinks.map(([to, label]) => <NavLink key={to} className="nav-overflow" to={to}>{label}</NavLink>)}
+            <div className="nav-more-wrap">
+              <button className="nav-more" aria-expanded={moreOpen} onClick={() => setMoreOpen((open) => !open)}>More…</button>
+              {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
+            </div>
           </nav>
         </div>
       </header>

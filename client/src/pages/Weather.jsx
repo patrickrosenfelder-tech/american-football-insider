@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { Loading, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
 
 const LEVEL_LABEL = { none: 'No impact', low: 'Low', medium: 'Moderate', high: 'High' };
 
@@ -18,12 +18,13 @@ function Conditions({ g }) {
 }
 
 export function WeatherBlock({ gameId }) {
-  const { data, error, loading } = useApi(`/weather/game/${gameId}`);
+  const { data, error, loading, retry, stale, lastUpdated } = useApi(`/weather/game/${gameId}`, { timeoutMs: 10000 });
   if (loading) return <div className="card"><Loading label="Loading forecast…" /></div>;
-  if (error) return null;
+  if (error && !data) return <div className="card"><ErrorBox error={error} onRetry={retry} /></div>;
   const g = data.data;
   return (
     <div className="card">
+      {stale && <StaleData at={lastUpdated} />}
       <h3 className="card-title compare-head"><span>Weather</span><span className={`wx-level ${g.impact?.level || 'none'}`}>{g.impact ? LEVEL_LABEL[g.impact.level] : ''}</span></h3>
       <p className="small muted">{g.venue?.name}{g.roof_label ? ` · ${g.roof_label}` : ''}</p>
       {g.roof === 'dome' || g.roof === 'covered' ? <p className="small">{g.impact?.note}</p> : (
@@ -40,9 +41,9 @@ export function WeatherBlock({ gameId }) {
 export default function Weather() {
   const [params] = useSearchParams();
   const week = params.get('week');
-  const { data, error, loading } = useApi(`/weather${week ? `?week=${week}` : ''}`);
+  const { data, error, loading, retry, stale, lastUpdated } = useApi(`/weather${week ? `?week=${week}` : ''}`, { timeoutMs: 10000 });
   if (loading) return <Loading label="Loading forecasts…" />;
-  if (error) return <ErrorBox error={error} />;
+  if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   const d = data.data;
   const order = { high: 0, medium: 1, low: 2, none: 3 };
   const games = [...d.games].sort((a, b) => (order[a.impact?.level] ?? 4) - (order[b.impact?.level] ?? 4) || a.date.localeCompare(b.date));
@@ -50,6 +51,7 @@ export default function Weather() {
 
   return (
     <section>
+      {stale && <StaleData at={lastUpdated} />}
       <div className="page-head">
         <div>
           <h1>Week {d.week} weather</h1>

@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, InjuryBadge, Updated } from '../components.jsx';
+import { Loading, ErrorBox, Logo, InjuryBadge, Updated, StaleData } from '../components.jsx';
 import { MatchupTendencies } from './Tendencies.jsx';
 import { WeatherBlock } from './Weather.jsx';
 import { TrendsBlock } from './Picks.jsx';
@@ -89,15 +89,16 @@ function Injuries({ side }) {
 
 export default function Preview() {
   const { gameId } = useParams();
-  const { data, error, loading } = useApi(`/previews/${gameId}`);
+  const { data, error, loading, retry, stale, lastUpdated } = useApi(`/previews/${gameId}`);
   if (loading) return <Loading label="Building matchup preview…" />;
-  if (error) return <ErrorBox error={error} />;
+  if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   const p = data.data;
   const { away, home } = p;
   const statRows = STAT_ROWS.map(([label, path, higher, suffix]) => [label, get(away.stats, path), get(home.stats, path), higher, suffix]);
 
   return (
     <section>
+      {stale && <StaleData at={lastUpdated} />}
       <div className="card game-hero">
         <div className="hero-status"><span className="pill pre">Week {p.week} preview</span>{p.status !== 'pre' && <Link className="small" to={`/game/${p.game_id}`}><u>Game center</u></Link>}</div>
         <div className="hero-teams">

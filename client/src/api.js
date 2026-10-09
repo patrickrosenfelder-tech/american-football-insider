@@ -1,28 +1,45 @@
 import { useEffect, useState, useCallback } from 'react';
 
-export async function api(path) {
-  const res = await fetch(`/api${path}`);
+const sessionCache = new Map();
+
+export async function api(path, { timeoutMs = 15000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let res;
+  try {
+    res = await fetch(`/api${path}`, { signal: controller.signal });
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error(`Request timed out after ${Math.round(timeoutMs / 1000)} seconds`);
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
   const body = await res.json().catch(() => ({}));
   if (!res.ok || body.success === false) throw new Error(body.error || `Request failed (${res.status})`);
   return body;
 }
 
 // Fetches `path`; re-polls every `refreshMs` while `shouldRefresh(body)` is true.
-export function useApi(path, { refreshMs = 0, shouldRefresh = () => false } = {}) {
-  const [state, setState] = useState({ data: null, error: null, loading: true });
+export function useApi(path, { refreshMs = 0, shouldRefresh = () => false, timeoutMs = 15000 } = {}) {
+  const [state, setState] = useState({ data: path ? sessionCache.get(path)?.data || null : null, error: null, loading: Boolean(path), stale: false, lastUpdated: sessionCache.get(path)?.updatedAt || null });
 
   const load = useCallback(async (silent) => {
-    if (!path) { setState({ data: null, error: null, loading: false }); return null; }
+    if (!path) { setState({ data: null, error: null, loading: false, stale: false, lastUpdated: null }); return null; }
     if (!silent) setState((s) => ({ ...s, loading: true, error: null }));
     try {
-      const body = await api(path);
-      setState({ data: body, error: null, loading: false });
+      const body = await api(path, { timeoutMs });
+      const updatedAt = new Date().toISOString();
+      sessionCache.set(path, { data: body, updatedAt });
+      setState({ data: body, error: null, loading: false, stale: false, lastUpdated: updatedAt });
       return body;
     } catch (error) {
-      setState((s) => ({ data: silent ? s.data : null, error, loading: false }));
+      setState((s) => {
+        const cached = s.data || sessionCache.get(path)?.data || null;
+        return { data: cached, error, loading: false, stale: Boolean(cached), lastUpdated: s.lastUpdated || sessionCache.get(path)?.updatedAt || null };
+      });
       return null;
     }
-  }, [path]);
+  }, [path, timeoutMs]);
 
   useEffect(() => {
     let timer;
@@ -38,7 +55,7 @@ export function useApi(path, { refreshMs = 0, shouldRefresh = () => false } = {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load, refreshMs]);
 
-  return state;
+  return { ...state, retry: () => load(false) };
 }
 
 export const isLive = (game) => game?.status?.state === 'in';

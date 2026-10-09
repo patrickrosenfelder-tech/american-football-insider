@@ -9,6 +9,7 @@ router.get('/', async (req, res) => {
     const data = await weatherService.getWeekWeather({ week: week ? Number(week) : null, season: season ? Number(season) : null, seasonType: seasontype ? Number(seasontype) : null });
     res.json({ success: true, data, timestamp: new Date().toISOString() });
   } catch (error) {
+    console.error('Weather week request failed', { error: error.message, query: req.query });
     res.status(502).json({ success: false, error: error.message });
   }
 });
@@ -20,6 +21,7 @@ router.get('/game/:gameId', async (req, res) => {
     if (!data) return res.status(404).json({ success: false, error: 'Game not found' });
     return res.json({ success: true, data, timestamp: new Date().toISOString() });
   } catch (error) {
+    console.error('Weather game request failed', { error: error.message, gameId: req.params.gameId });
     return res.status(502).json({ success: false, error: error.message });
   }
 });
