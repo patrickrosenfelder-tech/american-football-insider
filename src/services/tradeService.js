@@ -14,7 +14,7 @@ const news = require('./newsService');
 const { currentSeason } = require('./rosterService');
 const profiles = require('./playerProfileService');
 
-const TRADES_KEY = (season) => `trades_${season}`;
+const TRADES_KEY = (season) => `trades_v2_${season}`;
 const RUMORS_KEY = 'trade_rumors_v1';
 const TX_URL = `${ESPN_SITE}/transactions`;
 const UA = 'Mozilla/5.0 (compatible; American-Football-Insider/1.0; +https://american-football-insider.fly.dev)';
@@ -249,13 +249,19 @@ const finishTrade = (t, prof, resolveName, season) => {
   return { id: t.id, date: t.date, status: 'Completed', teams: sides, sources: [...t.sources] };
 };
 
-async function refreshTrades(season = currentSeason()) {
+async function buildTradeList(season) {
   const [{ trades, errors }, prof, resolveName] = await Promise.all([buildTrades(season), profiles.loadProfiles(), teamResolver()]);
   const list = trades.filter((t) => Object.keys(t.sides).length >= 2).map((t) => finishTrade(t, prof, resolveName, season))
     .sort((a, b) => b.date.localeCompare(a.date));
   await db.saveDataset(TRADES_KEY(season), { season, trades: list, source: 'nflverse trades.csv + ESPN transactions', errors, updated_at: new Date().toISOString() }, { trades: list.length });
   return { trades: list.length, ...(errors.length ? { error: errors.join('; ') } : {}) };
 }
+
+// Single flight per job: hourly job, boot and cold page views share one in-progress build.
+const inflight = {};
+const once = (key, fn) => (inflight[key] ||= fn().finally(() => { delete inflight[key]; }));
+const refreshTrades = (season = currentSeason()) => once(`trades_${season}`, () => buildTradeList(season));
+const refreshRumors = () => once('rumors', buildRumors);
 
 async function getTrades({ season = currentSeason(), team, position } = {}) {
   let row = await db.loadDataset(TRADES_KEY(season));
@@ -345,7 +351,7 @@ const summaryFor = (r) => {
     + `${others.length ? `, with ${others.join(', ')} linked` : ''}. Latest: “${r.headline}”.`;
 };
 
-async function refreshRumors() {
+async function buildRumors() {
   const [{ items, errors }, index, tradesRow] = await Promise.all([collectRumorItems(), news.buildIndex(), db.loadDataset(TRADES_KEY(currentSeason()))]);
   const row = await db.loadDataset(RUMORS_KEY);
   const store = row?.data?.rumors || {};

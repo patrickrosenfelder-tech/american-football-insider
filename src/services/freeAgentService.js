@@ -11,7 +11,8 @@ const { transactions, clauses } = require('./tradeService');
 const profiles = require('./playerProfileService');
 
 const FA_KEY = (season) => `free_agents_${season}`;
-const ATHLETE = 'https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes';
+// Core API athlete record (~5 KB, vs ~125 KB for the site athlete page payload).
+const ATHLETE = 'https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes';
 const LIST_SIZE = 50;
 const PS_LIST_SIZE = 15;
 const MAX_CHECKS = 240;
@@ -155,11 +156,10 @@ const scorePlayer = (p, dist, age) => {
 
 const espnStatus = async (espnId) => {
   const { data } = await axios.get(`${ATHLETE}/${espnId}`, { timeout: 12000, headers: { 'User-Agent': 'American-Football-Insider/1.0' } });
-  const a = data.athlete || {};
-  return { type: a.status?.type || null, name: a.status?.name || null, team: a.team?.abbreviation || null, age: a.age ?? null, headshot: a.headshot?.href || null, position: a.position?.abbreviation || null };
+  return { type: data.status?.type || null, name: data.status?.name || null, age: data.age ?? null, headshot: data.headshot?.href || null, position: data.position?.abbreviation || null };
 };
 
-async function refreshFreeAgents(season = currentSeason()) {
+async function buildFreeAgents(season) {
   const [prof, { releases, signings }, roster] = await Promise.all([profiles.loadProfiles(), wire(), weeklyRoster(season).catch(() => [])]);
   const onRoster = new Set(roster.filter((r) => ['ACT', 'DEV', 'RES', 'INA', 'PUP', 'NON', 'EXE', 'SUS'].includes(r.status)).map((r) => r.gsis_id));
   const dist = distributions(prof);
@@ -249,6 +249,13 @@ async function refreshFreeAgents(season = currentSeason()) {
   await db.saveDataset(FA_KEY(season), data, { players: data.agents.length });
   return { players: data.agents.length, practice_squad: data.practice_squad.length, recently_signed: recentlySigned.length, candidates: scored.length };
 }
+
+// Single flight: the daily job, boot and a cold page view must not build the list concurrently (256 MB VM).
+let inflight = null;
+const refreshFreeAgents = (season = currentSeason()) => {
+  if (!inflight) inflight = buildFreeAgents(season).finally(() => { inflight = null; });
+  return inflight;
+};
 
 async function getFreeAgents() {
   const season = currentSeason();

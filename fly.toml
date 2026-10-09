@@ -6,6 +6,8 @@ primary_region = 'iad'
 [env]
   PORT = '8080'
   DB_PATH = '/data/nfl-data.db'
+  # 256 MB VM: cap the V8 heap so GC runs before the kernel OOM-kills the process.
+  NODE_OPTIONS = '--max-old-space-size=120'
 
 # Persistent SQLite (news summaries, injury snapshots, AFI pick record).
 [mounts]

@@ -147,7 +147,7 @@ const bootstrap = async () => {
   if (!(await teamStatsService.getTeamStats(currentSeason())) || !(await tendencyService.getTendencies(currentSeason()))) await refreshPbpDerived();
   await refreshSchedules();
   await refreshNews();
-  if (!(await db.loadDataset(`trades_${currentSeason()}`))) await refreshTrades();
+  if (!(await db.loadDataset(`trades_v2_${currentSeason()}`))) await refreshTrades();
   if (!(await db.loadDataset('trade_rumors_v1'))) await refreshTradeRumors();
   const fa = await db.loadDataset(`free_agents_${currentSeason()}`);
   if (!Array.isArray(fa?.data?.practice_squad)) await refreshFreeAgents();
