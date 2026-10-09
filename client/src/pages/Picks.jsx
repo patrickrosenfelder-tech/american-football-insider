@@ -55,10 +55,18 @@ function PickCard({ g }) {
           <p className="key-stat"><b>Efficiency signal:</b> {p.efficiency_rating?.snippet}</p>
           <div className="afi-edges"><b>AFI Key Matchups</b>{p.micro_matchups?.map((m) => <span key={`${m.label}-${m.text}`} className="afi-edge">{m.icon} <b>{m.label}:</b> {m.text}</span>) || <span className="muted small">Limited data</span>}</div>
           <p className="muted small">Model: {p.home} {fmtLine(p.model.spread_home)}, total {p.model.total} · Market: {p.market.details || '–'}{p.market.total != null ? `, O/U ${p.market.total}` : ''}</p>
+          <p className="muted small">{p.model_version || 'v1'}{p.model_run_at ? ` · Model run: ${new Date(p.model_run_at).toLocaleString()}` : ''}{p.fallback_reason && /fallback/.test(p.model_version || '') ? ` · ${p.fallback_reason}` : ''}</p>
         </>
       )}
     </div>
   );
+}
+
+function ModelRun({ run }) {
+  if (!run) return null;
+  const at = run.generated_at ? new Date(run.generated_at).toLocaleString() : null;
+  if (run.available) return <p className="muted small">Model run: <b>{at}</b> · {run.model_version} · {run.games} games{run.data_through ? ` · data through ${new Date(run.data_through).toLocaleDateString()}` : ''}</p>;
+  return <p className="disclaimer"><b>Model v1 fallback:</b> {at ? `the latest v2 run (${at}) is older than ${run.max_age_hours}h` : 'no v2 predictions are available'}, so these picks use the v1 formula.</p>;
 }
 
 function RecordTiles({ record }) {
@@ -114,6 +122,7 @@ export default function Picks() {
           <Link className="btn" to={`/picks?week=${d.week + 1}`}>Week {d.week + 1} →</Link>
         </div>
       </div>
+      <ModelRun run={d.model_run} />
       <p className="disclaimer">{d.disclaimer}</p>
       <h2 className="section-title">Season record{d.tracking_since ? <span className="muted small"> · tracked since {new Date(d.tracking_since).toLocaleDateString()}</span> : ''}</h2>
       <RecordTiles record={d.record} />

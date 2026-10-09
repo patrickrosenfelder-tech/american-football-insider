@@ -17,6 +17,7 @@ import Model from './pages/Model.jsx';
 import PowerRankings from './pages/PowerRankings.jsx';
 import Trades from './pages/Trades.jsx';
 import FreeAgents from './pages/FreeAgents.jsx';
+import Status from './pages/Status.jsx';
 
 export default function App() {
   return (
@@ -66,6 +67,7 @@ export default function App() {
           <Route path="/power-rankings" element={<PowerRankings />} />
           <Route path="/trades" element={<Trades />} />
           <Route path="/free-agents" element={<FreeAgents />} />
+          <Route path="/status" element={<Status />} />
           <Route path="/news/:storyId" element={<NewsStory />} />
           <Route path="*" element={<div className="state">Page not found.</div>} />
         </Routes>

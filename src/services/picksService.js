@@ -26,17 +26,34 @@ const round1 = (v) => Math.round(v * 10) / 10;
 const half = (v) => Math.round(v * 2) / 2;
 const fmtLine = (v) => (v > 0 ? `+${v}` : v === 0 ? 'PK' : `${v}`);
 const implied = (ml) => (ml == null ? null : ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100));
-const predictionArtifact = async () => {
-  const row = await db.loadDataset('model_predictions_current');
-  if (row && row.data?.generated_at && Date.now() - Date.parse(row.data.generated_at) <= 48 * 3600e3) return row.data;
-  const {existsSync,readFileSync}=require('fs');
-  const pp=__dirname+'/../../scripts/model/predictions_current.json';
-  if(existsSync(pp))try{
-    const a=JSON.parse(readFileSync(pp,'utf-8'));
-    if(a&&a.predictions&&a.predictions.length) return a;
-  }catch(e){}
-  return null;
+const PREDICTION_MAX_AGE_H = 48;
+// v2 probabilities come from the Python pipeline, either POSTed by the
+// predictions workflow (DB) or shipped with the image (disk). The newest copy
+// wins; anything older than 48h is treated as unavailable so picks fall back to
+// v1 visibly instead of silently serving stale probabilities.
+const predictionCandidates = async () => {
+  const out = [];
+  const row = await db.loadDataset('model_predictions_current').catch(() => null);
+  if (row?.data?.predictions?.length) out.push({ source: 'db', artifact: row.data });
+  const { existsSync, readFileSync } = require('fs');
+  const pp = `${__dirname}/../../scripts/model/predictions_current.json`;
+  if (existsSync(pp)) try {
+    const a = JSON.parse(readFileSync(pp, 'utf-8'));
+    if (a?.predictions?.length) out.push({ source: 'disk', artifact: a });
+  } catch (e) { /* unreadable disk artifact is the same as none */ }
+  return out.filter((c) => Number.isFinite(Date.parse(c.artifact.generated_at)))
+    .sort((a, b) => Date.parse(b.artifact.generated_at) - Date.parse(a.artifact.generated_at));
 };
+const predictionStatus = async () => {
+  const newest = (await predictionCandidates())[0];
+  if (!newest) return { available: false, stale: true, source: null, generated_at: null, games: 0, model_version: null, data_through: null, max_age_hours: PREDICTION_MAX_AGE_H, artifact: null };
+  const ageH = (Date.now() - Date.parse(newest.artifact.generated_at)) / 3600e3;
+  const stale = ageH > PREDICTION_MAX_AGE_H;
+  return { available: !stale, stale, source: newest.source, generated_at: newest.artifact.generated_at, age_hours: round1(ageH), games: newest.artifact.predictions.length,
+    model_version: newest.artifact.model_version, data_through: newest.artifact.data_through || null, max_age_hours: PREDICTION_MAX_AGE_H, artifact: stale ? null : newest.artifact };
+};
+const predictionArtifact = async () => (await predictionStatus()).artifact;
+const publicPredictionStatus = (status) => { const { artifact, ...rest } = status; return rest; };
 
 const priorMargins = async (season) => {
   const played = await getPlayedGames();
@@ -226,12 +243,13 @@ const makePick = async (g, model) => {
   return pick;
 };
 
-const applyPythonPrediction = (pick, prediction) => {
-  if (!prediction) { pick.model_version = 'v1 (fallback)'; return pick; }
+const applyPythonPrediction = (pick, prediction, fallbackReason = 'no v2 prediction for this game') => {
+  if (!prediction) { pick.model_version = 'v1 (fallback)'; pick.fallback_reason = fallbackReason; return pick; }
   const margin = Number(prediction.home_margin); const pHome = Number(prediction.home_win_probability);
   if (!Number.isFinite(margin) || !Number.isFinite(pHome)) { pick.model_version = 'v1 (fallback)'; return pick; }
   pick.model = { ...pick.model, home_margin: round1(margin), spread_home: half(-margin), home_win_prob: Math.round(pHome * 1000) / 10 };
   pick.model_version = prediction.model_version;
+  pick.model_run_at = prediction.generated_at || null;
   pick.features = prediction.features;
   pick.model_v2 = { version: prediction.model_version, contributions: prediction.contributions || [] };
   const L = pick.market;
@@ -362,22 +380,24 @@ const refreshPicks = async ({ week = null } = {}) => {
   const board = week ? await getScoreboard({ week, season, seasonType: 2 }) : await getUpcomingScoreboard();
   if (board.season_type !== 2 && !week) return { season, week: board.week, skipped: 'not regular season' };
   const model = await buildModel(season);
-  const artifact = await predictionArtifact();
+  const status = await predictionStatus();
+  const artifact = status.artifact;
+  const fallbackReason = artifact ? 'no v2 prediction for this game' : status.generated_at ? `v2 predictions are stale (generated ${status.generated_at})` : 'no v2 predictions available';
   // nflverse game IDs and ESPN scoreboard IDs are different.  The artifact
   // carries canonical team abbreviations, which safely identify a matchup on
   // the single-week board alongside either provider ID.
   const nflverseTeam = (team) => ({ WSH: 'WAS', LAR: 'LA' }[team] || team);
   const matchupKey = (away, home) => `${nflverseTeam(away)}:${nflverseTeam(home)}`;
   const predicted = new Map((artifact?.predictions || []).flatMap((raw) => {
-    const p = { ...raw, model_version: raw.model_version || artifact.model_version, contributions: raw.contributions || raw.top_contributions || [] };
-    return [[p.game_id, p], [p.espn_id, p], [p.away_team && p.home_team ? matchupKey(p.away_team, p.home_team) : null, p]].filter(([id]) => id);
+    const p = { ...raw, model_version: raw.model_version || artifact.model_version, generated_at: artifact.generated_at, contributions: raw.contributions || raw.top_contributions || [] };
+    return [[p.game_id, p], [p.espn_id, p], [p.matchup_key, p], [p.away_team && p.home_team ? matchupKey(p.away_team, p.home_team) : null, p]].filter(([id]) => id);
   }));
   let made = 0; let graded = 0;
   for (const g of board.games) {
     const existing = state.picks[g.game_id];
     if (g.status.state === 'pre') {
       const p = await makePick(g, model);
-      if (p) { state.picks[g.game_id] = applyPythonPrediction(p, predicted.get(g.game_id) || predicted.get(matchupKey(g.away.abbreviation, g.home.abbreviation))); made += 1; }
+      if (p) { state.picks[g.game_id] = applyPythonPrediction(p, predicted.get(g.game_id) || predicted.get(matchupKey(g.away.abbreviation, g.home.abbreviation)), fallbackReason); made += 1; }
     } else if (existing && !existing.locked_at) {
       existing.locked_at = existing.locked_at || g.date;
     }
@@ -394,7 +414,8 @@ const refreshPicks = async ({ week = null } = {}) => {
 const getPicks = async ({ week = null } = {}) => {
   const season = currentSeason();
   const board = week ? await getScoreboard({ week, season, seasonType: 2 }) : await getUpcomingScoreboard();
-  const artifact = await predictionArtifact();
+  const status = await predictionStatus();
+  const artifact = status.artifact;
   let state = await load(season);
   // First visit for a week (or stale > 1h): compute now.
   const missing = board.games.some((g) => g.status.state === 'pre' && !state.picks[g.game_id]);
@@ -403,7 +424,7 @@ const getPicks = async ({ week = null } = {}) => {
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
     return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 11
-      || (artifact && pick.model_version !== artifact.model_version)
+      || (artifact ? pick.model_version !== artifact.model_version : /^v2\./.test(pick.model_version || ''))
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
@@ -426,6 +447,7 @@ const getPicks = async ({ week = null } = {}) => {
     momentum_record: ['Hot', 'Neutral', 'Cold'].map((state) => ({ state, ...segmentedRecord(all, 'momentum', state) })),
     weekly: Object.entries(byWeek).map(([w, ps]) => ({ week: Number(w), ...record(ps) })).sort((x, y) => y.week - x.week),
     tracking_since: all.length ? all.map((p) => p.made_at).sort()[0] : null,
+    model_run: publicPredictionStatus(status),
     disclaimer: DISCLAIMER,
     method: 'Margin = 60% weighted recency (45% last 3 games, 30% games 4–7, 15% games 8+, 10% last season’s final four) + 30% efficiency power rating (YPP, turnovers, third down and red zone) + 10% momentum. Teams with fewer than three current-season games use a season-plus-prior fallback. Momentum is capped at ±3 points. Home field (+1.5) and injuries are then applied. AFI Confidence Rating compares the model margin to the market: 1★ under 1.5 points through 5★ at 7+ points.',
     last_updated: state.updated_at
@@ -433,4 +455,4 @@ const getPicks = async ({ week = null } = {}) => {
   };
 };
 
-module.exports = { refreshPicks, getPicks, makePick, buildModel, refreshBacktest, DISCLAIMER };
+module.exports = { refreshPicks, getPicks, makePick, buildModel, refreshBacktest, predictionStatus, publicPredictionStatus, DISCLAIMER };

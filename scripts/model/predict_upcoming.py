@@ -27,10 +27,14 @@ def load_schedule(season,cache):
     if not path.exists():
         import urllib.request;print('downloading nflverse games.csv',flush=True);urllib.request.urlretrieve(GAMES_URL,path)
     games=pd.read_csv(path);games=games[(games.season==season)&(games.game_type=='REG')].copy();games['kickoff']=pd.to_datetime(games['gameday'].astype(str)+' '+games['gametime'].fillna('00:00'),utc=True,errors='coerce');return games.sort_values(['kickoff','game_id'])
+# nflverse and ESPN disagree on two abbreviations; the served artifact carries
+# both so Node can match ESPN scoreboard games without its own mapping.
+ESPN={'LA':'LAR','WAS':'WSH'}
+def espn(team): return ESPN.get(team,team)
 def public(row):
     p,m=predict(row);c=[{'feature':k,'value':round(float(row[k]),6),'win_probability':round(float(row[k])*MODEL['coefficients']['win_probability'][k],6),'home_margin':round(float(row[k])*MODEL['coefficients']['home_margin'][k],6)} for k in MODEL['features']];c.sort(key=lambda x:abs(x['home_margin']),reverse=True)
     line=lambda x:None if pd.isna(x) else float(x)
-    return {'game_id':str(row['game_id']),'kickoff':row['kickoff'],'season':int(row['season']),'week':int(row['week']),'home_team':row['home'],'away_team':row['away'],'spread_line':line(row['closing_spread']),'total_line':line(row['closing_total']),'features':{k:round(float(row[k]),6) for k in MODEL['features']},'home_win_probability':round(p,8),'home_margin':round(m,6),'top_contributions':c[:3]}
+    return {'game_id':str(row['game_id']),'kickoff':row['kickoff'],'season':int(row['season']),'week':int(row['week']),'matchup_key':f"{row['away']}:{row['home']}",'home_team':row['home'],'away_team':row['away'],'home_team_espn':espn(row['home']),'away_team_espn':espn(row['away']),'spread_line':line(row['closing_spread']),'total_line':line(row['closing_total']),'features':{k:round(float(row[k]),6) for k in MODEL['features']},'home_win_probability':round(p,8),'home_margin':round(m,6),'top_contributions':c[:3]}
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--season',type=int,default=datetime.now(timezone.utc).year);parser.add_argument('--start',type=int,default=2002);parser.add_argument('--cache',default=str(ROOT/'.cache'));parser.add_argument('--output',default=str(OUT));args=parser.parse_args();parity_check();cache=pathlib.Path(args.cache);cache.mkdir(parents=True,exist_ok=True)
     pbp=load_pbp(args.season,args.start,cache);pbp=pbp[pbp.kickoff<=pd.Timestamp.now(tz='UTC')];h,elo,last=defaultdict(list),defaultdict(lambda:1505.0),{};last_played=None;played_ids=set()

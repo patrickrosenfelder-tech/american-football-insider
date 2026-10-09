@@ -5,6 +5,7 @@ const db = require('../db/database');
 const { currentSeason } = require('../services/rosterService');
 const newsService = require('../services/newsService');
 const socialService = require('../services/socialService');
+const picksService = require('../services/picksService');
 
 // Public data-status view: one row per data source, built from the scheduler's job state.
 // `dataset` is a fallback for last_success when a job has not run since status tracking began.
@@ -69,6 +70,17 @@ const buildStatus = async () => {
       }))
     };
   }));
+  // Model predictions are pushed by the Python workflow, not a scheduler job,
+  // so their row is built from the artifact itself.
+  const pred = picksService.publicPredictionStatus(await picksService.predictionStatus().catch(() => ({ stale: true, available: false })));
+  sources.push({
+    source: 'model_predictions', label: 'Model predictions', provider: `AFI ${pred.model_version || 'v2'} (Python pipeline → ${pred.source || 'none'})`,
+    state: pred.available ? 'ok' : 'error', last_success: pred.generated_at || null, last_run: pred.generated_at || null, next_run: null,
+    schedule: 'GitHub Actions daily 12:00 UTC + Sun 16:00 UTC',
+    last_error: pred.available ? null : pred.generated_at ? `Stale: generated ${pred.age_hours}h ago (> ${pred.max_age_hours}h) — picks fell back to v1` : 'No v2 prediction artifact — picks use v1',
+    last_error_at: null, generated_at: pred.generated_at || null, games: pred.games || 0, data_through: pred.data_through || null, stale: pred.stale,
+    jobs: []
+  });
   const news = await newsService.status();
   const social = await socialService.status().catch((error) => ({ error: error.message }));
   const lastRun = news.runs?.[0] || {};
