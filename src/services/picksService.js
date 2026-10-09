@@ -26,6 +26,11 @@ const round1 = (v) => Math.round(v * 10) / 10;
 const half = (v) => Math.round(v * 2) / 2;
 const fmtLine = (v) => (v > 0 ? `+${v}` : v === 0 ? 'PK' : `${v}`);
 const implied = (ml) => (ml == null ? null : ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100));
+const predictionArtifact = async () => {
+  const row = await db.loadDataset('model_predictions_current');
+  if (!row || !row.data?.generated_at || Date.now() - Date.parse(row.data.generated_at) > 48 * 3600e3) return null;
+  return row.data;
+};
 
 const priorMargins = async (season) => {
   const played = await getPlayedGames();
@@ -215,6 +220,26 @@ const makePick = async (g, model) => {
   return pick;
 };
 
+const applyPythonPrediction = (pick, prediction) => {
+  if (!prediction) { pick.model_version = 'v1 (fallback)'; return pick; }
+  const margin = Number(prediction.home_margin); const pHome = Number(prediction.home_win_probability);
+  if (!Number.isFinite(margin) || !Number.isFinite(pHome)) { pick.model_version = 'v1 (fallback)'; return pick; }
+  pick.model = { ...pick.model, home_margin: round1(margin), spread_home: half(-margin), home_win_prob: Math.round(pHome * 1000) / 10 };
+  pick.model_version = prediction.model_version;
+  pick.features = prediction.features;
+  pick.model_v2 = { version: prediction.model_version, contributions: prediction.contributions || [] };
+  const L = pick.market;
+  if (L.spread_home != null) {
+    const edge = margin + L.spread_home; const side = edge >= 0 ? 'home' : 'away';
+    pick.spread = { side, team: side === 'home' ? pick.home : pick.away, line: side === 'home' ? L.spread_home : -L.spread_home, edge: round1(Math.abs(edge)), confidence: Math.abs(edge) >= 3 ? 'high' : Math.abs(edge) >= 1.5 ? 'medium' : 'low' };
+    const confidenceEdge = Math.abs(margin + L.spread_home);
+    pick.confidence_stars = confidenceEdge >= 7 ? 5 : confidenceEdge >= 5 ? 4 : confidenceEdge >= 3 ? 3 : confidenceEdge >= 1.5 ? 2 : 1;
+  }
+  const side = pHome >= .5 ? 'home' : 'away'; const ml = side === 'home' ? L.moneyline_home : L.moneyline_away;
+  pick.moneyline = { ...pick.moneyline, side, team: side === 'home' ? pick.home : pick.away, odds: ml ?? null, model_prob: Math.round((side === 'home' ? pHome : 1 - pHome) * 1000) / 10, implied_prob: implied(ml) == null ? null : Math.round(implied(ml) * 1000) / 10 };
+  return pick;
+};
+
 // --- Storage, locking and grading ------------------------------------------------------
 
 const key = (season) => `afi_picks_${season}`;
@@ -331,12 +356,14 @@ const refreshPicks = async ({ week = null } = {}) => {
   const board = week ? await getScoreboard({ week, season, seasonType: 2 }) : await getUpcomingScoreboard();
   if (board.season_type !== 2 && !week) return { season, week: board.week, skipped: 'not regular season' };
   const model = await buildModel(season);
+  const artifact = await predictionArtifact();
+  const predicted = new Map((artifact?.predictions || []).flatMap((p) => [[p.game_id, p], [p.espn_id, p]].filter(([id]) => id)));
   let made = 0; let graded = 0;
   for (const g of board.games) {
     const existing = state.picks[g.game_id];
     if (g.status.state === 'pre') {
       const p = await makePick(g, model);
-      if (p) { state.picks[g.game_id] = p; made += 1; }
+      if (p) { state.picks[g.game_id] = applyPythonPrediction(p, predicted.get(g.game_id)); made += 1; }
     } else if (existing && !existing.locked_at) {
       existing.locked_at = existing.locked_at || g.date;
     }

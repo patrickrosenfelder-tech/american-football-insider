@@ -1,0 +1,19 @@
+name: AFI predictions
+on:
+  schedule:
+    - cron: '0 12 * * *' # 08:00 ET (UTC offset is adjusted seasonally by the workflow owner)
+    - cron: '0 16 * * 0' # Sunday 11:00 ET
+  workflow_dispatch:
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -r scripts/model/requirements.txt
+      - run: python scripts/model/predict_upcoming.py
+      - run: curl --fail-with-body -X POST "$AFI_URL/api/admin/predictions" -H "Authorization: Bearer $AFI_ADMIN_TOKEN" -H "Content-Type: application/json" --data-binary @scripts/model/predictions_current.json
+        env:
+          AFI_URL: ${{ secrets.AFI_URL }}
+          AFI_ADMIN_TOKEN: ${{ secrets.AFI_ADMIN_TOKEN }}
