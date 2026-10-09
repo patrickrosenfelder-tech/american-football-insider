@@ -57,6 +57,10 @@ export default function App() {
               {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
             </div>
           </nav>
+          <div className="nav-actions" aria-label="Account tools">
+            <button className="nav-icon" type="button" aria-label="Search">⌕</button>
+            <span className="user-avatar" aria-label="User account">FI</span>
+          </div>
         </div>
       </header>
       <main className="wrap">

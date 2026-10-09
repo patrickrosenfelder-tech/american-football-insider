@@ -38,8 +38,9 @@ function TeamRow({ team, game }) {
 }
 
 export function GameCard({ game }) {
+  const accent = game.home?.color || game.away?.color || '#0b1c2d';
   return (
-    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`}>
+    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`} style={{ '--team-accent': accent }}>
       <div className="game-card-head">
         <StatusPill game={game} />
         {game.broadcast && <span className="muted small">{game.broadcast}</span>}
@@ -48,6 +49,34 @@ export function GameCard({ game }) {
       <TeamRow team={game.home} game={game} />
       {isLive(game) && game.down_distance && <div className="situation">{game.down_distance}</div>}
       {game.status.state === 'pre' && game.odds && <div className="muted small">Line: {game.odds}</div>}
+    </Link>
+  );
+}
+
+export function FeaturedFinal({ game }) {
+  const accent = game.home?.winner ? game.home.color : game.away?.color || game.home?.color || '#0b1c2d';
+  const Team = ({ team, align }) => (
+    <div className={`featured-team ${align} ${team.winner ? 'winner' : ''}`}>
+      <Logo src={team.logo} alt={team.name} size={64} />
+      <div>
+        <strong>{team.name || team.short_name}</strong>
+        {team.record && <span>{team.record}</span>}
+      </div>
+    </div>
+  );
+  return (
+    <Link to={`/game/${game.game_id}`} className="featured-final card" style={{ '--team-accent': accent }}>
+      <div className="featured-matchup">
+        <Team team={game.away} align="away" />
+        <div className="featured-score" aria-label={`${game.away.name} ${game.away.score}, ${game.home.name} ${game.home.score}`}>
+          <b>{game.away.score ?? '–'}</b><span className="final-badge">FINAL</span><b>{game.home.score ?? '–'}</b>
+        </div>
+        <Team team={game.home} align="home" />
+      </div>
+      <div className="featured-footer">
+        <span>{game.broadcast || 'Game complete'}</span>
+        <span className="replay-link">Watch Replay <span aria-hidden="true">→</span></span>
+      </div>
     </Link>
   );
 }

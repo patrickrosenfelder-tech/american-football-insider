@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useApi, isLive, dayKey } from '../api.js';
-import { GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { FeaturedFinal, GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Scores() {
   const [params, setParams] = useSearchParams();
@@ -25,7 +25,9 @@ export default function Scores() {
     .flatMap((b) => b.weeks.map((w) => ({ ...w, season_type: b.season_type, key: `${b.season_type}-${w.week}` })));
   const currentKey = `${seasonType || data.season_type}-${week || data.week}`;
 
-  const byDay = games.reduce((acc, g) => {
+  const finals = games.filter((g) => g.status.state === 'post');
+  const scheduledGames = games.filter((g) => g.status.state !== 'post');
+  const byDay = scheduledGames.reduce((acc, g) => {
     const k = dayKey(g.date);
     (acc[k] ||= []).push(g);
     return acc;
@@ -41,10 +43,7 @@ export default function Scores() {
       <div className="page-head">
         <div>
           <h1>{data.season} {(seasonType || data.season_type) === '3' || data.season_type === 3 ? 'Playoffs' : `Week ${week || data.week}`}</h1>
-          <p className="muted">
-            {games.length} games{liveCount > 0 && <> · <span className="live-text">{liveCount} live</span></>}
-            {liveCount > 0 && ' · auto-refreshing'}
-          </p>
+          <p className="muted">All times ET · {games.length} games{liveCount > 0 && <> · <span className="live-text">{liveCount} live</span></>}{liveCount > 0 && ' · auto-refreshing'}</p>
         </div>
         {weekOptions.length > 0 && (
           <label className="week-select">
@@ -60,9 +59,16 @@ export default function Scores() {
 
       {games.length === 0 && <div className="state">No games scheduled this week.</div>}
 
+      {finals.length > 0 && (
+        <section className="finals-section" aria-labelledby="finals-heading">
+          <div className="scores-section-head"><h2 id="finals-heading">Final scores</h2><span>Completed</span></div>
+          <div className="featured-finals">{finals.map((g) => <FeaturedFinal key={g.game_id} game={g} />)}</div>
+        </section>
+      )}
+
       {Object.entries(byDay).map(([day, list]) => (
         <div key={day} className="day-group">
-          <h2 className="day-title">{day}</h2>
+          <div className="scores-section-head"><h2 className="day-title">{day}</h2><span>{list.length} game{list.length === 1 ? '' : 's'}</span></div>
           <div className="grid games-grid">
             {list.map((g) => <GameCard key={g.game_id} game={g} />)}
           </div>
