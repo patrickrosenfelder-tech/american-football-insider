@@ -4,7 +4,7 @@
   --ink: #0f1a2e;
   --muted: #627089;
   --line: #e3e8f0;
-  --navy: #0b1c2d;
+  --navy: #f0f3f8;
   --accent: #e75534;
   --live: #e11d48;
   --win: #15803d;
@@ -34,20 +34,20 @@ h2, h3 { margin: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 /* Top bar */
-.topbar { background: var(--navy); color: #fff; position: sticky; top: 0; z-index: 10; }
+.topbar { background: var(--card); color: var(--ink); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; }
 .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 12px; }
 .brand { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; white-space: nowrap; }
 .brand b { color: #f26445; }
 .topbar nav { display: flex; gap: 4px; }
-.topbar nav a { padding: 7px 12px; border-radius: 999px; color: #c7d2e6; font-weight: 600; font-size: .92rem; }
-.topbar nav a.active, .topbar nav a:hover { background: rgba(255,255,255,.12); color: #fff; }
+.topbar nav a { padding: 7px 12px; border-radius: 999px; color: var(--muted); font-weight: 500; font-size: .9rem; }
+.topbar nav a.active, .topbar nav a:hover { background: rgba(0,0,0,.04); color: var(--ink); }
 .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: 4px; }
-.nav-icon { width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; }
-.nav-icon:hover { color: #c7d2e6; }
-.user-avatar { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #f26445; color: #fff; font-size: .62rem; font-weight: 900; letter-spacing: .03em; }
+.nav-icon { width: 28px; height: 28px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 1.3rem; line-height: 1; cursor: pointer; }
+.nav-icon:hover { color: var(--ink); }
+.user-avatar { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); font-size: .6rem; font-weight: 700; letter-spacing: .03em; }
 .nav-more-wrap { display: none; position: relative; }
-.nav-more { border: 0; border-radius: 999px; padding: 7px 12px; background: transparent; color: #c7d2e6; font: inherit; font-weight: 600; font-size: .92rem; cursor: pointer; }
-.nav-more:hover, .nav-more[aria-expanded="true"] { background: rgba(255,255,255,.12); color: #fff; }
+.nav-more { border: 0; border-radius: 999px; padding: 7px 12px; background: transparent; color: var(--muted); font: inherit; font-weight: 500; font-size: .9rem; cursor: pointer; }
+.nav-more:hover, .nav-more[aria-expanded="true"] { background: rgba(0,0,0,.04); color: var(--ink); }
 .nav-more-menu { position: absolute; right: 0; top: calc(100% + 8px); min-width: 150px; padding: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); box-shadow: var(--shadow); }
 .nav-more-menu a { display: block; color: var(--ink) !important; padding: 8px 10px !important; border-radius: 7px !important; }
 .nav-more-menu a:hover, .nav-more-menu a.active { background: color-mix(in srgb, var(--muted) 12%, transparent) !important; }
@@ -67,7 +67,7 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .conf-title { font-size: 1rem; margin: 4px 0 10px; }
 
 .grid { display: grid; gap: 12px; }
-.games-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.games-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 .conf-grid { grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
 .div-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 .stat-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
@@ -104,7 +104,7 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 
 /* Game card */
 .game-card { display: flex; flex-direction: column; gap: 10px; border-left: 4px solid var(--team-accent, var(--navy)); transition: transform .12s ease, border-color .12s; }
-.game-card:hover { transform: translateY(-1px); border-color: #b9c4d8; }
+.game-card:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(15,26,46,.08); }
 .game-card.is-live { border-color: var(--live); box-shadow: 0 0 0 1px var(--live) inset, var(--shadow); }
 .game-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .team-row { display: flex; align-items: center; gap: 10px; }
