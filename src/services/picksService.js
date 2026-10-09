@@ -357,13 +357,21 @@ const refreshPicks = async ({ week = null } = {}) => {
   if (board.season_type !== 2 && !week) return { season, week: board.week, skipped: 'not regular season' };
   const model = await buildModel(season);
   const artifact = await predictionArtifact();
-  const predicted = new Map((artifact?.predictions || []).flatMap((p) => [[p.game_id, p], [p.espn_id, p]].filter(([id]) => id)));
+  // nflverse game IDs and ESPN scoreboard IDs are different.  The artifact
+  // carries canonical team abbreviations, which safely identify a matchup on
+  // the single-week board alongside either provider ID.
+  const nflverseTeam = (team) => ({ WSH: 'WAS', LAR: 'LA' }[team] || team);
+  const matchupKey = (away, home) => `${nflverseTeam(away)}:${nflverseTeam(home)}`;
+  const predicted = new Map((artifact?.predictions || []).flatMap((raw) => {
+    const p = { ...raw, model_version: raw.model_version || artifact.model_version, contributions: raw.contributions || raw.top_contributions || [] };
+    return [[p.game_id, p], [p.espn_id, p], [p.away_team && p.home_team ? matchupKey(p.away_team, p.home_team) : null, p]].filter(([id]) => id);
+  }));
   let made = 0; let graded = 0;
   for (const g of board.games) {
     const existing = state.picks[g.game_id];
     if (g.status.state === 'pre') {
       const p = await makePick(g, model);
-      if (p) { state.picks[g.game_id] = applyPythonPrediction(p, predicted.get(g.game_id)); made += 1; }
+      if (p) { state.picks[g.game_id] = applyPythonPrediction(p, predicted.get(g.game_id) || predicted.get(matchupKey(g.away.abbreviation, g.home.abbreviation))); made += 1; }
     } else if (existing && !existing.locked_at) {
       existing.locked_at = existing.locked_at || g.date;
     }
@@ -380,6 +388,7 @@ const refreshPicks = async ({ week = null } = {}) => {
 const getPicks = async ({ week = null } = {}) => {
   const season = currentSeason();
   const board = week ? await getScoreboard({ week, season, seasonType: 2 }) : await getUpcomingScoreboard();
+  const artifact = await predictionArtifact();
   let state = await load(season);
   // First visit for a week (or stale > 1h): compute now.
   const missing = board.games.some((g) => g.status.state === 'pre' && !state.picks[g.game_id]);
@@ -388,6 +397,7 @@ const getPicks = async ({ week = null } = {}) => {
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
     return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 11
+      || (artifact && pick.model_version !== artifact.model_version)
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {

@@ -34,7 +34,9 @@ const PORT = process.env.PORT || 3002;
 const CLIENT_DIST = path.join(__dirname, '../client/dist');
 
 app.use(cors());
-app.use(express.json());
+// A season's Python prediction artifact includes all model inputs and can be
+// several hundred KB; Express's 100 KB default rejects an otherwise valid POST.
+app.use(express.json({ limit: '1mb' }));
 
 db.initialize();
 cache.initialize();
