@@ -15,7 +15,9 @@ const FA_KEY = (season) => `free_agents_${season}`;
 const ATHLETE = 'https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes';
 const LIST_SIZE = 50;
 const PS_LIST_SIZE = 15;
-const MAX_CHECKS = 240;
+const MAX_CHECKS = 700;
+// Every position group shows at least this many confirmed free agents (when that many exist).
+const MIN_PER_GROUP = 5;
 
 const FORMULA = [
   'AFI FA score (0-100) = 100 × snap factor × positional value × (0.3 + 0.7 × production) × age factor.',
@@ -196,11 +198,14 @@ async function buildFreeAgents(season) {
   let checkErrors = 0;
   const queue = scored.filter((c) => !c.release?.practice_squad || c.snaps >= 100);
   const psQueue = scored.filter((c) => c.release?.practice_squad && c.snaps < 100);
+  const checked = new Set();
   const confirm = async (list, out, size) => {
     let i = 0;
     const worker = async () => {
       while (i < list.length && out.length < size && checks < MAX_CHECKS) {
         const c = list[i++];
+        if (checked.has(c.p.espn_id)) continue;
+        checked.add(c.p.espn_id);
         checks += 1;
         try {
           const st = await espnStatus(c.p.espn_id);
@@ -213,6 +218,15 @@ async function buildFreeAgents(season) {
     out.splice(size);
   };
   await confirm(queue, agents, LIST_SIZE);
+  // Top up thin position groups so every group has at least MIN_PER_GROUP players.
+  for (const group of Object.keys(profiles.POS_VALUE)) {
+    const have = agents.filter((a) => a.p.group === group).length;
+    if (have >= MIN_PER_GROUP) continue;
+    const extra = [];
+    await confirm(queue.filter((q) => q.p.group === group), extra, MIN_PER_GROUP - have);
+    agents.push(...extra);
+  }
+  agents.sort((a, b) => (b.has_snaps - a.has_snaps) || b.score - a.score);
   await confirm(psQueue, practice, PS_LIST_SIZE);
 
   const row = (c) => {
@@ -242,7 +256,7 @@ async function buildFreeAgents(season) {
     }).filter(Boolean).sort((a, b) => b.signed_date.localeCompare(a.signed_date) || b.snaps_2025_26 - a.snaps_2025_26).slice(0, 25);
 
   const data = {
-    season, agents: agents.map(row), practice_squad: practice.map(row), recently_signed: recentlySigned,
+    season, min_per_group: MIN_PER_GROUP, agents: agents.map(row), practice_squad: practice.map(row), recently_signed: recentlySigned,
     candidates: scored.length, espn_checks: checks, espn_check_errors: checkErrors,
     data_through: prof.dataThrough, source: 'ESPN transactions + ESPN athlete status + nflverse players/stats/snap counts/weekly rosters',
     updated_at: new Date().toISOString()
@@ -263,7 +277,7 @@ async function getFreeAgents() {
   const season = currentSeason();
   let row = await db.loadDataset(FA_KEY(season));
   // Rebuild when missing or still in the pre-ranking shape (no practice_squad list).
-  if (!row || !Array.isArray(row.data?.practice_squad)) { await refreshFreeAgents(season); row = await db.loadDataset(FA_KEY(season)); }
+  if (!row || !Array.isArray(row.data?.practice_squad) || row.data?.min_per_group !== MIN_PER_GROUP) { await refreshFreeAgents(season); row = await db.loadDataset(FA_KEY(season)); }
   const fix = (a) => ({ ...a, last_team: espnAbbr(a.last_team), team_fits: (a.team_fits || []).map((f) => ({ ...f, team: espnAbbr(f.team) })) });
   const data = row?.data || { season, agents: [], practice_squad: [], recently_signed: [] };
   return { ...data, agents: (data.agents || []).map(fix), practice_squad: (data.practice_squad || []).map(fix), last_updated: row?.updated_at || null, formula: FORMULA };
