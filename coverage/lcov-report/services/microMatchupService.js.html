@@ -1,0 +1,814 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for services/microMatchupService.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> microMatchupService.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">10.32% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>32/310</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/287</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/61</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">19.51% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>32/164</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const db = require('../db/database');
+const { assetUrl, streamCsv, assetExists, loadIdMap, num } = require('./nflverseService');
+&nbsp;
+// Free nflverse PBP + participation only.  Participation does not establish
+// shadow assignments, so coverage signals never claim WR-vs-CB coverage.
+//
+// Players are keyed by nflverse gsis_id (passer/receiver/rusher_player_id) and
+// joined to ESPN depth-chart starters through nflverse's players.csv espn_id,
+// never by name: two "J.Daniels" on different teams must not share a split.
+//
+// Pressure uses one definition for every season: QB hit or sack per dropback
+// (a pressure proxy).  The 2026 participation file is not published, so FTN's
+// was_pressure would otherwise mean different things in different seasons.
+// Coverage (man/zone) and 5+ rusher (blitz) rates come from the most recent
+// participation release only and are labelled with that season.
+const VERSION = 2;
+const TTL_MS = 6 * 3600e3;
+const BACKOFF_MS = 30 * 60e3;
+const MAX_TOTAL = 2; // the summed adjustment per game is capped until the signals are backtested
+const n = <span class="fstat-no" title="function not covered" >(v</span>) =&gt; <span class="cstat-no" title="statement not covered" >Number(v) || 0;</span>
+const rate = <span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >b ? a / b : 0;</span>
+const one = <span class="fstat-no" title="function not covered" >(v</span>) =&gt; <span class="cstat-no" title="statement not covered" >Math.round(v * 10) / 10;</span>
+const pct = <span class="fstat-no" title="function not covered" >(v</span>) =&gt; <span class="cstat-no" title="statement not covered" >one(v * 100);</span>
+const clamp = <span class="fstat-no" title="function not covered" >(v</span>, lo, hi) =&gt; <span class="cstat-no" title="statement not covered" >Math.max(lo, Math.min(hi, v));</span>
+const key = <span class="fstat-no" title="function not covered" >(g</span>ame, play) =&gt; <span class="cstat-no" title="statement not covered" >`${game}|${play}`;</span>
+const make = <span class="fstat-no" title="function not covered" >(i</span>con, label, text, impact, sample, team) =&gt; (<span class="cstat-no" title="statement not covered" >{ icon, label, text, impact: one(clamp(impact, -2, 2)), sample, team })</span>;
+const bucket = <span class="fstat-no" title="function not covered" >()</span> =&gt; (<span class="cstat-no" title="statement not covered" >{ n: 0, epa: 0 })</span>;
+const cov = <span class="fstat-no" title="function not covered" >(v</span>) =&gt; <span class="cstat-no" title="statement not covered" >/man/i.test(v || '') ? 'man' : /zone/i.test(v || '') ? 'zone' : null;</span>
+const TEAM = { LA: 'LAR', WAS: 'WSH' }; // nflverse -&gt; ESPN abbreviations
+const team = <span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >TEAM[t] || t;</span>
+const indoor = <span class="fstat-no" title="function not covered" >(r</span>oof) =&gt; <span class="cstat-no" title="statement not covered" >/dome|closed|covered|retractable/i.test(roof || '');</span>
+const PBP = ['game_id', 'play_id', 'home_team', 'away_team', 'posteam', 'defteam', 'play_type', 'pass', 'rush', 'qb_dropback', 'sack', 'qb_hit', 'epa', 'yards_gained', 'rusher_player_id', 'rusher_player_name', 'passer_player_id', 'passer_player_name', 'receiver_player_id', 'receiver_player_name', 'total_home_score', 'total_away_score', 'home_score', 'away_score', 'temp', 'wind', 'roof', 'start_time'];
+const PART = ['nflverse_game_id', 'play_id', 'defense_man_zone_type', 'defense_coverage_type', 'number_of_pass_rushers'];
+&nbsp;
+// nflverse start_time is the Eastern kickoff clock, e.g. "9/7/25, 20:22:52".
+const etHour = <span class="fstat-no" title="function not covered" >(s</span>tartTime) =&gt; { const m = <span class="cstat-no" title="statement not covered" >/,\s*(\d{1,2}):/.exec(startTime || '');</span> <span class="cstat-no" title="statement not covered" >return m ? Number(m[1]) : null; </span>};
+const isNight = <span class="fstat-no" title="function not covered" >(h</span>our) =&gt; <span class="cstat-no" title="statement not covered" >hour != null &amp;&amp; hour &gt;= 19;</span>
+const kickoffEtHour = <span class="fstat-no" title="function not covered" >(d</span>ate) =&gt; {
+  const t = <span class="cstat-no" title="statement not covered" >Date.parse(date || '');</span> <span class="cstat-no" title="statement not covered" >if (!t) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+<span class="cstat-no" title="statement not covered" >  return Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hourCycle: 'h23' }).format(new Date(t)));</span>
+};
+&nbsp;
+async function <span class="fstat-no" title="function not covered" >build(</span>season) {
+  const participation = <span class="cstat-no" title="statement not covered" >new Map();</span>
+  let chartedSeason = <span class="cstat-no" title="statement not covered" >null;</span>
+<span class="cstat-no" title="statement not covered" >  for (const yr of [season - 1, season]) {</span>
+    // Participation releases are plain CSV (not gzip) and lag the live PBP feed.
+    const file = <span class="cstat-no" title="statement not covered" >`pbp_participation_${yr}.csv`;</span>
+<span class="cstat-no" title="statement not covered" >    if (!(await assetExists('pbp_participation', file))) <span class="cstat-no" title="statement not covered" >continue;</span></span>
+<span class="cstat-no" title="statement not covered" >    chartedSeason = yr;</span>
+<span class="cstat-no" title="statement not covered" >    await streamCsv(assetUrl('pbp_participation', file), <span class="fstat-no" title="function not covered" >(r</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (!r.nflverse_game_id || r.play_id == null) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >      participation.set(key(r.nflverse_game_id, r.play_id), { rushers: n(r.number_of_pass_rushers), coverage: cov(r.defense_man_zone_type) || cov(r.defense_coverage_type) });</span>
+    }, { columns: PART });
+  }
+  const games = <span class="cstat-no" title="statement not covered" >new Map(),</span> rush = <span class="cstat-no" title="statement not covered" >new Map();</span>
+  const data = <span class="cstat-no" title="statement not covered" >{ version: VERSION, season, charted_season: chartedSeason, def: {}, off: {}, qbs: {}, targets: {}, league: { drop: 0, pressure: 0, pressured: bucket(), clean: bucket() } };</span>
+  const inc = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(x</span>, f, epa) =&gt; { <span class="cstat-no" title="statement not covered" >x[f].n++; <span class="cstat-no" title="statement not covered" ></span>x[f].epa += epa; </span>};</span>
+  const addPass = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(p</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (!(p.qb_dropback === '1' || p.pass === '1' || p.sack === '1') || !p.posteam || !p.defteam) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    const x = <span class="cstat-no" title="statement not covered" >participation.get(key(p.game_id, p.play_id)) || {};</span>
+    const off = <span class="cstat-no" title="statement not covered" >team(p.posteam),</span> def = <span class="cstat-no" title="statement not covered" >team(p.defteam);</span>
+    const pressured = <span class="cstat-no" title="statement not covered" >p.qb_hit === '1' || p.sack === '1';</span>
+    const blitz = <span class="cstat-no" title="statement not covered" >x.rushers &gt;= 5;</span>
+    const d = <span class="cstat-no" title="statement not covered" >data.def[def] ||= { drop: 0, pressure: 0, coverage: 0, man: 0, charted: 0, blitz: 0 };</span>
+    const o = <span class="cstat-no" title="statement not covered" >data.off[off] ||= { drop: 0, pressure: 0 };</span>
+    const epa = <span class="cstat-no" title="statement not covered" >n(p.epa);</span>
+<span class="cstat-no" title="statement not covered" >    d.drop++; <span class="cstat-no" title="statement not covered" ></span>o.drop++; <span class="cstat-no" title="statement not covered" ></span>data.league.drop++;</span>
+<span class="cstat-no" title="statement not covered" >    if (pressured) { <span class="cstat-no" title="statement not covered" >d.pressure++; <span class="cstat-no" title="statement not covered" ></span>o.pressure++; <span class="cstat-no" title="statement not covered" ></span>data.league.pressure++; </span>}</span>
+<span class="cstat-no" title="statement not covered" >    inc(data.league, pressured ? 'pressured' : 'clean', epa);</span>
+<span class="cstat-no" title="statement not covered" >    if (x.coverage !== undefined) { <span class="cstat-no" title="statement not covered" >d.charted++; <span class="cstat-no" title="statement not covered" ></span>if (blitz) <span class="cstat-no" title="statement not covered" >d.blitz++; <span class="cstat-no" title="statement not covered" ></span></span>if (x.coverage) { <span class="cstat-no" title="statement not covered" >d.coverage++; <span class="cstat-no" title="statement not covered" ></span>if (x.coverage === 'man') <span class="cstat-no" title="statement not covered" >d.man++; </span></span>} </span>}</span>
+<span class="cstat-no" title="statement not covered" >    if (p.passer_player_id) {</span>
+      const q = <span class="cstat-no" title="statement not covered" >data.qbs[p.passer_player_id] ||= { name: p.passer_player_name, pressured: bucket(), clean: bucket(), man: bucket(), manOther: bucket(), blitz: bucket(), blitzOther: bucket(), cold: bucket(), coldOther: bucket(), wind: bucket(), windOther: bucket(), night: bucket(), nightOther: bucket(), all: bucket() };</span>
+<span class="cstat-no" title="statement not covered" >      inc(q, pressured ? 'pressured' : 'clean', epa); <span class="cstat-no" title="statement not covered" ></span>inc(q, 'all', epa);</span>
+<span class="cstat-no" title="statement not covered" >      if (x.coverage !== undefined) { <span class="cstat-no" title="statement not covered" >inc(q, x.coverage === 'man' ? 'man' : 'manOther', epa); <span class="cstat-no" title="statement not covered" ></span>inc(q, blitz ? 'blitz' : 'blitzOther', epa); </span>}</span>
+      // Missing temperature/wind is unknown, not cold or calm-by-default.
+      const temp = <span class="cstat-no" title="statement not covered" >num(p.temp),</span> wind = <span class="cstat-no" title="statement not covered" >num(p.wind);</span>
+<span class="cstat-no" title="statement not covered" >      if (!indoor(p.roof) &amp;&amp; temp != null) <span class="cstat-no" title="statement not covered" >inc(q, temp &lt; 40 ? 'cold' : 'coldOther', epa);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (!indoor(p.roof) &amp;&amp; wind != null) <span class="cstat-no" title="statement not covered" >inc(q, wind &gt; 15 ? 'wind' : 'windOther', epa);</span></span>
+<span class="cstat-no" title="statement not covered" >      if (etHour(p.start_time) != null) <span class="cstat-no" title="statement not covered" >inc(q, isNight(etHour(p.start_time)) ? 'night' : 'nightOther', epa);</span></span>
+    }
+    // Targets are kept per offense, so a receiver's old team never feeds his new team's signal.
+<span class="cstat-no" title="statement not covered" >    if (p.receiver_player_id &amp;&amp; x.coverage) {</span>
+      const t = <span class="cstat-no" title="statement not covered" >(data.targets[off] ||= {})[p.receiver_player_id] ||= { name: p.receiver_player_name, man: bucket(), zone: bucket() };</span>
+<span class="cstat-no" title="statement not covered" >      inc(t, x.coverage, epa);</span>
+    }
+  };
+  const add = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(p</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (!p.game_id || !p.home_team || !p.away_team) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    games.set(p.game_id, { home: team(p.home_team), away: team(p.away_team), hs: Math.max(n(p.total_home_score), n(p.home_score)), as: Math.max(n(p.total_away_score), n(p.away_score)) });</span>
+<span class="cstat-no" title="statement not covered" >    if (p.play_type === 'run' &amp;&amp; p.rush === '1' &amp;&amp; p.rusher_player_id &amp;&amp; p.posteam) {</span>
+      const k = <span class="cstat-no" title="statement not covered" >`${p.game_id}|${p.posteam}|${p.rusher_player_id}`;</span>
+      const r = <span class="cstat-no" title="statement not covered" >rush.get(k) || { game: p.game_id, team: team(p.posteam), player: p.rusher_player_id, yards: 0, carries: 0 };</span>
+<span class="cstat-no" title="statement not covered" >      r.yards += n(p.yards_gained); <span class="cstat-no" title="statement not covered" ></span>r.carries++; <span class="cstat-no" title="statement not covered" ></span>rush.set(k, r);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    addPass(p);</span>
+  };
+<span class="cstat-no" title="statement not covered" >  for (const yr of [season - 1, season]) <span class="cstat-no" title="statement not covered" >await streamCsv(assetUrl('pbp', `play_by_play_${yr}.csv.gz`), add, { columns: PBP });</span></span>
+<span class="cstat-no" title="statement not covered" >  participation.clear();</span>
+&nbsp;
+  const rankBy = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(o</span>bj, value, desc = <span class="branch-0 cbranch-no" title="branch not covered" >true)</span> =&gt; <span class="cstat-no" title="statement not covered" >Object.entries(obj).sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >desc ? value(b[1]) - value(a[1]) : value(a[1]) - value(b[1]))</span>.reduce(<span class="fstat-no" title="function not covered" >(o</span>, [t], i) =&gt; (<span class="cstat-no" title="statement not covered" >o[t] = i + 1, o)</span>, {});</span></span>
+<span class="cstat-no" title="statement not covered" >  Object.values(data.def).forEach(<span class="fstat-no" title="function not covered" >(d</span>) =&gt; { <span class="cstat-no" title="statement not covered" >d.manRate = rate(d.man, d.coverage); <span class="cstat-no" title="statement not covered" ></span>d.blitzRate = rate(d.blitz, d.charted); <span class="cstat-no" title="statement not covered" ></span>d.pressureRate = rate(d.pressure, d.drop); </span>});</span>
+<span class="cstat-no" title="statement not covered" >  Object.values(data.off).forEach(<span class="fstat-no" title="function not covered" >(o</span>) =&gt; { <span class="cstat-no" title="statement not covered" >o.pressureRate = rate(o.pressure, o.drop); </span>});</span>
+<span class="cstat-no" title="statement not covered" >  data.defRank = rankBy(data.def, <span class="fstat-no" title="function not covered" >(d</span>) =&gt; <span class="cstat-no" title="statement not covered" >d.pressureRate)</span>;</span>
+<span class="cstat-no" title="statement not covered" >  data.olRank = rankBy(data.off, <span class="fstat-no" title="function not covered" >(o</span>) =&gt; <span class="cstat-no" title="statement not covered" >o.pressureRate,</span> false);</span>
+  const charted = <span class="cstat-no" title="statement not covered" >Object.fromEntries(Object.entries(data.def).filter(<span class="fstat-no" title="function not covered" >([</span>, d]) =&gt; <span class="cstat-no" title="statement not covered" >d.charted)</span>);</span>
+<span class="cstat-no" title="statement not covered" >  data.manRank = rankBy(charted, <span class="fstat-no" title="function not covered" >(d</span>) =&gt; <span class="cstat-no" title="statement not covered" >d.manRate)</span>; <span class="cstat-no" title="statement not covered" ></span>data.blitzRank = rankBy(charted, <span class="fstat-no" title="function not covered" >(d</span>) =&gt; <span class="cstat-no" title="statement not covered" >d.blitzRate)</span>;</span>
+<span class="cstat-no" title="statement not covered" >  data.league.pressureRate = rate(data.league.pressure, data.league.drop);</span>
+<span class="cstat-no" title="statement not covered" >  data.league.split = rate(data.league.pressured.epa, data.league.pressured.n) - rate(data.league.clean.epa, data.league.clean.n);</span>
+&nbsp;
+  // Ties are neither wins nor losses.
+<span class="cstat-no" title="statement not covered" >  data.rush = [...rush.values()].map(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; {</span>
+    const g = <span class="cstat-no" title="statement not covered" >games.get(r.game);</span> <span class="cstat-no" title="statement not covered" >if (!g) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+    const [us, them] = <span class="cstat-no" title="statement not covered" >g.home === r.team ? [g.hs, g.as] : [g.as, g.hs];</span>
+<span class="cstat-no" title="statement not covered" >    return { team: r.team, player: r.player, yards: r.yards, carries: r.carries, result: us &gt; them ? 'W' : us &lt; them ? 'L' : 'T' };</span>
+  }).filter(Boolean);
+&nbsp;
+  // ESPN athlete id -&gt; gsis id, only for players that appear in the aggregates.
+  const used = <span class="cstat-no" title="statement not covered" >new Set([...Object.keys(data.qbs), ...data.rush.map(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; <span class="cstat-no" title="statement not covered" >r.player)</span>, ...Object.values(data.targets).flatMap(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >Object.keys(t))</span>]);</span>
+  const ids = <span class="cstat-no" title="statement not covered" >await loadIdMap();</span>
+<span class="cstat-no" title="statement not covered" >  data.espn = {}; <span class="cstat-no" title="statement not covered" ></span>data.position = {};</span>
+<span class="cstat-no" title="statement not covered" >  Object.values(ids.gsis).forEach(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; { <span class="cstat-no" title="statement not covered" >if (used.has(r.gsis_id)) { <span class="cstat-no" title="statement not covered" >data.espn[String(r.espn_id)] = r.gsis_id; <span class="cstat-no" title="statement not covered" ></span>data.position[r.gsis_id] = r.position; </span>} </span>});</span>
+<span class="cstat-no" title="statement not covered" >  data.built_at = new Date().toISOString();</span>
+<span class="cstat-no" title="statement not covered" >  return data;</span>
+}
+&nbsp;
+// Per-season memo with a TTL.  The last good aggregate is persisted so a cold
+// start or an nflverse outage serves it instead of silently dropping signals,
+// and failed downloads back off instead of retrying on every request.
+const memo = {};
+const snapshotKey = <span class="fstat-no" title="function not covered" >(s</span>eason) =&gt; <span class="cstat-no" title="statement not covered" >`micro_matchups_${season}`;</span>
+async function <span class="fstat-no" title="function not covered" >load(</span>season) {
+  const s = <span class="cstat-no" title="statement not covered" >memo[season] ||= { data: null, loadedAt: 0, failedAt: 0, promise: null };</span>
+<span class="cstat-no" title="statement not covered" >  if (!s.data &amp;&amp; !s.restored) {</span>
+<span class="cstat-no" title="statement not covered" >    s.restored = true;</span>
+    const row = <span class="cstat-no" title="statement not covered" >await db.loadDataset(snapshotKey(season)).catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >null)</span>;</span>
+<span class="cstat-no" title="statement not covered" >    if (row?.data?.version === VERSION) { <span class="cstat-no" title="statement not covered" >s.data = row.data; <span class="cstat-no" title="statement not covered" ></span>s.loadedAt = Date.parse(row.data.built_at) || 0; </span>}</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (s.data &amp;&amp; Date.now() - s.loadedAt &lt; TTL_MS) <span class="cstat-no" title="statement not covered" >return s.data;</span></span>
+<span class="cstat-no" title="statement not covered" >  if (s.failedAt &amp;&amp; Date.now() - s.failedAt &lt; BACKOFF_MS) {</span>
+<span class="cstat-no" title="statement not covered" >    if (s.data) <span class="cstat-no" title="statement not covered" >return s.data;</span></span>
+<span class="cstat-no" title="statement not covered" >    throw new Error('nflverse unavailable (backing off)');</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (!s.promise) {</span>
+<span class="cstat-no" title="statement not covered" >    s.promise = build(season).then(<span class="fstat-no" title="function not covered" >as</span>ync (data) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      s.data = data; <span class="cstat-no" title="statement not covered" ></span>s.loadedAt = Date.now(); <span class="cstat-no" title="statement not covered" ></span>s.failedAt = 0;</span>
+<span class="cstat-no" title="statement not covered" >      await db.saveDataset(snapshotKey(season), data, { qbs: Object.keys(data.qbs).length }).catch(<span class="fstat-no" title="function not covered" >(e</span>) =&gt; <span class="cstat-no" title="statement not covered" >console.warn(`[matchups] snapshot save failed: ${e.message}`))</span>;</span>
+<span class="cstat-no" title="statement not covered" >      return data;</span>
+    }).catch(<span class="fstat-no" title="function not covered" >(e</span>) =&gt; {
+<span class="cstat-no" title="statement not covered" >      s.failedAt = Date.now();</span>
+<span class="cstat-no" title="statement not covered" >      console.warn(`[matchups] nflverse load failed${s.data ? ', serving last good snapshot' : ''}: ${e.message}`);</span>
+<span class="cstat-no" title="statement not covered" >      if (s.data) <span class="cstat-no" title="statement not covered" >return s.data;</span></span>
+<span class="cstat-no" title="statement not covered" >      throw e;</span>
+    }).finally(<span class="fstat-no" title="function not covered" >()</span> =&gt; { <span class="cstat-no" title="statement not covered" >s.promise = null; </span>});
+  }
+  // Stale data is served while the refresh runs in the background.
+<span class="cstat-no" title="statement not covered" >  return s.data || s.promise;</span>
+}
+&nbsp;
+const gsis = <span class="fstat-no" title="function not covered" >(d</span>ata, player) =&gt; <span class="cstat-no" title="statement not covered" >player?.id != null ? data.espn[String(player.id)] : null;</span>
+const effect = <span class="fstat-no" title="function not covered" >(d</span>iff, scale = <span class="branch-0 cbranch-no" title="branch not covered" >4)</span> =&gt; <span class="cstat-no" title="statement not covered" >clamp(diff * scale, -1.8, 1.8);</span>
+const desc = <span class="fstat-no" title="function not covered" >(v</span>) =&gt; <span class="cstat-no" title="statement not covered" >`${v &gt;= 0 ? '+' : ''}${v.toFixed(2)}`;</span> // EPA values
+const seasons = <span class="fstat-no" title="function not covered" >(d</span>ata) =&gt; <span class="cstat-no" title="statement not covered" >`${data.season - 1}–${String(data.season).slice(2)}`;</span>
+&nbsp;
+function <span class="fstat-no" title="function not covered" >rbSignal(</span>data, side, team) {
+  const id = <span class="cstat-no" title="statement not covered" >gsis(data, side?.rb1);</span> <span class="cstat-no" title="statement not covered" >if (!id) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const x = <span class="cstat-no" title="statement not covered" >data.rush.filter(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; <span class="cstat-no" title="statement not covered" >r.team === team &amp;&amp; r.player === id &amp;&amp; r.carries &amp;&amp; r.result !== 'T')</span>;</span>
+<span class="cstat-no" title="statement not covered" >  if (x.length &lt; 16 || x.reduce(<span class="fstat-no" title="function not covered" >(s</span>, r) =&gt; <span class="cstat-no" title="statement not covered" >s + r.carries,</span> 0) &lt; 20) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const threshold = <span class="cstat-no" title="statement not covered" >Math.round(x.map(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; <span class="cstat-no" title="statement not covered" >r.yards)</span>.sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >a - b)</span>[Math.floor(x.length / 2)] / 5) * 5;</span>
+  const record = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(a</span>) =&gt; <span class="cstat-no" title="statement not covered" >a.reduce(<span class="fstat-no" title="function not covered" >(z</span>, r) =&gt; (<span class="cstat-no" title="statement not covered" >r.result === 'W' ? z.w++ : z.l++, z)</span>, { w: 0, l: 0 });</span></span>
+  const high = <span class="cstat-no" title="statement not covered" >record(x.filter(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; <span class="cstat-no" title="statement not covered" >r.yards &gt;= threshold)</span>),</span> low = <span class="cstat-no" title="statement not covered" >record(x.filter(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; <span class="cstat-no" title="statement not covered" >r.yards &lt; threshold)</span>);</span>
+  const hi = <span class="cstat-no" title="statement not covered" >rate(high.w, high.w + high.l),</span> lo = <span class="cstat-no" title="statement not covered" >rate(low.w, low.w + low.l);</span>
+<span class="cstat-no" title="statement not covered" >  if (high.w + high.l &lt; 8 || low.w + low.l &lt; 8 || Math.abs(hi - lo) &lt; .25) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const impact = <span class="cstat-no" title="statement not covered" >(hi &gt; lo ? 1 : -1) * clamp(Math.abs(hi - lo) * 1.5, .4, 1.8);</span>
+<span class="cstat-no" title="statement not covered" >  return make('🏃', 'RB1 team-results threshold', `${team} is ${high.w}-${high.l} when ${side.rb1.name} reaches ${threshold}+ rush yards and ${low.w}-${low.l} when held under—a ${Math.round(Math.abs(hi - lo) * 100)}-point win-rate split (${seasons(data)}, ties excluded). AFI ${impact &gt; 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, x.length, team);</span>
+}
+&nbsp;
+function <span class="fstat-no" title="function not covered" >conditionSignal(</span>data, side, team, weather) {
+  const id = <span class="cstat-no" title="statement not covered" >gsis(data, side?.starting_qb),</span> q = <span class="cstat-no" title="statement not covered" >id &amp;&amp; data.qbs[id];</span> <span class="cstat-no" title="statement not covered" >if (!q || !weather) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const f = <span class="cstat-no" title="statement not covered" >weather.forecast,</span> outdoors = <span class="cstat-no" title="statement not covered" >f &amp;&amp; weather.roof &amp;&amp; !indoor(weather.roof);</span>
+  const hour = <span class="cstat-no" title="statement not covered" >kickoffEtHour(weather.date);</span>
+  const kind = <span class="cstat-no" title="statement not covered" >outdoors &amp;&amp; f.temp_f != null &amp;&amp; f.temp_f &lt; 40 ? 'cold' : outdoors &amp;&amp; f.wind_mph != null &amp;&amp; f.wind_mph &gt; 15 ? 'wind' : isNight(hour) ? 'night' : null;</span>
+  const other = <span class="cstat-no" title="statement not covered" >q[`${kind}Other`];</span>
+<span class="cstat-no" title="statement not covered" >  if (!kind || q[kind].n &lt; 50 || other.n &lt; 50) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const a = <span class="cstat-no" title="statement not covered" >rate(q[kind].epa, q[kind].n),</span> b = <span class="cstat-no" title="statement not covered" >rate(other.epa, other.n);</span> <span class="cstat-no" title="statement not covered" >if (Math.abs(a - b) &lt; .08) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const forecast = <span class="cstat-no" title="statement not covered" >kind === 'cold' ? `${Math.round(f.temp_f)}°F forecast` : kind === 'wind' ? `${Math.round(f.wind_mph)} mph forecast wind` : 'night kickoff (7pm ET or later)',</span> impact = <span class="cstat-no" title="statement not covered" >effect(a - b);</span>
+<span class="cstat-no" title="statement not covered" >  return make('🌦️', 'QB condition EPA split', `${side.starting_qb.name}: ${desc(a)} EPA/dropback in ${kind} games vs ${desc(b)} otherwise (${q[kind].n} vs ${other.n} dropbacks; ${forecast}). AFI ${impact &gt;= 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, q[kind].n, team);</span>
+}
+&nbsp;
+// Fires only for a real mismatch: a top-8 pass rush against a bottom-11 line.
+// The QB's pressured-vs-clean split is compared with the league-average split
+// (every QB is worse under pressure), and scaled by how much more often than
+// average this rush/line pairing should produce a hit or sack, over a typical
+// 35-dropback game (EPA is in points).
+const DROPBACKS = 35;
+function <span class="fstat-no" title="function not covered" >pressureSignal(</span>data, side, team, opp) {
+  const id = <span class="cstat-no" title="statement not covered" >gsis(data, side?.starting_qb),</span> q = <span class="cstat-no" title="statement not covered" >id &amp;&amp; data.qbs[id],</span> d = <span class="cstat-no" title="statement not covered" >data.def[opp],</span> o = <span class="cstat-no" title="statement not covered" >data.off[team];</span>
+<span class="cstat-no" title="statement not covered" >  if (!q || !d || !o || q.pressured.n &lt; 50 || q.clean.n &lt; 50) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const dr = <span class="cstat-no" title="statement not covered" >data.defRank[opp],</span> or = <span class="cstat-no" title="statement not covered" >data.olRank[team];</span> <span class="cstat-no" title="statement not covered" >if (!(dr &lt;= 8 &amp;&amp; or &gt;= 22)) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const split = <span class="cstat-no" title="statement not covered" >rate(q.pressured.epa, q.pressured.n) - rate(q.clean.epa, q.clean.n),</span> excess = <span class="cstat-no" title="statement not covered" >split - data.league.split;</span>
+  const extra = <span class="cstat-no" title="statement not covered" >(d.pressureRate - data.league.pressureRate) + (o.pressureRate - data.league.pressureRate);</span> <span class="cstat-no" title="statement not covered" >if (Math.abs(excess) &lt; .1 || extra &lt;= 0) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const impact = <span class="cstat-no" title="statement not covered" >clamp(DROPBACKS * extra * excess, -1.5, 1.5);</span>
+<span class="cstat-no" title="statement not covered" >  if (Math.abs(impact) &lt; .2) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+<span class="cstat-no" title="statement not covered" >  return make('💨', 'Pass rush vs. O-line', `${opp} gets a hit or sack on ${pct(d.pressureRate)}% of dropbacks (NFL rank ${dr}; league ${pct(data.league.pressureRate)}%) and ${team}'s line allows ${pct(o.pressureRate)}% (rank ${or}), ${seasons(data)} hits+sacks. ${side.starting_qb.name}'s pressured-vs-clean EPA gap is ${desc(split)} vs the league's ${desc(data.league.split)} (${q.pressured.n}/${q.clean.n} dropbacks). AFI ${impact &gt;= 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, q.pressured.n + q.clean.n, team);</span>
+}
+&nbsp;
+function <span class="fstat-no" title="function not covered" >coverageSignal(</span>data, side, team, opp, oppSide) {
+  const wr = <span class="cstat-no" title="statement not covered" >side?.wr1,</span> id = <span class="cstat-no" title="statement not covered" >gsis(data, wr);</span> <span class="cstat-no" title="statement not covered" >if (!id || wr.position !== 'WR' || (data.position[id] &amp;&amp; data.position[id] !== 'WR')) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const w = <span class="cstat-no" title="statement not covered" >data.targets[team]?.[id],</span> d = <span class="cstat-no" title="statement not covered" >data.def[opp];</span> <span class="cstat-no" title="statement not covered" >if (!w || !d || !d.coverage) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const kind = <span class="cstat-no" title="statement not covered" >d.manRate &gt;= .5 ? 'man' : 'zone',</span> other = <span class="cstat-no" title="statement not covered" >kind === 'man' ? 'zone' : 'man';</span>
+<span class="cstat-no" title="statement not covered" >  if (w[kind].n &lt; 30 || w[other].n &lt; 30) <span class="cstat-no" title="statement not covered" >return null; </span></span>const a = <span class="cstat-no" title="statement not covered" >rate(w[kind].epa, w[kind].n),</span> b = <span class="cstat-no" title="statement not covered" >rate(w[other].epa, w[other].n);</span> <span class="cstat-no" title="statement not covered" >if (Math.abs(a - b) &lt; .08) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const impact = <span class="cstat-no" title="statement not covered" >effect(a - b, 3),</span> cb = <span class="cstat-no" title="statement not covered" >oppSide?.cb1?.name ? `; top CB by depth-chart snaps: ${oppSide.cb1.name}` : '';</span>
+<span class="cstat-no" title="statement not covered" >  return make('🎯', 'WR1 vs. coverage', `${wr.name} has ${desc(a)} EPA/target vs ${kind} and ${desc(b)} vs ${other} with ${team}; ${opp} used ${kind} on ${pct(kind === 'man' ? d.manRate : 1 - d.manRate)}% of charted coverage plays (${data.charted_season} charting)${cb}. AFI ${impact &gt;= 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, w[kind].n, team);</span>
+}
+&nbsp;
+function <span class="fstat-no" title="function not covered" >schemeSignal(</span>data, side, team, opp) {
+  const id = <span class="cstat-no" title="statement not covered" >gsis(data, side?.starting_qb),</span> q = <span class="cstat-no" title="statement not covered" >id &amp;&amp; data.qbs[id],</span> d = <span class="cstat-no" title="statement not covered" >data.def[opp];</span> <span class="cstat-no" title="statement not covered" >if (!q || !d || !d.charted) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const kind = <span class="cstat-no" title="statement not covered" >data.manRank[opp] &lt;= 8 || data.manRank[opp] &gt;= 25 ? 'man' : (data.blitzRank[opp] &lt;= 8 || data.blitzRank[opp] &gt;= 25 ? 'blitz' : null);</span> <span class="cstat-no" title="statement not covered" >if (!kind) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const other = <span class="cstat-no" title="statement not covered" >`${kind}Other`,</span> a = <span class="cstat-no" title="statement not covered" >q[kind],</span> b = <span class="cstat-no" title="statement not covered" >q[other];</span> <span class="cstat-no" title="statement not covered" >if (a.n &lt; 50 || b.n &lt; 50) <span class="cstat-no" title="statement not covered" >return null; </span></span>const av = <span class="cstat-no" title="statement not covered" >rate(a.epa, a.n),</span> bv = <span class="cstat-no" title="statement not covered" >rate(b.epa, b.n);</span> <span class="cstat-no" title="statement not covered" >if (Math.abs(av - bv) &lt; .08) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  const rank = <span class="cstat-no" title="statement not covered" >kind === 'man' ? data.manRank[opp] : data.blitzRank[opp],</span> share = <span class="cstat-no" title="statement not covered" >kind === 'man' ? d.manRate : d.blitzRate,</span> impact = <span class="cstat-no" title="statement not covered" >effect(av - bv, 3.5);</span>
+<span class="cstat-no" title="statement not covered" >  return make('🧭', 'Scheme extreme', `${opp} was NFL rank ${rank} in ${kind === 'blitz' ? '5+ rusher' : kind} rate (${pct(share)}%, ${data.charted_season} charting); ${side.starting_qb.name} is ${desc(av)} EPA/dropback vs ${kind} and ${desc(bv)} otherwise (${a.n}/${b.n}). AFI ${impact &gt;= 0 ? 'adds' : 'subtracts'} ${Math.abs(impact).toFixed(1)} point.`, impact, a.n, team);</span>
+}
+&nbsp;
+// Net home-relative adjustment from the shown signals, capped at ±MAX_TOTAL.
+const matchupAdjustment = <span class="fstat-no" title="function not covered" >(s</span>ignals, home, away) =&gt; {
+  const raw = <span class="cstat-no" title="statement not covered" >signals.reduce(<span class="fstat-no" title="function not covered" >(t</span>, s) =&gt; <span class="cstat-no" title="statement not covered" >t + (s.team === home ? s.impact : s.team === away ? -s.impact : 0),</span> 0);</span>
+<span class="cstat-no" title="statement not covered" >  return { raw: one(raw), capped: one(clamp(raw, -MAX_TOTAL, MAX_TOTAL)) };</span>
+};
+&nbsp;
+async function <span class="fstat-no" title="function not covered" >getMicroMatchups(</span>{ season, home, away, weather, preview }) {
+  const data = <span class="cstat-no" title="statement not covered" >await load(season);</span>
+  const homeSide = <span class="cstat-no" title="statement not covered" >preview?.home,</span> awaySide = <span class="cstat-no" title="statement not covered" >preview?.away;</span>
+  const rush = <span class="cstat-no" title="statement not covered" >[pressureSignal(data, awaySide, away, home), pressureSignal(data, homeSide, home, away)];</span>
+<span class="cstat-no" title="statement not covered" >  return [</span>
+    rbSignal(data, awaySide, away), rbSignal(data, homeSide, home),
+    conditionSignal(data, awaySide, away, weather), conditionSignal(data, homeSide, home, weather),
+    // A mismatch on both sides is not a mismatch: drop the pair rather than let it cancel.
+    ...(rush[0] &amp;&amp; rush[1] ? [] : rush),
+    coverageSignal(data, awaySide, away, home, homeSide), coverageSignal(data, homeSide, home, away, awaySide),
+    schemeSignal(data, awaySide, away, home), schemeSignal(data, homeSide, home, away)
+  ].filter(Boolean).sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >Math.abs(b.impact) - Math.abs(a.impact))</span>.slice(0, 3);
+}
+module.exports = { getMicroMatchups, matchupAdjustment, MAX_TOTAL };
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-10-09T21:55:18.451Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -13,3 +13,4 @@ build/
 *.log
 npm-debug.log*
 client/dist/
+__pycache__/

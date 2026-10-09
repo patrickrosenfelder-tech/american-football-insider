@@ -1,0 +1,667 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for services/playoffEngine.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> playoffEngine.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">7.57% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>15/198</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/81</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">1.49% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>1/67</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">11.9% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>15/126</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// NFL standings, tiebreakers and playoff seeding for one set of game results.
+// Pure functions (no I/O) so the same code runs for actual standings, user picks and Monte Carlo sims.
+//
+// teams: [{ id, conf, div }]
+// games: [{ id, home, away, result: 'H' | 'A' | 'T' | null, home_score, away_score }]  (null = not decided)
+//
+// Tiebreakers implemented (NFL rulebook order), see README "Playoff predictor":
+//   Division: head-to-head, division record, common games, conference record, strength of victory,
+//             strength of schedule, net points (all games), coin toss.
+//   Wild card: same-division ties first reduced to the division leader, then head-to-head (2 clubs: if they
+//             met; 3+ clubs: only a sweep / swept), conference record, common games (min. 4), strength of
+//             victory, strength of schedule, net points (all games), coin toss.
+//   Simplified/skipped: combined conference/league ranking in points scored/allowed, net points in common /
+//   conference games, net touchdowns. "Coin toss" is deterministic (team id order).
+&nbsp;
+const EPS = 1e-9;
+&nbsp;
+const pct = <span class="fstat-no" title="function not covered" >(w</span>, l, t) =&gt; {
+  const g = <span class="cstat-no" title="statement not covered" >w + l + t;</span>
+<span class="cstat-no" title="statement not covered" >  return g ? (w + t / 2) / g : 0;</span>
+};
+&nbsp;
+const buildRecords = <span class="fstat-no" title="function not covered" >(t</span>eams, games) =&gt; {
+  const rec = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >  teams.forEach(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    rec[t.id] = { id: t.id, conf: t.conf, div: t.div, w: 0, l: 0, t: 0, dw: 0, dl: 0, dt: 0, cw: 0, cl: 0, ct: 0, pf: 0, pa: 0, games: [] };</span>
+  });
+<span class="cstat-no" title="statement not covered" >  games.forEach(<span class="fstat-no" title="function not covered" >(g</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (!g.result) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    const h = <span class="cstat-no" title="statement not covered" >rec[g.home];</span>
+    const a = <span class="cstat-no" title="statement not covered" >rec[g.away];</span>
+<span class="cstat-no" title="statement not covered" >    if (!h || !a) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    const hr = <span class="cstat-no" title="statement not covered" >g.result === 'H' ? 1 : g.result === 'A' ? 0 : 0.5;</span>
+    const add = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(r</span>, opp, res, pf, pa) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (res === 1) <span class="cstat-no" title="statement not covered" >r.w += 1; </span>else <span class="cstat-no" title="statement not covered" >if (res === 0) <span class="cstat-no" title="statement not covered" >r.l += 1; </span>else <span class="cstat-no" title="statement not covered" >r.t += 1;</span></span></span>
+<span class="cstat-no" title="statement not covered" >      if (r.div === opp.div) { <span class="cstat-no" title="statement not covered" >if (res === 1) <span class="cstat-no" title="statement not covered" >r.dw += 1; </span>else <span class="cstat-no" title="statement not covered" >if (res === 0) <span class="cstat-no" title="statement not covered" >r.dl += 1; </span>else <span class="cstat-no" title="statement not covered" >r.dt += 1; </span></span></span>}</span>
+<span class="cstat-no" title="statement not covered" >      if (r.conf === opp.conf) { <span class="cstat-no" title="statement not covered" >if (res === 1) <span class="cstat-no" title="statement not covered" >r.cw += 1; </span>else <span class="cstat-no" title="statement not covered" >if (res === 0) <span class="cstat-no" title="statement not covered" >r.cl += 1; </span>else <span class="cstat-no" title="statement not covered" >r.ct += 1; </span></span></span>}</span>
+<span class="cstat-no" title="statement not covered" >      if (pf != null &amp;&amp; pa != null) { <span class="cstat-no" title="statement not covered" >r.pf += pf; <span class="cstat-no" title="statement not covered" ></span>r.pa += pa; </span>}</span>
+<span class="cstat-no" title="statement not covered" >      r.games.push({ opp: opp.id, res });</span>
+    };
+<span class="cstat-no" title="statement not covered" >    add(h, a, hr, g.home_score, g.away_score);</span>
+<span class="cstat-no" title="statement not covered" >    add(a, h, 1 - hr, g.away_score, g.home_score);</span>
+  });
+<span class="cstat-no" title="statement not covered" >  Object.values(rec).forEach(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    r.pct = pct(r.w, r.l, r.t);</span>
+<span class="cstat-no" title="statement not covered" >    r.div_pct = pct(r.dw, r.dl, r.dt);</span>
+<span class="cstat-no" title="statement not covered" >    r.conf_pct = pct(r.cw, r.cl, r.ct);</span>
+  });
+<span class="cstat-no" title="statement not covered" >  return rec;</span>
+};
+&nbsp;
+// Win pct of `id` in games against opponents in `opps` (Set). Returns [pct, games].
+const recordVs = <span class="fstat-no" title="function not covered" >(r</span>ec, id, opps) =&gt; {
+  let w = <span class="cstat-no" title="statement not covered" >0;</span> let n = <span class="cstat-no" title="statement not covered" >0;</span>
+<span class="cstat-no" title="statement not covered" >  rec[id].games.forEach(<span class="fstat-no" title="function not covered" >(g</span>) =&gt; { <span class="cstat-no" title="statement not covered" >if (opps.has(g.opp)) { <span class="cstat-no" title="statement not covered" >w += g.res; <span class="cstat-no" title="statement not covered" ></span>n += 1; </span>} </span>});</span>
+<span class="cstat-no" title="statement not covered" >  return [n ? w / n : 0, n];</span>
+};
+&nbsp;
+const sov = <span class="fstat-no" title="function not covered" >(r</span>ec, id) =&gt; {
+  let w = <span class="cstat-no" title="statement not covered" >0;</span> let g = <span class="cstat-no" title="statement not covered" >0;</span>
+<span class="cstat-no" title="statement not covered" >  rec[id].games.forEach(<span class="fstat-no" title="function not covered" >(x</span>) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (x.res !== 1) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    const o = <span class="cstat-no" title="statement not covered" >rec[x.opp];</span>
+<span class="cstat-no" title="statement not covered" >    w += o.w + o.t / 2; <span class="cstat-no" title="statement not covered" ></span>g += o.w + o.l + o.t;</span>
+  });
+<span class="cstat-no" title="statement not covered" >  return g ? w / g : 0;</span>
+};
+&nbsp;
+const sos = <span class="fstat-no" title="function not covered" >(r</span>ec, id) =&gt; {
+  let w = <span class="cstat-no" title="statement not covered" >0;</span> let g = <span class="cstat-no" title="statement not covered" >0;</span>
+<span class="cstat-no" title="statement not covered" >  rec[id].games.forEach(<span class="fstat-no" title="function not covered" >(x</span>) =&gt; {</span>
+    const o = <span class="cstat-no" title="statement not covered" >rec[x.opp];</span>
+<span class="cstat-no" title="statement not covered" >    w += o.w + o.t / 2; <span class="cstat-no" title="statement not covered" ></span>g += o.w + o.l + o.t;</span>
+  });
+<span class="cstat-no" title="statement not covered" >  return g ? w / g : 0;</span>
+};
+&nbsp;
+const commonOpponents = <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; {
+  let common = <span class="cstat-no" title="statement not covered" >null;</span>
+<span class="cstat-no" title="statement not covered" >  ids.forEach(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; {</span>
+    const opps = <span class="cstat-no" title="statement not covered" >new Set(rec[id].games.map(<span class="fstat-no" title="function not covered" >(g</span>) =&gt; <span class="cstat-no" title="statement not covered" >g.opp)</span>);</span>
+<span class="cstat-no" title="statement not covered" >    common = common ? new Set([...common].filter(<span class="fstat-no" title="function not covered" >(o</span>) =&gt; <span class="cstat-no" title="statement not covered" >opps.has(o))</span>) : opps;</span>
+  });
+<span class="cstat-no" title="statement not covered" >  ids.forEach(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >common.delete(id))</span>;</span>
+<span class="cstat-no" title="statement not covered" >  return common;</span>
+};
+&nbsp;
+// Each step returns a score per team (higher = better) or null when the step doesn't apply.
+const STEPS = {
+  h2h: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; {
+    const group = <span class="cstat-no" title="statement not covered" >new Set(ids);</span>
+    const scores = <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >recordVs(rec, id, new Set([...group].filter(<span class="fstat-no" title="function not covered" >(x</span>) =&gt; <span class="cstat-no" title="statement not covered" >x !== id)</span>)))</span>;</span>
+<span class="cstat-no" title="statement not covered" >    if (scores.some(<span class="fstat-no" title="function not covered" >([</span>, n]) =&gt; <span class="cstat-no" title="statement not covered" >n === 0)</span>) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+<span class="cstat-no" title="statement not covered" >    return scores.map(<span class="fstat-no" title="function not covered" >([</span>p]) =&gt; <span class="cstat-no" title="statement not covered" >p)</span>;</span>
+  },
+  // Wild card head-to-head: 2 clubs if they met; 3+ clubs only if one swept / was swept by all others.
+  h2hWildcard: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (ids.length === 2) <span class="cstat-no" title="statement not covered" >return STEPS.h2h(rec, ids);</span></span>
+    const sweep = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(i</span>d, want) =&gt; <span class="cstat-no" title="statement not covered" >ids.every(<span class="fstat-no" title="function not covered" >(o</span>) =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (o === id) <span class="cstat-no" title="statement not covered" >return true;</span></span>
+      const gs = <span class="cstat-no" title="statement not covered" >rec[id].games.filter(<span class="fstat-no" title="function not covered" >(g</span>) =&gt; <span class="cstat-no" title="statement not covered" >g.opp === o)</span>;</span>
+<span class="cstat-no" title="statement not covered" >      return gs.length &gt; 0 &amp;&amp; gs.every(<span class="fstat-no" title="function not covered" >(g</span>) =&gt; <span class="cstat-no" title="statement not covered" >g.res === want)</span>;</span>
+    });
+    const sweeper = <span class="cstat-no" title="statement not covered" >ids.find(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >sweep(id, 1))</span>;</span>
+<span class="cstat-no" title="statement not covered" >    if (sweeper) <span class="cstat-no" title="statement not covered" >return ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; (<span class="cstat-no" title="statement not covered" >id === sweeper ? 1 : 0)</span>);</span></span>
+    const swept = <span class="cstat-no" title="statement not covered" >ids.filter(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >sweep(id, 0))</span>;</span>
+<span class="cstat-no" title="statement not covered" >    if (swept.length) <span class="cstat-no" title="statement not covered" >return ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; (<span class="cstat-no" title="statement not covered" >swept.includes(id) ? 0 : 1)</span>);</span></span>
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+  },
+  division: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >rec[id].div_pct)</span>,</span>
+  conference: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >rec[id].conf_pct)</span>,</span>
+  common: (min) =&gt; <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; {
+    const common = <span class="cstat-no" title="statement not covered" >commonOpponents(rec, ids);</span>
+    const scores = <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >recordVs(rec, id, common))</span>;</span>
+<span class="cstat-no" title="statement not covered" >    if (scores.some(<span class="fstat-no" title="function not covered" >([</span>, n]) =&gt; <span class="cstat-no" title="statement not covered" >n &lt; min)</span>) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+<span class="cstat-no" title="statement not covered" >    return scores.map(<span class="fstat-no" title="function not covered" >([</span>p]) =&gt; <span class="cstat-no" title="statement not covered" >p)</span>;</span>
+  },
+  sov: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >sov(rec, id))</span>,</span>
+  sos: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >sos(rec, id))</span>,</span>
+  netPoints: <span class="fstat-no" title="function not covered" >(r</span>ec, ids) =&gt; <span class="cstat-no" title="statement not covered" >ids.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >rec[id].pf - rec[id].pa)</span></span>
+};
+&nbsp;
+const DIVISION_STEPS = [STEPS.h2h, STEPS.division, STEPS.common(1), STEPS.conference, STEPS.sov, STEPS.sos, STEPS.netPoints];
+const WILDCARD_STEPS = [STEPS.h2hWildcard, STEPS.conference, STEPS.common(4), STEPS.sov, STEPS.sos, STEPS.netPoints];
+&nbsp;
+// Returns the single best team among tied `ids`. When a step separates some (but not all) teams,
+// the procedure restarts with the remaining group, as the rulebook requires.
+const breakTie = <span class="fstat-no" title="function not covered" >(r</span>ec, ids, steps, prepare = <span class="branch-0 cbranch-no" title="branch not covered" >null)</span> =&gt; {
+  let group = <span class="cstat-no" title="statement not covered" >prepare ? prepare(ids) : ids;</span>
+<span class="cstat-no" title="statement not covered" >  if (group.length === 1) <span class="cstat-no" title="statement not covered" >return group[0];</span></span>
+<span class="cstat-no" title="statement not covered" >  for (const step of steps) {</span>
+    const scores = <span class="cstat-no" title="statement not covered" >step(rec, group);</span>
+<span class="cstat-no" title="statement not covered" >    if (!scores) <span class="cstat-no" title="statement not covered" >continue;</span></span>
+    const best = <span class="cstat-no" title="statement not covered" >Math.max(...scores);</span>
+    const top = <span class="cstat-no" title="statement not covered" >group.filter(<span class="fstat-no" title="function not covered" >(_</span>, i) =&gt; <span class="cstat-no" title="statement not covered" >scores[i] &gt;= best - EPS)</span>;</span>
+<span class="cstat-no" title="statement not covered" >    if (top.length &lt; group.length) {</span>
+<span class="cstat-no" title="statement not covered" >      group = top;</span>
+<span class="cstat-no" title="statement not covered" >      return top.length === 1 ? top[0] : breakTie(rec, top, steps, prepare);</span>
+    }
+  }
+<span class="cstat-no" title="statement not covered" >  return [...group].sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >Number(a) - Number(b))</span>[0]; </span>// coin toss (deterministic)
+};
+&nbsp;
+// Orders `ids` by win pct, breaking ties one place at a time.
+const rankGroup = <span class="fstat-no" title="function not covered" >(r</span>ec, ids, pickBest) =&gt; {
+  const out = <span class="cstat-no" title="statement not covered" >[];</span>
+  let left = <span class="cstat-no" title="statement not covered" >[...ids];</span>
+<span class="cstat-no" title="statement not covered" >  while (left.length) {</span>
+    const bestPct = <span class="cstat-no" title="statement not covered" >Math.max(...left.map(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >rec[id].pct)</span>);</span>
+    const tied = <span class="cstat-no" title="statement not covered" >left.filter(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >rec[id].pct &gt;= bestPct - EPS)</span>;</span>
+    const pick = <span class="cstat-no" title="statement not covered" >tied.length === 1 ? tied[0] : pickBest(tied);</span>
+<span class="cstat-no" title="statement not covered" >    out.push(pick);</span>
+<span class="cstat-no" title="statement not covered" >    left = left.filter(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >id !== pick)</span>;</span>
+  }
+<span class="cstat-no" title="statement not covered" >  return out;</span>
+};
+&nbsp;
+const computeStandings = <span class="fstat-no" title="function not covered" >(t</span>eams, games) =&gt; {
+  const rec = <span class="cstat-no" title="statement not covered" >buildRecords(teams, games);</span>
+  const divisions = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >  teams.forEach(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; { <span class="cstat-no" title="statement not covered" >(divisions[t.div] ||= []).push(t.id); </span>});</span>
+&nbsp;
+  const divRank = <span class="cstat-no" title="statement not covered" >{};</span>
+  const divOrder = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >  Object.entries(divisions).forEach(<span class="fstat-no" title="function not covered" >([</span>div, ids]) =&gt; {</span>
+    const order = <span class="cstat-no" title="statement not covered" >rankGroup(rec, ids, <span class="fstat-no" title="function not covered" >(t</span>ied) =&gt; <span class="cstat-no" title="statement not covered" >breakTie(rec, tied, DIVISION_STEPS))</span>;</span>
+<span class="cstat-no" title="statement not covered" >    divOrder[div] = order;</span>
+<span class="cstat-no" title="statement not covered" >    order.forEach(<span class="fstat-no" title="function not covered" >(i</span>d, i) =&gt; { <span class="cstat-no" title="statement not covered" >divRank[id] = i; </span>});</span>
+  });
+&nbsp;
+  // Same-division clubs in a wild card tie: keep only the highest ranked one per division.
+  const reduceByDivision = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(i</span>ds) =&gt; {</span>
+    const best = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >    ids.forEach(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; {</span>
+      const d = <span class="cstat-no" title="statement not covered" >rec[id].div;</span>
+<span class="cstat-no" title="statement not covered" >      if (best[d] == null || divRank[id] &lt; divRank[best[d]]) <span class="cstat-no" title="statement not covered" >best[d] = id;</span></span>
+    });
+<span class="cstat-no" title="statement not covered" >    return Object.values(best);</span>
+  };
+  const wildcardPick = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(t</span>ied) =&gt; <span class="cstat-no" title="statement not covered" >breakTie(rec, tied, WILDCARD_STEPS, reduceByDivision);</span></span>
+&nbsp;
+  const conferences = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >  [...new Set(teams.map(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >t.conf)</span>)].forEach(<span class="fstat-no" title="function not covered" >(c</span>onf) =&gt; {</span>
+    const winners = <span class="cstat-no" title="statement not covered" >Object.values(divOrder).map(<span class="fstat-no" title="function not covered" >(o</span>) =&gt; <span class="cstat-no" title="statement not covered" >o[0])</span>.filter(<span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >rec[id].conf === conf)</span>;</span>
+    const seededWinners = <span class="cstat-no" title="statement not covered" >rankGroup(rec, winners, wildcardPick);</span>
+    const rest = <span class="cstat-no" title="statement not covered" >teams.filter(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >t.conf === conf &amp;&amp; !winners.includes(t.id))</span>.map(<span class="fstat-no" title="function not covered" >(t</span>) =&gt; <span class="cstat-no" title="statement not covered" >t.id)</span>;</span>
+    const restOrder = <span class="cstat-no" title="statement not covered" >rankGroup(rec, rest, wildcardPick);</span>
+<span class="cstat-no" title="statement not covered" >    conferences[conf] = { seeds: [...seededWinners, ...restOrder.slice(0, 3)], order: [...seededWinners, ...restOrder] };</span>
+  });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return { records: rec, divisions: divOrder, conferences };</span>
+};
+&nbsp;
+module.exports = { computeStandings, buildRecords, breakTie, pct };
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-10-09T21:55:18.451Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

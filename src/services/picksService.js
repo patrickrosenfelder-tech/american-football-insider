@@ -424,7 +424,7 @@ const getPicks = async ({ week = null } = {}) => {
   const outdated = board.games.some((g) => {
     const pick = state.picks[g.game_id];
     return g.status.state === 'pre' && pick && (pick.confidence_stars == null || pick.micro_matchup_version !== 11
-      || (artifact ? pick.model_version !== artifact.model_version : /^v2\./.test(pick.model_version || ''))
+      || (artifact ? pick.model_version !== artifact.model_version || pick.model_run_at !== artifact.generated_at : /^v2\./.test(pick.model_version || ''))
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
   if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
