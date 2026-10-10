@@ -2,6 +2,17 @@ import { useEffect, useState, useCallback } from 'react';
 
 const sessionCache = new Map();
 
+export function getFavoriteTeams() {
+  try { return JSON.parse(localStorage.getItem('afi-favorite-teams') || '[]'); } catch { return []; }
+}
+
+export function toggleFavoriteTeam(abbreviation) {
+  const favorites = getFavoriteTeams();
+  const next = favorites.includes(abbreviation) ? favorites.filter((x) => x !== abbreviation) : [...favorites, abbreviation];
+  localStorage.setItem('afi-favorite-teams', JSON.stringify(next));
+  return next;
+}
+
 export async function api(path, { timeoutMs = 15000 } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);

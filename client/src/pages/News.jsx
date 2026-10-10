@@ -1,4 +1,5 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 import { SocialWidget } from './Social.jsx';
@@ -50,6 +51,7 @@ export function NewsFeed({ team = null, compact = false }) {
   const [params, setParams] = useSearchParams();
   const kind = compact ? null : params.get('kind');
   const search = compact ? '' : (params.get('q') || '').trim();
+  const [visibleLimit, setVisibleLimit] = useState(12);
   const qs = new URLSearchParams();
   if (team) qs.set('team', team);
   if (kind) qs.set('kind', kind);
@@ -64,6 +66,7 @@ export function NewsFeed({ team = null, compact = false }) {
   const headlines = needle
     ? d.headlines.filter((h) => h.title.toLowerCase().includes(needle))
     : d.headlines;
+  const visibleStories = stories.slice(0, visibleLimit);
   const setKind = (k) => { const next = new URLSearchParams(params); if (k) next.set('kind', k); else next.delete('kind'); setParams(next, { replace: true }); };
   return (
     <div>
@@ -82,11 +85,12 @@ export function NewsFeed({ team = null, compact = false }) {
         return (
           <div key={k}>
             {!kind && <h2 className="section-title">{label}</h2>}
-            <div className="grid story-grid">{list.map((s) => <StoryCard key={s.id} s={s} />)}</div>
+            <div className="grid story-grid">{visibleStories.filter((s) => s.kind === k).map((s) => <StoryCard key={s.id} s={s} />)}</div>
           </div>
         );
       })}
       {kind !== 'data' && <Headlines items={headlines} />}
+      {visibleLimit < stories.length && <button type="button" className="load-more" onClick={() => setVisibleLimit((n) => n + 12)}>Load more stories</button>}
       <p className="muted small note">
         We don’t republish articles. News stories are short summaries written by AI from the headlines and snippets of public feeds
         (ESPN, CBS Sports, Yahoo Sports, ProFootballTalk), with links to every source. Data stories are generated from ESPN game, injury and transaction data.

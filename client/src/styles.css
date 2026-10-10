@@ -59,6 +59,9 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
   font: inherit; font-weight: 700; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line);
   background: var(--card); color: var(--ink); max-width: 100%;
 }
+.score-filters { display: flex; gap: 7px; flex-wrap: wrap; margin: 0 0 18px; }
+.score-filters button, .load-more { border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); padding: 7px 12px; font: inherit; font-size: .8rem; font-weight: 800; cursor: pointer; }
+.score-filters button:hover, .score-filters button.active { border-color: #b9cbea; background: #e9f2ff; color: #1554a5; }
 .section-title { font-size: 1.05rem; margin: 24px 0 10px; }
 .day-title { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink); margin: 0; }
 .card-title { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 10px; }
@@ -204,6 +207,14 @@ tr:last-child td { border-bottom: 0; }
 /* Teams */
 .team-link { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-radius: 10px; font-weight: 600; }
 .team-link:hover { background: color-mix(in srgb, var(--team, #888) 12%, transparent); }
+.team-link-row { display: flex; align-items: center; gap: 4px; }
+.team-link-row .team-link { flex: 1; min-width: 0; }
+.favorite-button { width: 30px; height: 30px; border: 0; border-radius: 8px; background: transparent; color: #9aa8bd; font-size: 1.15rem; cursor: pointer; }
+.favorite-button:hover, .favorite-button.active { color: #d97706; background: #fff7d6; }
+.teams-head { align-items: center; }
+.team-search { width: min(280px, 100%); padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); font: inherit; }
+.favorite-strip { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: -12px 0 16px; color: var(--muted); font-size: .82rem; }
+.favorite-team { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #f1d990; background: #fffaf0; color: var(--ink); border-radius: 999px; padding: 4px 9px; font-weight: 800; }
 
 .team-hero {
   display: flex; align-items: center; gap: 18px; padding: 22px; border-radius: var(--radius); color: #fff;
@@ -211,6 +222,8 @@ tr:last-child td { border-bottom: 0; }
 }
 .team-hero .logo { background: rgba(255,255,255,.92); border-radius: 50%; padding: 8px; }
 .team-hero p { margin: 4px 0 0; opacity: .9; }
+.hero-favorite { margin-left: auto; border: 1px solid rgba(255,255,255,.4); border-radius: 999px; padding: 8px 12px; background: rgba(255,255,255,.16); color: #fff; font: inherit; font-size: .78rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.hero-favorite:hover, .hero-favorite.active { background: rgba(255,255,255,.28); }
 
 .sched-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
 .sched-row:last-child { border-bottom: 0; }
@@ -276,7 +289,9 @@ tr:last-child td { border-bottom: 0; }
   .topbar nav { overflow-x: auto; scrollbar-width: none; }
   .topbar nav::-webkit-scrollbar { display: none; }
   .topbar nav a, .nav-more { padding: 6px 9px; font-size: .78rem; }
-  .nav-actions { display: none; }
+  .nav-actions { display: flex; margin-left: 0; }
+  .nav-actions .user-avatar { display: none; }
+  .nav-icon { font-size: 1.35rem; }
   .conf-grid { grid-template-columns: 1fr; }
   .hide-sm { display: none; }
   .team-cell .full { display: none; }
@@ -285,6 +300,10 @@ tr:last-child td { border-bottom: 0; }
   .team-hero { padding: 16px; }
   .team-hero .logo { width: 60px; height: 60px; }
   .hero-score { font-size: 2rem; }
+  .teams-head { align-items: stretch; }
+  .team-search { width: 100%; }
+  .team-hero { align-items: flex-start; flex-wrap: wrap; }
+  .hero-favorite { margin-left: 0; }
 }
 
 /* Sub navigation / tabs */
@@ -446,6 +465,7 @@ a.tag:hover { border-color: #b9c4d8; }
 .story-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .headline-row { display: flex; gap: 10px; align-items: baseline; padding: 8px 14px; border-bottom: 1px solid var(--line); font-size: .9rem; }
 .headline-row:last-child { border-bottom: 0; }
+.load-more { display: block; margin: 16px auto 0; }
 @media (max-width: 640px) { .headline-row { flex-direction: column; gap: 2px; } }
 
 /* Weather */

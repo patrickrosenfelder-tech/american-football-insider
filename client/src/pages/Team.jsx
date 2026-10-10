@@ -1,5 +1,6 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { useApi, formatKickoff } from '../api.js';
+import { useState } from 'react';
+import { getFavoriteTeams, toggleFavoriteTeam, useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 import DepthChart from './DepthChart.jsx';
 import Roster from './Roster.jsx';
@@ -59,12 +60,14 @@ function StatGrid({ categories }) {
 export default function Team() {
   const { teamId } = useParams();
   const [params, setParams] = useSearchParams();
+  const [favorites, setFavorites] = useState(() => getFavoriteTeams());
   const tab = params.get('tab') || 'overview';
   const team = useApi(`/teams/${teamId}`);
 
   if (team.loading) return <Loading label="Loading team…" />;
   if (team.error) return <ErrorBox error={team.error} />;
   const t = team.data.data;
+  const favorite = favorites.includes(t.abbreviation);
 
   return (
     <section>
@@ -75,6 +78,7 @@ export default function Team() {
           <p>{t.record} · {t.standing_summary || t.division}</p>
           {t.bye_week && <p className="small">Bye: Week {t.bye_week}</p>}
         </div>
+        <button type="button" className={`hero-favorite ${favorite ? 'active' : ''}`} onClick={() => setFavorites(toggleFavoriteTeam(t.abbreviation))}>{favorite ? '★ Following' : '☆ Follow team'}</button>
       </div>
 
       <nav className="subnav">
