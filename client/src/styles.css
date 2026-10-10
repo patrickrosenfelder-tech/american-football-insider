@@ -32,7 +32,7 @@ h2, h3 { margin: 0; }
 .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 12px; }
 .brand { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 1.1rem; white-space: nowrap; }
 .brand b { color: var(--accent); }
-.topbar nav { display: flex; gap: 4px; min-width: 0; }
+.topbar nav { display: flex; gap: 4px; min-width: 0; overflow: visible; }
 .topbar nav a { padding: 9px 14px; border-radius: 999px; color: #40516d; font-weight: 700; font-size: .9rem; white-space: nowrap; }
 .topbar nav a.active, .topbar nav a:hover { background: #e7f0ff; color: #1554a5; }
 .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: 4px; }
@@ -337,7 +337,8 @@ tr:last-child td { border-bottom: 0; }
 .pad { padding: 14px; margin: 0; }
 .team-title { display: flex; align-items: center; gap: 8px; }
 .team-title a:hover { text-decoration: underline; }
-.topbar nav { overflow-x: auto; }
+.feed-status { display: inline-flex; align-items: center; gap: 7px; color: #28734a; background: #e8f7ee; border: 1px solid #c4e8d1; border-radius: 999px; padding: 7px 11px; font-size: .78rem; font-weight: 800; }
+.feed-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #28a15b; box-shadow: 0 0 0 3px rgba(40,161,91,.14); }
 
 /* Previews */
 .btn { font-weight: 700; font-size: .85rem; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); }
@@ -376,7 +377,8 @@ tr:last-child td { border-bottom: 0; }
 }
 
 /* Playoff predictor */
-.topbar nav { overflow-x: auto; scrollbar-width: none; }
+  .topbar nav { overflow-x: auto; overflow-y: visible; scrollbar-width: none; }
+  .nav-more-menu { position: fixed; top: 58px; right: 12px; }
 .topbar nav a { white-space: nowrap; }
 .predictor { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .predictor-results { position: sticky; top: 72px; display: grid; gap: 12px; }

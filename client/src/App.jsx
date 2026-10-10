@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -19,13 +19,14 @@ import PowerRankings from './pages/PowerRankings.jsx';
 import Trades from './pages/Trades.jsx';
 import FreeAgents from './pages/FreeAgents.jsx';
 import Status from './pages/Status.jsx';
+import Social from './pages/Social.jsx';
 
 export default function App() {
   const location = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
   useEffect(() => {
     const route = location.pathname.split('/')[1];
-    const titles = { '': 'Scores', news: 'News', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
+    const titles = { '': 'Scores', news: 'News', social: 'Watch', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
     document.title = `${titles[route] || 'Football Insider'} | AFI`;
     setMoreOpen(false);
   }, [location.pathname]);
@@ -75,7 +76,7 @@ export default function App() {
           <Route path="/tendencies" element={<TendenciesPage />} />
           <Route path="/playoffs" element={<Playoffs />} />
           <Route path="/news" element={<News />} />
-          <Route path="/social" element={<Navigate to="/news" replace />} />
+          <Route path="/social" element={<Social />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/picks" element={<Picks />} />
           <Route path="/model" element={<Model />} />

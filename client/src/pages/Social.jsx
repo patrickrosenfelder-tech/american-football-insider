@@ -164,3 +164,24 @@ export function SocialWidget({ team = null, limit = 12, title = 'Social' }) {
     </aside>
   );
 }
+
+export default function Social() {
+  const { data, error, loading } = useApi('/social?limit=60', live);
+  const posts = data?.data?.posts || [];
+  return (
+    <section>
+      <div className="page-head">
+        <div>
+          <h1>Watch</h1>
+          <p className="muted small">Live clips, videos, and updates from the football conversation.</p>
+        </div>
+        <span className="feed-status"><span className="feed-status-dot" /> Live feed</span>
+      </div>
+      {loading && !data && <Loading label="Loading watch feed…" />}
+      {error && !data && <p className="muted">Watch feed unavailable: {error.message}</p>}
+      {!loading && !error && !posts.length && <div className="state">No recent watch content.</div>}
+      {posts.length > 0 && <div className="social-feed">{posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>}
+      {data?.data?.last_updated && <p className="muted small updated">Updated {new Date(data.data.last_updated).toLocaleString()}</p>}
+    </section>
+  );
+}
