@@ -42,8 +42,9 @@ export default function Weather() {
   const [params] = useSearchParams();
   const week = params.get('week');
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/weather${week ? `?week=${week}` : ''}`, { timeoutMs: 10000 });
-  if (loading) return <Loading label="Loading forecasts…" />;
+  if (loading && !data) return <Loading label="Loading forecasts…" />;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
+  if (!data?.data || !Array.isArray(data.data.games)) return <ErrorBox error={new Error('Weather data is unavailable right now.')} onRetry={retry} />;
   const d = data.data;
   const order = { high: 0, medium: 1, low: 2, none: 3 };
   const games = [...d.games].sort((a, b) => (order[a.impact?.level] ?? 4) - (order[b.impact?.level] ?? 4) || a.date.localeCompare(b.date));

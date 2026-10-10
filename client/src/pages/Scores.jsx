@@ -17,6 +17,7 @@ export default function Scores() {
 
   if (loading && !data) return <Loading label="Loading scoreboard…" />;
   if (error && !data) return <ErrorBox error={error} />;
+  if (!data?.data || !Array.isArray(data.data)) return <ErrorBox error={new Error('The scoreboard returned an invalid response.')} />;
 
   const games = data.data;
   const liveCount = games.filter(isLive).length;

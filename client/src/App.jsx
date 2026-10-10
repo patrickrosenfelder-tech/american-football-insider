@@ -31,7 +31,8 @@ export default function App() {
   }, [location.pathname]);
 
   const overflowLinks = [
-    ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/teams', 'Teams'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies']
+    ['/trades', 'Trades'], ['/free-agents', 'Free Agents'], ['/model', 'AFI Model'], ['/power-rankings', 'Power Rankings'],
+    ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies'], ['/status', 'Data Status']
   ];
   return (
     <>
@@ -41,19 +42,16 @@ export default function App() {
             <img src="/favicon.svg" alt="" width="28" height="28" />
             <span>Football <b>Insider</b></span>
           </NavLink>
-          <nav>
+          <nav aria-label="Primary navigation">
             <NavLink to="/" end>Scores</NavLink>
-            <NavLink to="/news">News</NavLink>
-            <NavLink to="/trades">Trades</NavLink>
-            <NavLink to="/free-agents">Free Agents</NavLink>
             <NavLink to="/standings">Standings</NavLink>
-            <NavLink to="/previews">Previews</NavLink>
-            <NavLink to="/picks">Picks</NavLink>
-            <NavLink to="/model">AFI Model</NavLink>
-            <NavLink to="/power-rankings">Rankings</NavLink>
-            {overflowLinks.map(([to, label]) => <NavLink key={to} className="nav-overflow" to={to}>{label}</NavLink>)}
+            <NavLink to="/previews">Schedule</NavLink>
+            <NavLink to="/picks">Stats</NavLink>
+            <NavLink to="/teams">Teams</NavLink>
+            <NavLink to="/news">News</NavLink>
+            <NavLink to="/social">Watch</NavLink>
             <div className="nav-more-wrap">
-              <button className="nav-more" aria-expanded={moreOpen} onClick={() => setMoreOpen((open) => !open)}>More…</button>
+              <button className="nav-more" aria-expanded={moreOpen} aria-haspopup="menu" onClick={() => setMoreOpen((open) => !open)}>More</button>
               {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
             </div>
           </nav>
