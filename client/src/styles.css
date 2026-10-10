@@ -145,12 +145,12 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .bye { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: .85rem; }
 
 /* Scores landing page */
-.scores-hero { display: grid; grid-template-columns: minmax(250px, .62fr) minmax(0, 1.38fr); align-items: start; gap: 34px; margin-bottom: 18px; }
-.scores-hero:not(.has-featured-final) { display: block; }
-.scores-page-head { min-height: 184px; align-content: flex-start; margin: 10px 0 0; }
+.scores-hero { display: block; margin-bottom: 24px; }
+.scores-page-head { min-height: 0; align-items: flex-end; margin: 10px 0 22px; }
 .scores-page-head h1 { font-size: clamp(2.8rem, 5vw, 4.7rem); }
 .scores-page-head .muted { font-size: 1.08rem; margin-top: 12px; }
-.scores-page-head .week-select { margin-top: 18px; }
+.scores-page-head .week-select { flex: 0 0 360px; }
+.scores-page-head .week-select select { width: 100%; }
 .scores-section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .scores-section-head h2 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; }
 .scores-section-head > span { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
@@ -173,8 +173,9 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 @media (max-width: 640px) {
   main { padding-top: 24px; }
   .games-grid { grid-template-columns: 1fr; }
-  .scores-hero { display: block; margin-bottom: 22px; }
-  .scores-page-head { min-height: 0; margin-bottom: 26px; }
+  .scores-hero { margin-bottom: 22px; }
+  .scores-page-head { align-items: stretch; margin-bottom: 24px; }
+  .scores-page-head .week-select { flex-basis: 100%; }
   .featured-matchup { grid-template-columns: 1fr auto 1fr; }
   .featured-team { padding: 0 8px 15px; }
   .featured-team.home { border-left: 0; border-top: 1px solid var(--line); }
