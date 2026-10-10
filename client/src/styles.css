@@ -38,6 +38,10 @@ h2, h3 { margin: 0; }
 .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: 4px; }
 .nav-icon { width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: #294568; font-size: 1.6rem; line-height: 1; cursor: pointer; }
 .nav-icon:hover { color: #1554a5; }
+.global-search { display: flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 5px 3px 11px; background: var(--card); box-shadow: 0 2px 8px rgba(28,55,92,.06); }
+.global-search input { width: 145px; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: .8rem; }
+.global-search input::placeholder { color: var(--muted); }
+.search-close { width: 24px; height: 24px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
 .user-avatar { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 2px solid #294568; border-radius: 50%; color: #294568; font-size: .6rem; font-weight: 700; letter-spacing: .03em; }
 .nav-more-wrap { display: block; position: relative; }
 .nav-more { border: 0; border-radius: 999px; padding: 9px 14px; background: transparent; color: #40516d; font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; white-space: nowrap; }
@@ -100,6 +104,12 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .game-card { display: flex; flex-direction: column; padding: 14px 12px 16px; gap: 10px; border-left: 5px solid var(--team-accent, var(--navy)); transition: transform .16s ease, border-color .16s, box-shadow .16s; }
 .game-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(28,55,92,.12); }
 .game-card.is-live { border-color: var(--live); box-shadow: 0 0 0 1px var(--live) inset, var(--shadow); }
+.game-card.is-final { padding-top: 16px; background: linear-gradient(180deg, #fff 0%, #fbfcff 100%); }
+.game-card.is-final .game-card-teams { min-height: 138px; }
+.game-card.is-final .game-card-mark { min-height: 72px; }
+.game-card.is-final .game-card-score { color: var(--ink); font-size: 2rem; font-weight: 900; }
+.game-card.is-final .game-card-team.lost .game-card-score { color: var(--muted); }
+.game-card.is-final .game-card-meta { border-top: 1px solid var(--line); padding-top: 11px; }
 .game-card-teams { display: grid; grid-template-columns: 1fr 1fr; min-height: 123px; }
 .game-card-team { display: flex; flex-direction: column; align-items: center; min-width: 0; text-align: center; }
 .game-card-team + .game-card-team { border-left: 1px solid var(--line); }
@@ -158,6 +168,7 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .final-badge { align-self: end; margin-bottom: 19px; color: #fff; background: #3f4348; border-radius: 9px; padding: 6px 24px; font-size: .7rem; font-weight: 900; letter-spacing: .09em; }
 .featured-footer { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); margin-top: 0; padding: 12px 20px; font-size: .82rem; color: var(--muted); }
 .replay-link { color: #175fc4; font-weight: 800; }
+.search-result-banner { margin: 4px 0 14px; padding: 10px 12px; border: 1px solid #cfe0f7; border-radius: 10px; background: #edf5ff; color: #235b9f; font-size: .88rem; }
 @media (max-width: 920px) { .games-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
   main { padding-top: 24px; }
@@ -172,6 +183,7 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
   .featured-team .logo { width: 46px; height: 46px; }
   .featured-score { grid-column: 3; grid-row: 1 / span 2; padding: 0 10px; }
   .final-badge { grid-column: 2; grid-row: 1 / span 2; margin: 0; padding: 5px 7px; font-size: .58rem; }
+  .global-search input { width: 105px; }
 }
 
 /* Tables */

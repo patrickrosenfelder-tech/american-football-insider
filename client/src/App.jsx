@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -22,7 +22,10 @@ import Status from './pages/Status.jsx';
 
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   useEffect(() => {
     const route = location.pathname.split('/')[1];
     const titles = { '': 'Scores', news: 'News', social: 'Watch', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
@@ -49,14 +52,20 @@ export default function App() {
             <NavLink to="/picks">Stats</NavLink>
             <NavLink to="/teams">Teams</NavLink>
             <NavLink to="/news">News</NavLink>
-            <NavLink to="/news#social">Watch</NavLink>
             <div className="nav-more-wrap">
               <button className="nav-more" aria-expanded={moreOpen} aria-haspopup="menu" onClick={() => setMoreOpen((open) => !open)}>More</button>
               {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
             </div>
           </nav>
           <div className="nav-actions" aria-label="Account tools">
-            <button className="nav-icon" type="button" aria-label="Search">⌕</button>
+            {searchOpen ? (
+              <form className="global-search" onSubmit={(event) => { event.preventDefault(); const q = searchQuery.trim(); if (q) navigate(`/news?q=${encodeURIComponent(q)}`); setSearchOpen(false); }}>
+                <input autoFocus type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search news…" aria-label="Search news" />
+                <button type="button" className="search-close" onClick={() => setSearchOpen(false)} aria-label="Close search">×</button>
+              </form>
+            ) : (
+              <button className="nav-icon" type="button" aria-label="Search news" onClick={() => setSearchOpen(true)}>⌕</button>
+            )}
             <span className="user-avatar" aria-label="User account">FI</span>
           </div>
         </div>

@@ -51,7 +51,7 @@ export function GameCard({ game }) {
     </div>
   );
   return (
-    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`} style={{ '--team-accent': accent }}>
+    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''} ${game.status.state === 'post' ? 'is-final' : ''}`} style={{ '--team-accent': accent }}>
       <div className="game-card-teams">
         <Team team={game.away} />
         <Team team={game.home} />
@@ -82,9 +82,9 @@ export function FeaturedFinal({ game }) {
     <Link to={`/game/${game.game_id}`} className="featured-final card" style={{ '--team-accent': accent }}>
       <div className="featured-matchup">
         <Team team={game.away} align="away" />
-        <b className="featured-score away-score" aria-label={`${game.away.name} score`}>{game.away.score ?? '–'}</b>
+        <b className="featured-score away-score" aria-label={`${game.away.name} score ${game.away.score ?? 'not available'}`}>{game.away.score ?? '–'}</b>
         <span className="final-badge">FINAL</span>
-        <b className="featured-score home-score" aria-label={`${game.home.name} score`}>{game.home.score ?? '–'}</b>
+        <b className="featured-score home-score" aria-label={`${game.home.name} score ${game.home.score ?? 'not available'}`}>{game.home.score ?? '–'}</b>
         <Team team={game.home} align="home" />
       </div>
       <div className="featured-footer">

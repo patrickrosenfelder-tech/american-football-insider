@@ -49,6 +49,7 @@ function Headlines({ items }) {
 export function NewsFeed({ team = null, compact = false }) {
   const [params, setParams] = useSearchParams();
   const kind = compact ? null : params.get('kind');
+  const search = compact ? '' : (params.get('q') || '').trim();
   const qs = new URLSearchParams();
   if (team) qs.set('team', team);
   if (kind) qs.set('kind', kind);
@@ -56,6 +57,13 @@ export function NewsFeed({ team = null, compact = false }) {
   if (loading) return <Loading label="Loading news…" />;
   if (error) return <ErrorBox error={error} />;
   const d = data.data;
+  const needle = search.toLowerCase();
+  const stories = needle
+    ? d.stories.filter((s) => [s.title, s.excerpt, ...(s.teams || [])].filter(Boolean).join(' ').toLowerCase().includes(needle))
+    : d.stories;
+  const headlines = needle
+    ? d.headlines.filter((h) => h.title.toLowerCase().includes(needle))
+    : d.headlines;
   const setKind = (k) => { const next = new URLSearchParams(params); if (k) next.set('kind', k); else next.delete('kind'); setParams(next, { replace: true }); };
   return (
     <div>
@@ -66,9 +74,10 @@ export function NewsFeed({ team = null, compact = false }) {
           ))}
         </div>
       )}
-      {!d.stories.length && <div className="state">No stories yet{team ? ' for this team' : ''}.</div>}
+      {search && <div className="search-result-banner">Showing results for <b>“{search}”</b></div>}
+      {!stories.length && <div className="state">No stories found{team ? ' for this team' : ''}.</div>}
       {[['headline', 'Latest news'], ['data', 'From the data']].map(([k, label]) => {
-        const list = d.stories.filter((s) => s.kind === k);
+        const list = stories.filter((s) => s.kind === k);
         if (!list.length) return null;
         return (
           <div key={k}>
@@ -77,7 +86,7 @@ export function NewsFeed({ team = null, compact = false }) {
           </div>
         );
       })}
-      {kind !== 'data' && <Headlines items={d.headlines} />}
+      {kind !== 'data' && <Headlines items={headlines} />}
       <p className="muted small note">
         We don’t republish articles. News stories are short summaries written by AI from the headlines and snippets of public feeds
         (ESPN, CBS Sports, Yahoo Sports, ProFootballTalk), with links to every source. Data stories are generated from ESPN game, injury and transaction data.
@@ -113,6 +122,7 @@ export default function News() {
   const { data } = useApi('/teams');
   const [params, setParams] = useSearchParams();
   const team = params.get('team');
+  const search = params.get('q');
   const teamName = team && (data?.data || []).find((t) => t.abbreviation === team)?.name;
   const setTeam = (t) => { const next = new URLSearchParams(params); if (t) next.set('team', t); else next.delete('team'); setParams(next, { replace: true }); };
   return (
@@ -127,6 +137,7 @@ export default function News() {
         </label>{team && <button className="link-btn" onClick={() => setTeam('')} title="Clear team filter">✕ Clear</button>}
       </div>
       <div className="filter-banner" style={{ display: team ? 'flex' : 'none' }}><b>Showing:</b> {teamName || team} stories, tagged teams, social and data feeds matched. <button className="link-btn" onClick={() => setTeam('')} style={{ marginLeft: 10 }}>✕ Clear</button></div>
+      {search && <div className="filter-banner"><b>Search:</b> {search} <button className="link-btn" onClick={() => { const next = new URLSearchParams(params); next.delete('q'); setParams(next, { replace: true }); }} style={{ marginLeft: 10 }}>✕ Clear</button></div>}
       <div className="news-layout">
         <div className="news-main news-only"><NewsFeed team={team} /></div>
         <SocialWidget team={team} limit={15} title={team ? `Social · ${team}` : 'Social'} />
