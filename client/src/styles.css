@@ -484,6 +484,7 @@ a.tag:hover { border-color: #b9c4d8; }
 /* Social feed */
 .news-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
 .news-main { min-width: 0; }
+.news-only { max-width: 980px; }
 .social-widget { position: sticky; top: 72px; max-height: calc(100vh - 88px); overflow-y: auto; }
 .social-widget .section-title { margin: 0; }
 .social-widget-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 10px; }

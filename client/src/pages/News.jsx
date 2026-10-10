@@ -1,7 +1,6 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
-import { SocialWidget } from './Social.jsx';
 
 const ago = (iso) => {
   const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
@@ -127,10 +126,7 @@ export default function News() {
         </label>{team && <button className="link-btn" onClick={() => setTeam('')} title="Clear team filter">✕ Clear</button>}
       </div>
       <div className="filter-banner" style={{ display: team ? 'flex' : 'none' }}><b>Showing:</b> {teamName || team} stories, tagged teams, social and data feeds matched. <button className="link-btn" onClick={() => setTeam('')} style={{ marginLeft: 10 }}>✕ Clear</button></div>
-<div className="news-layout">
-        <div className="news-main"><NewsFeed team={team} /></div>
-        <SocialWidget team={team} limit={15} title={team ? `Social · ${team}` : 'Social'} />
-      </div>
+      <div className="news-main news-only"><NewsFeed team={team} /></div>
     </section>
   );
 }
