@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -19,7 +19,6 @@ import PowerRankings from './pages/PowerRankings.jsx';
 import Trades from './pages/Trades.jsx';
 import FreeAgents from './pages/FreeAgents.jsx';
 import Status from './pages/Status.jsx';
-import Social from './pages/Social.jsx';
 
 export default function App() {
   const location = useLocation();
@@ -50,7 +49,7 @@ export default function App() {
             <NavLink to="/picks">Stats</NavLink>
             <NavLink to="/teams">Teams</NavLink>
             <NavLink to="/news">News</NavLink>
-            <NavLink to="/social">Watch</NavLink>
+            <NavLink to="/news#social">Watch</NavLink>
             <div className="nav-more-wrap">
               <button className="nav-more" aria-expanded={moreOpen} aria-haspopup="menu" onClick={() => setMoreOpen((open) => !open)}>More</button>
               {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
@@ -76,7 +75,7 @@ export default function App() {
           <Route path="/tendencies" element={<TendenciesPage />} />
           <Route path="/playoffs" element={<Playoffs />} />
           <Route path="/news" element={<News />} />
-          <Route path="/social" element={<Social />} />
+          <Route path="/social" element={<Navigate to="/news#social" replace />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/picks" element={<Picks />} />
           <Route path="/model" element={<Model />} />

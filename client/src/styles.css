@@ -93,7 +93,7 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .sources { display: flex; flex-wrap: wrap; gap: 8px; }
 .sources a { color: #2f6fec; font-size: .82rem; font-weight: 700; text-decoration: underline; }
 .table-card { padding: 0; overflow-x: auto; margin-bottom: 12px; }
-.table-card thead th, .table-wrap thead th { position: sticky; top: 56px; z-index: 2; background: var(--card); box-shadow: 0 1px 0 var(--line); }
+.table-card thead th, .table-wrap thead th { position: static; background: var(--card); box-shadow: 0 1px 0 var(--line); }
 .list-card { padding: 4px 0; }
 
 /* Game card */
@@ -484,7 +484,7 @@ a.tag:hover { border-color: #b9c4d8; }
 /* Social feed */
 .news-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
 .news-main { min-width: 0; }
-.news-only { max-width: 980px; }
+.news-only { min-width: 0; }
 .social-widget { position: sticky; top: 72px; max-height: calc(100vh - 88px); overflow-y: auto; }
 .social-widget .section-title { margin: 0; }
 .social-widget-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 10px; }

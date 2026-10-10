@@ -147,7 +147,7 @@ export function SocialWidget({ team = null, limit = 12, title = 'Social' }) {
   const posts = data?.data.posts || [];
   const breaking = posts.filter((p) => p.breaking).length;
   return (
-    <aside className="social-widget">
+    <aside id="social" className="social-widget">
       <button type="button" className="social-toggle" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <span>{title}{breaking > 0 && <span className="social-breaking inline">{breaking} breaking</span>}</span>
         <span className="muted">{open ? '▲' : '▼'}</span>
