@@ -39,11 +39,7 @@ const buildStatus = async () => {
   const jobs = Object.fromEntries(scheduler.describe().map((j) => [j.job, j]));
   const season = currentSeason();
   const sources = await Promise.all(SOURCES.map(async (src) => {
-    const runs = src.jobs.map((name) => {
-      const run = jobs[name] || { job: name };
-      const legacyPartial = !Object.hasOwn(run, 'last_attempt_error') && run.ok !== false && run.last_error && run.last_error_at >= run.last_run;
-      return { ...run, degraded: run.degraded || Boolean(legacyPartial), last_success: legacyPartial && run.last_success === run.last_run ? null : run.last_success };
-    });
+    const runs = src.jobs.map((name) => jobs[name] || { job: name });
     // A source is only as fresh as its stalest job.
     let lastSuccess = runs.every((r) => r.last_success) ? earliest(runs.map((r) => r.last_success)) : null;
     if (!lastSuccess && src.dataset) {
@@ -51,22 +47,18 @@ const buildStatus = async () => {
       lastSuccess = row?.updated_at || null;
     }
     const errorRun = runs.filter((r) => r.last_error).sort((a, b) => (b.last_error_at || '').localeCompare(a.last_error_at || ''))[0];
-    const failing = runs.some((r) => r.ok === false && !r.degraded);
-    // Older persisted statuses marked partial runs ok, with their error at the
-    // exact last-run timestamp. Preserve those as degraded until refreshed.
-    const degraded = runs.some((r) => r.degraded);
+    const failing = runs.some((r) => r.ok === false);
     return {
       source: src.key,
       label: src.label,
       provider: src.provider,
-      state: src.disabled?.() ? 'disabled' : runs.some((r) => r.running) ? 'running' : failing ? 'error' : degraded ? 'degraded' : lastSuccess ? 'ok' : 'pending',
+      state: src.disabled?.() ? 'disabled' : runs.some((r) => r.running) ? 'running' : failing ? 'error' : lastSuccess ? 'ok' : 'pending',
       last_success: lastSuccess,
       last_run: latest(runs.map((r) => r.last_run)),
       next_run: earliest(runs.map((r) => r.next_run)),
       schedule: runs.map((r) => r.when).filter(Boolean).join(' + '),
       last_error: errorRun?.last_error || null,
       last_error_at: errorRun?.last_error_at || null,
-      last_attempt_error: runs.map((r) => Object.hasOwn(r, 'last_attempt_error') ? r.last_attempt_error : r.last_error_at >= r.last_run ? r.last_error : null).filter(Boolean).join('; ') || null,
       jobs: runs.map((r) => ({
         job: r.job,
         when: r.when || null,

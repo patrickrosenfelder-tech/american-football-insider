@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { setPageMetadata, routeMetadata } from './metadata.js';
+import { useEffect, useState } from 'react';
+import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -23,56 +22,48 @@ import Status from './pages/Status.jsx';
 
 export default function App() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const headerRef = useRef(null);
-  const menuRef = useRef(null);
-  useLayoutEffect(() => {
-    setPageMetadata(...routeMetadata(location.pathname));
-  }, [location.pathname]);
-  useLayoutEffect(() => {
-    setMoreOpen(false);
-    setSearchOpen(false);
-  }, [location.pathname, location.search]);
   useEffect(() => {
-    const close = (e) => {
-      if (e.type === 'keydown' && e.key === 'Escape' && (moreOpen || searchOpen)) { setMoreOpen(false); setSearchOpen(false); menuRef.current?.focus(); }
-      if (e.type === 'pointerdown' && !headerRef.current?.contains(e.target)) { setMoreOpen(false); setSearchOpen(false); }
-    };
-    document.addEventListener('keydown', close);
-    document.addEventListener('pointerdown', close);
-    return () => { document.removeEventListener('keydown', close); document.removeEventListener('pointerdown', close); };
-  }, [moreOpen, searchOpen]);
+    const route = location.pathname.split('/')[1];
+    const titles = { '': 'Scores', news: 'News', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
+    document.title = `${titles[route] || 'Football Insider'} | AFI`;
+    setMoreOpen(false);
+  }, [location.pathname]);
 
-  const primaryLinks = [['/', 'Games'], ['/standings', 'Standings'], ['/picks', 'Picks'], ['/teams', 'Teams'], ['/news', 'News']];
   const overflowLinks = [
-    ['/trades', 'Trades'], ['/free-agents', 'Free Agents'], ['/model', 'AFI Model'], ['/power-rankings', 'Power Rankings'], ['/previews', 'Matchup previews'], ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies'], ['/status', 'Data Status']
+    ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/teams', 'Teams'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies']
   ];
   return (
     <>
-      <a className="skip-link" href="#main-content">Skip to content</a>
-      <header className="topbar" ref={headerRef}>
+      <header className="topbar">
         <div className="wrap topbar-inner">
-          <NavLink to="/" className="brand" aria-label="Football Insider home">
+          <NavLink to="/" className="brand">
             <img src="/favicon.svg" alt="" width="28" height="28" />
             <span>Football <b>Insider</b></span>
           </NavLink>
-          <nav aria-label="Primary navigation">
-            {primaryLinks.map(([to, label]) => <NavLink key={to} className="nav-primary" to={to} end={to === '/'}>{label}</NavLink>)}
+          <nav>
+            <NavLink to="/" end>Scores</NavLink>
+            <NavLink to="/news">News</NavLink>
+            <NavLink to="/trades">Trades</NavLink>
+            <NavLink to="/free-agents">Free Agents</NavLink>
+            <NavLink to="/standings">Standings</NavLink>
+            <NavLink to="/previews">Previews</NavLink>
+            <NavLink to="/picks">Picks</NavLink>
+            <NavLink to="/model">AFI Model</NavLink>
+            <NavLink to="/power-rankings">Rankings</NavLink>
+            {overflowLinks.map(([to, label]) => <NavLink key={to} className="nav-overflow" to={to}>{label}</NavLink>)}
             <div className="nav-more-wrap">
-              <button ref={menuRef} className="nav-more" aria-expanded={moreOpen} aria-controls="navigation-menu" onClick={() => setMoreOpen((open) => !open)}><span className="desktop-label">More</span><span className="mobile-label">Menu</span></button>
-              {moreOpen && <div className="nav-more-menu" id="navigation-menu">{primaryLinks.map(([to, label]) => <NavLink className="mobile-only" key={to} to={to} end={to === '/'}>{label}</NavLink>)}{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
+              <button className="nav-more" aria-expanded={moreOpen} onClick={() => setMoreOpen((open) => !open)}>More…</button>
+              {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
             </div>
           </nav>
-          <div className="nav-actions">
-            <button className="nav-icon" type="button" aria-label={searchOpen ? 'Close search' : 'Search news'} aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>⌕</button>
+          <div className="nav-actions" aria-label="Account tools">
+            <button className="nav-icon" type="button" aria-label="Search">⌕</button>
+            <span className="user-avatar" aria-label="User account">FI</span>
           </div>
         </div>
-        {searchOpen && <form className="wrap header-search" role="search" onSubmit={(e) => { e.preventDefault(); navigate(`/news${query.trim() ? `?q=${encodeURIComponent(query.trim())}` : ''}`); }}><label htmlFor="news-search">Search news</label><input id="news-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} autoFocus /><button className="btn" type="submit">Search</button></form>}
       </header>
-      <main className="wrap" id="main-content" tabIndex="-1">
+      <main className="wrap">
         <Routes>
           <Route path="/" element={<Scores />} />
           <Route path="/standings" element={<Standings />} />

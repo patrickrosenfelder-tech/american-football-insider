@@ -28,7 +28,6 @@ const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
-const { renderMetadata } = require('./services/pageMetadata');
 
 const app = express();
 // 3000/3001 are used by other local services on the dev Mac.
@@ -75,11 +74,10 @@ app.use('/api', (req, res) => {
 
 // Serve the built React app (npm run build) with SPA fallback.
 if (fs.existsSync(CLIENT_DIST)) {
-  const template = fs.readFileSync(path.join(CLIENT_DIST, 'index.html'), 'utf8');
   app.use(express.static(CLIENT_DIST, { maxAge: '1h', index: false }));
   app.get('*', (req, res) => {
     res.set('Cache-Control', 'no-cache');
-    res.type('html').send(renderMetadata(template, req.path));
+    res.sendFile(path.join(CLIENT_DIST, 'index.html'));
   });
 } else {
   app.get('/', (req, res) => {

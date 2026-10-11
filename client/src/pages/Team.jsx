@@ -8,7 +8,6 @@ import { TeamTendencies } from './Tendencies.jsx';
 import { NewsFeed } from './News.jsx';
 import { SocialWidget } from './Social.jsx';
 import { TradeCard } from './Trades.jsx';
-import { usePageMetadata } from '../metadata.js';
 
 const TABS = [['overview', 'Overview'], ['news', 'News'], ['trades', 'Trades'], ['depth', 'Depth chart'], ['roster', 'Roster'], ['injuries', 'Injuries'], ['tendencies', 'Tendencies']];
 
@@ -62,7 +61,6 @@ export default function Team() {
   const [params, setParams] = useSearchParams();
   const tab = params.get('tab') || 'overview';
   const team = useApi(`/teams/${teamId}`);
-  usePageMetadata(team.data?.data.name, team.data && `${team.data.data.name}: schedule, roster, injuries, news and season statistics.`);
 
   if (team.loading) return <Loading label="Loading team…" />;
   if (team.error) return <ErrorBox error={team.error} />;

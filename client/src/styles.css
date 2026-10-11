@@ -99,8 +99,7 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .sources { display: flex; flex-wrap: wrap; gap: 8px; }
 .sources a { color: #2f6fec; font-size: .82rem; font-weight: 700; text-decoration: underline; }
 .table-card { padding: 0; overflow-x: auto; margin-bottom: 12px; }
-.table-wrap { max-width: 100%; overflow-x: auto; }
-.table-card thead th, .table-wrap thead th { background: var(--card); box-shadow: 0 1px 0 var(--line); }
+.table-card thead th, .table-wrap thead th { position: sticky; top: 56px; z-index: 2; background: var(--card); box-shadow: 0 1px 0 var(--line); }
 .list-card { padding: 4px 0; }
 
 /* Game card */
@@ -339,7 +338,7 @@ tr:last-child td { border-bottom: 0; }
 .pad { padding: 14px; margin: 0; }
 .team-title { display: flex; align-items: center; gap: 8px; }
 .team-title a:hover { text-decoration: underline; }
-.topbar nav { overflow: visible; }
+.topbar nav { overflow-x: auto; }
 
 /* Previews */
 .btn { font-weight: 700; font-size: .85rem; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); }
@@ -378,7 +377,7 @@ tr:last-child td { border-bottom: 0; }
 }
 
 /* Playoff predictor */
-.topbar nav { overflow: visible; }
+.topbar nav { overflow-x: auto; scrollbar-width: none; }
 .topbar nav a { white-space: nowrap; }
 .predictor { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .predictor-results { position: sticky; top: 72px; display: grid; gap: 12px; }
@@ -534,32 +533,3 @@ th.sortable:hover, th.sortable.active { color: var(--accent); }
 .dc-card.dc-sub { outline: 2px dashed var(--accent); outline-offset: -2px; }
 .dc-for { display: flex; align-items: center; gap: 3px; font-size: .62rem; color: var(--muted); line-height: 1.1; }
 .dc-for .inj { position: static; }
-
-/* Accessible navigation at every breakpoint. */
-.skip-link { position: fixed; left: 16px; top: -80px; z-index: 30; padding: 12px; background: var(--card); color: var(--ink); border: 2px solid var(--accent); }
-.skip-link:focus { top: 8px; }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-.topbar nav { flex: 0 0 auto; overflow: visible; }
-.topbar .nav-more-wrap { display: block; }
-.topbar .nav-more { min-height: 44px; }
-.topbar .nav-more-menu { min-width: 210px; max-height: calc(100dvh - 80px); overflow-y: auto; }
-.topbar .nav-more-menu a { min-height: 44px; display: flex; align-items: center; }
-.topbar .mobile-label, .topbar .nav-more-menu .mobile-only { display: none; }
-.topbar .nav-actions { display: flex; }
-.topbar .nav-icon { width: 44px; height: 44px; flex-shrink: 0; }
-.header-search { display: flex; align-items: center; gap: 8px; padding-bottom: 12px; }
-.header-search input { min-width: 0; flex: 1; font: inherit; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
-.pick-reasoning { margin-top: 12px; }
-.pick-reasoning summary { cursor: pointer; font-weight: 600; }
-@media (max-width: 800px) {
-  .topbar-inner { gap: 8px; }
-  .topbar .brand span { display: none; }
-  .topbar nav { margin-left: auto; }
-  .topbar .nav-primary { display: none; }
-  .topbar .desktop-label { display: none; }
-  .topbar .mobile-label { display: inline; }
-  .topbar .nav-more-menu .mobile-only { display: flex; }
-  .topbar .nav-more-menu { position: fixed; top: 64px; left: 16px; right: 16px; }
-  .header-search { flex-wrap: wrap; }
-  .header-search label { width: 100%; }
-}

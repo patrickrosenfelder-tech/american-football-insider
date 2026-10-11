@@ -6,7 +6,6 @@ const { getPreview } = require('./previewService');
 const weatherService = require('./weatherService');
 const { getMicroMatchups, matchupAdjustment } = require('./microMatchupService');
 const { currentSeason } = require('./rosterService');
-const { presentPick } = require('./pickPresentation');
 
 // AFI Picks — our own model pick per game (spread, total, moneyline). For entertainment only.
 //
@@ -235,8 +234,6 @@ const makePick = async (g, model) => {
 
   if (pick.spread) why.push(`The ${pick.confidence_stars}-star edge is driven by a ${round1(recencyMargin)}-point recency differential, ${round1(efficiencyMargin)} from efficiency, and ${round1(momentumMargin)} from momentum; it favors ${pick.spread.team} ${fmtLine(pick.spread.line)}${pick.total ? `, with ${pick.total.side.toUpperCase()} ${pick.total.line} on the total` : ''}.`);
   const notes = [...injA.notes, ...injH.notes];
-  pick.injury_notes = notes;
-  pick.total_model_version = 'v1';
   if (microMatchups.length) why.push(`Key matchup: ${microMatchups[0].text}`);
   if (notes.length) why.push(`Injuries factored in: ${notes.join('; ')}.`);
   if (weatherAdj) why.push(`Weather: ${wx.impact.flags.map((f) => f.label).join(', ')} trims 3 points from our total.`);
@@ -247,11 +244,9 @@ const makePick = async (g, model) => {
 };
 
 const applyPythonPrediction = (pick, prediction, fallbackReason = 'no v2 prediction for this game') => {
-  if (!prediction) { pick.model_version = 'v1 (fallback)'; pick.fallback_reason = fallbackReason; return presentPick(pick); }
+  if (!prediction) { pick.model_version = 'v1 (fallback)'; pick.fallback_reason = fallbackReason; return pick; }
   const margin = Number(prediction.home_margin); const pHome = Number(prediction.home_win_probability);
-  if (prediction.home_margin == null || prediction.home_win_probability == null || !Number.isFinite(margin) || !Number.isFinite(pHome) || pHome < 0 || pHome > 1) {
-    pick.model_version = 'v1 (fallback)'; pick.fallback_reason = 'invalid v2 prediction'; return presentPick(pick);
-  }
+  if (!Number.isFinite(margin) || !Number.isFinite(pHome)) { pick.model_version = 'v1 (fallback)'; return pick; }
   pick.model = { ...pick.model, home_margin: round1(margin), spread_home: half(-margin), home_win_prob: Math.round(pHome * 1000) / 10 };
   pick.model_version = prediction.model_version;
   pick.model_run_at = prediction.generated_at || null;
@@ -266,7 +261,7 @@ const applyPythonPrediction = (pick, prediction, fallbackReason = 'no v2 predict
   }
   const side = pHome >= .5 ? 'home' : 'away'; const ml = side === 'home' ? L.moneyline_home : L.moneyline_away;
   pick.moneyline = { ...pick.moneyline, side, team: side === 'home' ? pick.home : pick.away, odds: ml ?? null, model_prob: Math.round((side === 'home' ? pHome : 1 - pHome) * 1000) / 10, implied_prob: implied(ml) == null ? null : Math.round(implied(ml) * 1000) / 10 };
-  return presentPick(pick);
+  return pick;
 };
 
 // --- Storage, locking and grading ------------------------------------------------------
@@ -316,7 +311,7 @@ const getBacktest = () => {
 };
 
 // Re-picks unstarted games, locks started ones (keeps the last pre-kickoff pick) and grades finals.
-const refreshPicksOnce = async ({ week = null } = {}) => {
+const refreshPicks = async ({ week = null } = {}) => {
   const season = currentSeason();
   const state = await load(season);
   const board = week ? await getScoreboard({ week, season, seasonType: 2 }) : await getUpcomingScoreboard();
@@ -353,31 +348,13 @@ const refreshPicksOnce = async ({ week = null } = {}) => {
   return { season, week: board.week, made, graded };
 };
 
-// Serialize writers to the season dataset and join duplicate refreshes. A public
-// read never waits for previews/weather for every game to be recomputed.
-const refreshes = new Map();
-const refreshErrors = new Map();
-let refreshChain = Promise.resolve();
-const refreshKey = (week) => `${currentSeason()}:${week || 'current'}`;
-const refreshPicks = ({ week = null } = {}) => {
-  const id = refreshKey(week);
-  if (refreshes.has(id)) return refreshes.get(id);
-  const task = refreshChain.then(() => refreshPicksOnce({ week }));
-  const tracked = task.then((result) => { refreshErrors.delete(id); return result; }, (error) => {
-    refreshErrors.set(id, { message: error.message, at: Date.now() }); throw error;
-  }).finally(() => refreshes.delete(id));
-  refreshes.set(id, tracked);
-  refreshChain = tracked.catch(() => {});
-  return tracked;
-};
-
 const getPicks = async ({ week = null } = {}) => {
   const season = currentSeason();
   const board = week ? await getScoreboard({ week, season, seasonType: 2 }) : await getUpcomingScoreboard();
   const status = await predictionStatus();
   const artifact = status.artifact;
-  const state = await load(season);
-  // First visit for a week (or stale > 1h): request a background refresh.
+  let state = await load(season);
+  // First visit for a week (or stale > 1h): compute now.
   const missing = board.games.some((g) => g.status.state === 'pre' && !state.picks[g.game_id]);
   // Recalculate pre-kickoff legacy picks once after a model schema upgrade so
   // clients never receive a mix of old and new pick-card fields.
@@ -387,18 +364,16 @@ const getPicks = async ({ week = null } = {}) => {
       || (artifact ? pick.model_version !== artifact.model_version || pick.model_run_at !== artifact.generated_at : /^v2\./.test(pick.model_version || ''))
       || (pick.micro_matchups || []).some((m) => ['Surface', 'Weather'].includes(m.label) || !m.sample || !/\d/.test(m.text || '')));
   });
-  const needsRefresh = missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3;
-  const id = refreshKey(board.week);
-  const lastError = refreshErrors.get(id);
-  if (needsRefresh && (!lastError || Date.now() - lastError.at >= 60000)) {
-    refreshPicks({ week: board.week }).catch((error) => console.warn('[picks] background refresh:', error.message));
+  if (missing || outdated || !state.updated_at || Date.now() - Date.parse(state.updated_at) > 3600e3) {
+    await refreshPicks({ week: board.week });
+    state = await load(season);
   }
-  const all = Object.values(state.picks).map(presentPick);
+  const all = Object.values(state.picks);
   const games = board.games.map((g) => ({
     game_id: g.game_id, date: g.date, state: g.status.state, detail: g.status.detail,
     away: { id: g.away.id, abbreviation: g.away.abbreviation, name: g.away.name, logo: g.away.logo, score: g.away.score, record: g.away.record },
     home: { id: g.home.id, abbreviation: g.home.abbreviation, name: g.home.name, logo: g.home.logo, score: g.home.score, record: g.home.record },
-    pick: presentPick(state.picks[g.game_id])
+    pick: state.picks[g.game_id] || null
   }));
   const byWeek = {};
   all.filter((p) => p.result).forEach((p) => { (byWeek[p.week] ||= []).push(p); });
@@ -410,14 +385,11 @@ const getPicks = async ({ week = null } = {}) => {
     weekly: Object.entries(byWeek).map(([w, ps]) => ({ week: Number(w), ...record(ps) })).sort((x, y) => y.week - x.week),
     tracking_since: all.length ? all.map((p) => p.made_at).sort()[0] : null,
     model_run: publicPredictionStatus(status),
-    refresh_in_progress: refreshes.has(id),
-    refresh_error: lastError?.message || null,
-    stale: needsRefresh && board.games.some((g) => state.picks[g.game_id]),
     disclaimer: DISCLAIMER,
-    method: 'AFI v2 uses separate trained regressions for point margin and win probability, so their favorites can differ. Totals use the v1 scoring/weather model. Each card identifies its model version and run time. Games without a valid, fresh v2 prediction use v1: 60% weighted recency + 30% efficiency + 10% momentum, with home-field, injury and matchup adjustments. AFI Confidence Rating compares the margin model to the market: 1★ under 1.5 points, 2★ at 1.5+, 3★ at 3+, 4★ at 5+, and 5★ at 7+ points. Saved kickoff picks and results are preserved.',
+    method: 'Margin = 60% weighted recency (45% last 3 games, 30% games 4–7, 15% games 8+, 10% last season’s final four) + 30% efficiency power rating (YPP, turnovers, third down and red zone) + 10% momentum. Teams with fewer than three current-season games use a season-plus-prior fallback. Momentum is capped at ±3 points. Home field (+1.5) and injuries are then applied. AFI Confidence Rating compares the model margin to the market: 1★ under 1.5 points through 5★ at 7+ points.',
     last_updated: state.updated_at
     , backtest: getBacktest()
   };
 };
 
-module.exports = { refreshPicks, getPicks, makePick, applyPythonPrediction, buildModel, getBacktest, predictionStatus, publicPredictionStatus, DISCLAIMER };
+module.exports = { refreshPicks, getPicks, makePick, buildModel, getBacktest, predictionStatus, publicPredictionStatus, DISCLAIMER };

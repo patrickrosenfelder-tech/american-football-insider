@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useApi, formatKickoff, formatTimestamp } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
+import { useApi, formatKickoff } from '../api.js';
+import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 const fmtLine = (v) => (v == null ? '–' : v > 0 ? `+${v}` : v === 0 ? 'PK' : `${v}`);
 const fmtMl = (v) => (v == null ? '' : v > 0 ? ` (+${v})` : ` (${v})`);
@@ -23,7 +23,7 @@ function PickCard({ g }) {
         <span className="muted">@</span>
         <Logo src={g.home.logo} size={26} /><b>{g.home.abbreviation}</b>{g.state !== 'pre' && <span className="tabnum">{g.home.score}</span>}
       </Link>
-      {!p && <p className="muted small">{g.state === 'pre' ? 'No saved pick yet. Check back after the model refresh.' : 'No pick (game started before tracking).'}</p>}
+      {!p && <p className="muted small">No pick (game started before tracking or no line posted).</p>}
       {p && (
         <>
           <div className="afi-signals">
@@ -51,11 +51,11 @@ function PickCard({ g }) {
               <Result r={p.result?.moneyline} />
             </div>
           </div>
-          <details className="pick-reasoning"><summary>Why this pick</summary><p className="small">{p.reasoning}</p></details>
+          <p className="small">{p.reasoning}</p>
           <p className="key-stat"><b>Efficiency signal:</b> {p.efficiency_rating?.snippet}</p>
           <div className="afi-edges"><b>AFI Key Matchups</b>{p.micro_matchups?.map((m) => <span key={`${m.label}-${m.text}`} className="afi-edge">{m.icon} <b>{m.label}:</b> {m.text}</span>) || <span className="muted small">Limited data</span>}</div>
           <p className="muted small">Model: {p.home} {fmtLine(p.model.spread_home)}, total {p.model.total} · Market: {p.market.details || '–'}{p.market.total != null ? `, O/U ${p.market.total}` : ''}</p>
-          <p className="muted small">{p.model_version || 'v1'}{p.model_run_at ? ` · Model run: ${formatTimestamp(p.model_run_at)}` : ''}{p.fallback_reason && /fallback/.test(p.model_version || '') ? ` · ${p.fallback_reason}` : ''}</p>
+          <p className="muted small">{p.model_version || 'v1'}{p.model_run_at ? ` · Model run: ${new Date(p.model_run_at).toLocaleString()}` : ''}{p.fallback_reason && /fallback/.test(p.model_version || '') ? ` · ${p.fallback_reason}` : ''}</p>
         </>
       )}
     </div>
@@ -64,7 +64,7 @@ function PickCard({ g }) {
 
 function ModelRun({ run }) {
   if (!run) return null;
-  const at = run.generated_at ? formatTimestamp(run.generated_at) : null;
+  const at = run.generated_at ? new Date(run.generated_at).toLocaleString() : null;
   if (run.available) return <p className="muted small">Model run: <b>{at}</b> · {run.model_version} · {run.games} games{run.data_through ? ` · data through ${new Date(run.data_through).toLocaleDateString()}` : ''}</p>;
   return <p className="disclaimer"><b>Model v1 fallback:</b> {at ? `the latest v2 run (${at}) is older than ${run.max_age_hours}h` : 'no v2 predictions are available'}, so these picks use the v1 formula.</p>;
 }
@@ -76,7 +76,7 @@ function RecordTiles({ record }) {
         <div key={k} className="card record-tile">
           <span className="muted small">{label}</span>
           <span className="record-big">{record[k].text}</span>
-          <span className="muted small">{record[k].pct != null ? `${record[k].pct}% · ${record[k].w + record[k].l} graded pick${record[k].w + record[k].l === 1 ? '' : 's'} (pushes excluded)` : 'No graded picks yet'}</span>
+          <span className="muted small">{record[k].pct != null ? `${record[k].pct}%` : 'No graded picks yet'}</span>
         </div>
       ))}
     </div>
@@ -115,16 +115,12 @@ function Backtest({ data }) {
 export default function Picks() {
   const [params] = useSearchParams();
   const week = params.get('week');
-  const { data, error, loading, retry, stale, lastUpdated } = useApi(`/picks${week ? `?week=${week}` : ''}`, { refreshMs: 5000, shouldRefresh: (body) => body.data.refresh_in_progress });
-  if (loading && !data) return <Loading label="Loading picks…" />;
-  if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
+  const { data, error, loading } = useApi(`/picks${week ? `?week=${week}` : ''}`);
+  if (loading) return <Loading label="Running the model…" />;
+  if (error) return <ErrorBox error={error} />;
   const d = data.data;
   return (
     <section>
-      {(stale || d.stale) && <StaleData at={d.last_updated || lastUpdated} />}
-      {error && <p role="alert">Could not update picks. Showing saved results. <button className="btn" onClick={retry}>Retry</button></p>}
-      {!error && d.refresh_in_progress && <p role="status">Updating picks. Available picks remain visible while the model refreshes.</p>}
-      {d.refresh_error && <p role="alert">The latest model refresh failed. {d.last_updated ? 'Showing the last saved picks.' : 'Picks will appear after a successful refresh.'}</p>}
       <div className="page-head">
         <div>
           <h1>AFI Picks · Week {d.week}</h1>
@@ -176,9 +172,9 @@ function TrendCol({ t }) {
 }
 
 // Matchup betting trends block (preview page): both teams' ATS / O-U splits, key trends and the AFI pick.
-export function TrendsBlock({ gameId, away, home, week }) {
+export function TrendsBlock({ gameId, away, home }) {
   const trends = useApi(`/trends/game/${gameId}`);
-  const picks = useApi(`/picks${week ? `?week=${week}` : ''}`, { refreshMs: 5000, shouldRefresh: (body) => body.data.refresh_in_progress });
+  const picks = useApi('/picks');
   if (trends.loading) return <div className="card"><Loading label="Loading trends…" /></div>;
   if (trends.error) return null;
   const { away: ta, home: th } = trends.data.data;

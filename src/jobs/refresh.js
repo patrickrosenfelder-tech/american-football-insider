@@ -27,7 +27,8 @@ const loadStatus = async () => {
 
 const saveStatus = () => db.saveDataset(STATUS_KEY, status).catch((error) => console.error('[refresh] status save failed:', error.message));
 
-// Partial results are degraded, not a new successful complete refresh.
+// A job may return { error } for a partial failure (e.g. 2 of 32 teams failed): the run still
+// counts as a success, but the message is recorded as the last error.
 const runJob = async (name, fn) => {
   const started = Date.now();
   const prev = status[name] || {};
@@ -37,15 +38,13 @@ const runJob = async (name, fn) => {
     const { error, ...result } = (await fn()) || {};
     const now = new Date().toISOString();
     status[name] = {
-      ...keep, running: false, ok: !error, degraded: Boolean(error), last_run: now,
-      last_success: error ? keep.last_success : now, duration_ms: Date.now() - started, ...result,
-      last_attempt_error: error || null,
+      ...keep, running: false, ok: true, last_run: now, last_success: now, duration_ms: Date.now() - started, ...result,
       ...(error ? { last_error: error, last_error_at: now } : {})
     };
   } catch (error) {
     console.error(`[refresh] ${name} failed:`, error.message);
     const now = new Date().toISOString();
-    status[name] = { ...prev, ...keep, running: false, ok: false, degraded: false, last_run: now, last_attempt_error: error.message, last_error: error.message, last_error_at: now, duration_ms: Date.now() - started };
+    status[name] = { ...prev, ...keep, running: false, ok: false, last_run: now, last_error: error.message, last_error_at: now, duration_ms: Date.now() - started };
   }
   await saveStatus();
   return status[name];
@@ -163,4 +162,4 @@ const bootstrap = async () => {
   if (!Array.isArray(fa?.data?.practice_squad)) await refreshFreeAgents();
 };
 
-module.exports = { bootstrap, loadStatus, runJob, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshSocialBluesky, refreshSocialYoutube, refreshSocialReddit, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, status };
+module.exports = { bootstrap, loadStatus, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshSocialBluesky, refreshSocialYoutube, refreshSocialReddit, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, status };
