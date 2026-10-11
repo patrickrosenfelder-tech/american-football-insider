@@ -6,7 +6,7 @@ const newsService = require('../services/newsService');
 // remaining unsummarised headlines (link-outs only).
 router.get('/', async (req, res) => {
   try {
-    const data = await newsService.list({ team: req.query.team || null, kind: req.query.kind || null, limit: Math.min(Number(req.query.limit) || 60, 200) });
+    const data = await newsService.list({ team: req.query.team || null, kind: req.query.kind || null, q: req.query.q || null, limit: Math.min(Number(req.query.limit) || 60, 200) });
     res.json({ success: true, data, timestamp: new Date().toISOString() });
   } catch (error) {
     res.status(502).json({ success: false, error: error.message });
