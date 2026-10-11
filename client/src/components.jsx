@@ -51,18 +51,29 @@ export function GameCard({ game }) {
     </div>
   );
   return (
-    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''} ${game.status.state === 'post' ? 'is-final' : ''}`} style={{ '--team-accent': accent }}>
-      <div className="game-card-teams">
-        <Team team={game.away} />
-        <Team team={game.home} />
-      </div>
-      <div className="game-card-meta">
-        <StatusPill game={game} />
-        {game.broadcast && <span>{game.broadcast}</span>}
-        {isLive(game) && game.down_distance && <span className="situation">{game.down_distance}</span>}
-        {game.status.state === 'pre' && game.odds && <span>{game.odds}</span>}
-      </div>
-    </Link>
+    <article className={`card game-card ${isLive(game) ? 'is-live' : ''} ${game.status.state === 'post' ? 'is-final' : ''}`} style={{ '--team-accent': accent }}>
+      <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className="game-card-main">
+        <div className="game-card-teams">
+          <Team team={game.away} />
+          <Team team={game.home} />
+        </div>
+        <div className="game-card-meta">
+          <StatusPill game={game} />
+          {game.broadcast && <span>{game.broadcast}</span>}
+          {isLive(game) && game.down_distance && <span className="situation">{game.down_distance}</span>}
+          {game.status.state === 'pre' && game.odds && <span>{game.odds}</span>}
+        </div>
+      </Link>
+      {game.status.state === 'post' && (
+        <div className="game-card-links" aria-label="Postgame information">
+          <Link to={`/game/${game.game_id}`}>Game center</Link>
+          <Link to={`/preview/${game.game_id}`}>Preview</Link>
+          <Link to={`/weather/game/${game.game_id}`}>Weather</Link>
+          <Link to={`/teams/${game.away.abbreviation}?tab=injuries`}>Injuries</Link>
+          <Link to="/news">News</Link>
+        </div>
+      )}
+    </article>
   );
 }
 

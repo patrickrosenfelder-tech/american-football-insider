@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
 
@@ -35,6 +35,16 @@ export function WeatherBlock({ gameId }) {
       )}
       <p className="muted small"><Link to="/weather"><u>All games this week →</u></Link></p>
     </div>
+  );
+}
+
+export function GameWeather() {
+  const { gameId } = useParams();
+  return (
+    <section className="detail-page">
+      <p className="small"><Link to={`/game/${gameId}`}>← Game center</Link></p>
+      <WeatherBlock gameId={gameId} />
+    </section>
   );
 }
 

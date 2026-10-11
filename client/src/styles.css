@@ -104,10 +104,15 @@ main { padding-top: 38px; padding-bottom: 44px; min-height: 70vh; }
 .list-card { padding: 4px 0; }
 
 /* Game card */
-.game-card { display: flex; flex-direction: column; padding: 14px 12px 16px; gap: 10px; border-left: 5px solid var(--team-accent, var(--navy)); transition: transform .16s ease, border-color .16s, box-shadow .16s; }
+.game-card { display: flex; flex-direction: column; padding: 0; border-left: 5px solid var(--team-accent, var(--navy)); transition: transform .16s ease, border-color .16s, box-shadow .16s; overflow: hidden; }
 .game-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(28,55,92,.12); }
 .game-card.is-live { border-color: var(--live); box-shadow: 0 0 0 1px var(--live) inset, var(--shadow); }
 .game-card.is-final { padding-top: 16px; background: linear-gradient(180deg, #fff 0%, #fbfcff 100%); }
+.game-card-main { display: flex; flex-direction: column; gap: 10px; padding: 0 12px 16px; color: inherit; }
+.game-card.is-final .game-card-main { padding-top: 0; }
+.game-card-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px 12px; border-top: 1px solid var(--line); padding: 10px 10px 12px; background: rgba(245,248,253,.72); font-size: .74rem; font-weight: 800; }
+.game-card-links a { color: var(--blue); white-space: nowrap; }
+.game-card-links a:hover { color: var(--navy); text-decoration: underline; }
 .game-card.is-final .game-card-teams { min-height: 138px; }
 .game-card.is-final .game-card-mark { min-height: 72px; }
 .game-card.is-final .game-card-score { color: var(--ink); font-size: 2rem; font-weight: 900; }
@@ -242,6 +247,7 @@ tr:last-child td { border-bottom: 0; }
 
 /* Game detail */
 .game-hero { text-align: center; margin-bottom: 12px; }
+.hero-links { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px; margin-left: 10px; }
 .hero-status { display: flex; justify-content: center; align-items: center; gap: 8px; }
 .hero-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
 .hero-team { display: flex; flex-direction: column; align-items: center; gap: 4px; }

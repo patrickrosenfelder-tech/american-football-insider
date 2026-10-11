@@ -11,7 +11,7 @@ import Preview from './pages/Preview.jsx';
 import TendenciesPage from './pages/Tendencies.jsx';
 import Playoffs from './pages/Playoffs.jsx';
 import News, { NewsStory } from './pages/News.jsx';
-import Weather from './pages/Weather.jsx';
+import Weather, { GameWeather } from './pages/Weather.jsx';
 import Picks from './pages/Picks.jsx';
 import Model from './pages/Model.jsx';
 import PowerRankings from './pages/PowerRankings.jsx';
@@ -83,6 +83,7 @@ export default function App() {
           <Route path="/playoffs" element={<Playoffs />} />
           <Route path="/news" element={<News />} />
           <Route path="/social" element={<Navigate to="/news#social" replace />} />
+          <Route path="/weather/game/:gameId" element={<GameWeather />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/picks" element={<Picks />} />
           <Route path="/model" element={<Model />} />
