@@ -36,6 +36,9 @@ const PORT = process.env.PORT || 3002;
 const CLIENT_DIST = path.join(__dirname, '../client/dist');
 
 app.use(cors());
+if (process.env.PREVIEW_DEPLOYMENT === 'true') {
+  app.use((req, res, next) => { res.set('X-Robots-Tag', 'noindex, nofollow'); next(); });
+}
 // A season's Python prediction artifact includes all model inputs and can be
 // several hundred KB; Express's 100 KB default rejects an otherwise valid POST.
 app.use(express.json({ limit: '1mb' }));
