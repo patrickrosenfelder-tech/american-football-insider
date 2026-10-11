@@ -1,3 +1,4 @@
+import { usePageMetadata } from '../metadata.js';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useApi } from '../api.js';
@@ -153,6 +154,7 @@ export default function News() {
 export function NewsStory() {
   const { storyId } = useParams();
   const { data, error, loading } = useApi(`/news/${storyId}`);
+  usePageMetadata(data?.data?.title, data?.data?.summary || data?.data?.excerpt);
   if (loading) return <Loading label="Loading story…" />;
   if (error) return <ErrorBox error={error} />;
   const s = data.data;

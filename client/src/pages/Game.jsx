@@ -1,3 +1,4 @@
+import { usePageMetadata } from '../metadata.js';
 import { Link, useParams } from 'react-router-dom';
 import { useApi, isLive, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, StatusPill, Updated } from '../components.jsx';
@@ -52,6 +53,7 @@ export default function Game() {
     shouldRefresh: (body) => isLive(body.data)
   });
 
+  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name}` : null, 'NFL matchup information, team statistics, injuries and model analysis.');
   if (loading && !data) return <Loading label="Loading game…" />;
   if (error && !data) return <ErrorBox error={error} />;
   const g = data.data;
@@ -59,6 +61,7 @@ export default function Game() {
 
   return (
     <section>
+      <h1 className="sr-only">{g.away.name} at {g.home.name} game center</h1>
       <div className="card game-hero">
         <div className="hero-status">
           <StatusPill game={g} />

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { setPageMetadata, routeMetadata } from './metadata.js';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -25,12 +26,21 @@ export default function App() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const headerRef = useRef(null);
+  const menuRef = useRef(null);
+  useLayoutEffect(() => { setPageMetadata(...routeMetadata(location.pathname)); }, [location.pathname]);
   useEffect(() => {
-    const route = location.pathname.split('/')[1];
-    const titles = { '': 'Games', news: 'News', social: 'Watch', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Games', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
-    document.title = `${titles[route] || 'Football Insider'} | AFI`;
     setMoreOpen(false);
-  }, [location.pathname]);
+    setSearchOpen(false);
+  }, [location.pathname, location.search]);
+  useEffect(() => {
+    const dismiss = (event) => {
+      if (event.type === 'keydown' && event.key === 'Escape' && (moreOpen || searchOpen)) { setMoreOpen(false); setSearchOpen(false); menuRef.current?.focus(); }
+      if (event.type === 'pointerdown' && !headerRef.current?.contains(event.target)) { setMoreOpen(false); setSearchOpen(false); }
+    };
+    document.addEventListener('keydown', dismiss); document.addEventListener('pointerdown', dismiss);
+    return () => { document.removeEventListener('keydown', dismiss); document.removeEventListener('pointerdown', dismiss); };
+  }, [moreOpen, searchOpen]);
 
   const overflowLinks = [
     ['/trades', 'Trades'], ['/free-agents', 'Free Agents'], ['/model', 'AFI Model'], ['/power-rankings', 'Power Rankings'], ['/previews', 'Matchup previews'],
@@ -38,21 +48,22 @@ export default function App() {
   ];
   return (
     <>
-      <header className="topbar">
+      <a className="skip-link" href="#main-content">Skip to content</a>
+      <header className="topbar" ref={headerRef}>
         <div className="wrap topbar-inner">
-          <NavLink to="/" className="brand">
+          <NavLink to="/" className="brand" aria-label="Football Insider home">
             <img src="/favicon.svg" alt="" width="28" height="28" />
             <span>Football <b>Insider</b></span>
           </NavLink>
           <nav aria-label="Primary navigation">
             <NavLink to="/" end>Games</NavLink>
             <NavLink to="/standings">Standings</NavLink>
-            <NavLink to="/picks">Stats</NavLink>
+            <NavLink to="/picks">Picks</NavLink>
             <NavLink to="/teams">Teams</NavLink>
             <NavLink to="/news">News</NavLink>
             <div className="nav-more-wrap">
-              <button className="nav-more" aria-expanded={moreOpen} aria-haspopup="menu" onClick={() => setMoreOpen((open) => !open)}>More</button>
-              {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
+              <button ref={menuRef} className="nav-more" aria-expanded={moreOpen} aria-controls="navigation-menu" onClick={() => setMoreOpen((open) => !open)}>More</button>
+              {moreOpen && <div className="nav-more-menu" id="navigation-menu">{[['/', 'Games'], ['/standings', 'Standings'], ['/picks', 'Picks'], ['/teams', 'Teams'], ['/news', 'News']].map(([to, label]) => <NavLink className="mobile-nav-link" key={to} to={to} end={to === '/'}>{label}</NavLink>)}{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
             </div>
           </nav>
           <div className="nav-actions" aria-label="Account tools">
@@ -68,7 +79,7 @@ export default function App() {
           </div>
         </div>
       </header>
-      <main className="wrap">
+      <main className="wrap" id="main-content" tabIndex="-1">
         <Routes>
           <Route path="/" element={<Scores />} />
           <Route path="/standings" element={<Standings />} />

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { formatKickoff, isLive } from './api.js';
+import { formatKickoff, formatTimestamp, isLive } from './api.js';
 
 export function Loading({ label = 'Loading…' }) {
   return <div className="state skeleton-state" role="status" aria-label={label}><div className="skeleton-line wide" /><div className="skeleton-line" /><span className="sr-only">{label}</span></div>;
@@ -131,10 +131,10 @@ export function Updated({ at, label = 'Last updated', staleHours = 6 }) {
   const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
   const relative = minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} minute${minutes === 1 ? '' : 's'} ago` : `${Math.round(minutes / 60)} hour${Math.round(minutes / 60) === 1 ? '' : 's'} ago`;
   const stale = minutes >= staleHours * 60;
-  return <p className={`updated muted small ${stale ? 'stale-note' : ''}`}>{stale && 'Results may be stale — '}{label}: {relative} ({date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })})</p>;
+  return <p className={`updated muted small ${stale ? 'stale-note' : ''}`}>{stale && 'Results may be stale — '}{label}: {relative} ({formatTimestamp(at)})</p>;
 }
 
 export function StaleData({ at }) {
   if (!at) return <div className="stale-banner">Results may be stale — refresh failed.</div>;
-  return <div className="stale-banner">Results may be stale — last updated at {new Date(at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}.</div>;
+  return <div className="stale-banner">Results may be stale — last updated at {formatTimestamp(at)}.</div>;
 }

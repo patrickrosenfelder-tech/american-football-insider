@@ -1,3 +1,4 @@
+import { usePageMetadata } from '../metadata.js';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { getFavoriteTeams, toggleFavoriteTeam, useApi, formatKickoff } from '../api.js';
@@ -64,6 +65,7 @@ export default function Team() {
   const tab = params.get('tab') || 'overview';
   const team = useApi(`/teams/${teamId}`);
 
+  usePageMetadata(team.data?.data?.name, team.data?.data?.name ? `${team.data.data.name}: schedule, roster, injuries, news and season statistics.` : null);
   if (team.loading) return <Loading label="Loading team…" />;
   if (team.error) return <ErrorBox error={team.error} />;
   const t = team.data.data;

@@ -1,3 +1,4 @@
+import { usePageMetadata } from '../metadata.js';
 import { Link, useParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, InjuryBadge, Updated, StaleData } from '../components.jsx';
@@ -90,6 +91,7 @@ function Injuries({ side }) {
 export default function Preview() {
   const { gameId } = useParams();
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/previews/${gameId}`);
+  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name} · Preview` : null, 'NFL matchup information, team statistics, injuries and model analysis.');
   if (loading && !data) return <Loading label="Building matchup preview…" />;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   if (!data?.data?.away || !data.data.home) return <ErrorBox error={new Error('This matchup preview returned an invalid response.')} onRetry={retry} />;
@@ -99,6 +101,7 @@ export default function Preview() {
 
   return (
     <section>
+      <h1 className="sr-only">{p.away.name} at {p.home.name} matchup preview</h1>
       {stale && <StaleData at={lastUpdated} />}
       <div className="card game-hero">
         <div className="hero-status"><span className="pill pre">Week {p.week} preview</span>{p.status !== 'pre' && <Link className="small" to={`/game/${p.game_id}`}><u>Game center</u></Link>}</div>
@@ -142,7 +145,7 @@ export default function Preview() {
 
       <MatchupNews away={away} home={home} />
 
-      <TrendsBlock gameId={p.game_id} away={away} home={home} />
+      <TrendsBlock gameId={p.game_id} away={away} home={home} week={p.week} />
 
       <div className="grid two-col">
         <WeatherBlock gameId={p.game_id} />

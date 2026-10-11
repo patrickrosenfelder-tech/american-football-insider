@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cache = require('../cache/cacheManager');
+const { deriveByeWeek } = require('./scheduleIntegrity');
 
 // ESPN's public (keyless) JSON endpoints. Unofficial but stable and widely used.
 const ESPN_SITE = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl';
@@ -336,14 +337,14 @@ const getTeamDetail = async (teamIdOrAbbr) => {
   return cache.getOrSet(`team_detail_${team.id}`, async () => {
     const [detail, schedule] = await Promise.all([
       fetchJson(`${ESPN_SITE}/teams/${team.id}`),
-      fetchJson(`${ESPN_SITE}/teams/${team.id}/schedule`)
+      fetchJson(`${ESPN_SITE}/teams/${team.id}/schedule`, { seasontype: 2 })
     ]);
     const t = detail.team || {};
     return {
       ...team,
       standing_summary: t.standingSummary || null,
       record_detail: (t.record?.items || []).map((r) => ({ type: r.type, summary: r.summary, description: r.description })),
-      bye_week: schedule.byeWeek || null,
+      bye_week: deriveByeWeek(schedule),
       schedule: (schedule.events || []).map(normalizeEvent),
       fetched_at: new Date().toISOString()
     };

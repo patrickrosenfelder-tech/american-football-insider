@@ -574,3 +574,19 @@ th.sortable:hover, th.sortable.active { color: var(--accent); }
 .dc-card.dc-sub { outline: 2px dashed var(--accent); outline-offset: -2px; }
 .dc-for { display: flex; align-items: center; gap: 3px; font-size: .62rem; color: var(--muted); line-height: 1.1; }
 .dc-for .inj { position: static; }
+
+/* Audit accessibility fixes; retain the deployed theme and score-card layout. */
+.table-wrap { max-width: 100%; overflow-x: auto; }
+.skip-link { position: fixed; top: -100px; left: 16px; z-index: 100; padding: 10px 14px; background: var(--card); color: var(--ink); border: 2px solid var(--accent); border-radius: 8px; }
+.skip-link:focus { top: 8px; }
+:focus-visible { outline: 2px solid #1554a5; outline-offset: 3px; }
+.nav-more-menu { max-height: calc(100dvh - 80px); overflow-y: auto; }
+.topbar nav .nav-more-menu .mobile-nav-link { display: none; }
+@media (max-width: 640px) {
+  .topbar nav .nav-more-wrap { position: sticky; right: 0; background: var(--card); }
+  .topbar nav a, .nav-more { min-height: 44px; display: inline-flex; align-items: center; }
+  .topbar nav .nav-more-menu a, .topbar nav .nav-more-menu .mobile-nav-link { display: flex; width: 100%; }
+  .nav-icon { min-width: 44px; min-height: 44px; }
+  .global-search { position: absolute; right: 16px; top: 60px; z-index: 11; }
+  .global-search input { width: min(230px, calc(100vw - 100px)); }
+}
