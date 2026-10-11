@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { useApi, isLive, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, StatusPill, Updated } from '../components.jsx';
+import { usePageMetadata } from '../metadata.js';
 
 const KEY_STATS = ['totalYards', 'netPassingYards', 'rushingYards', 'firstDowns', 'thirdDownEff', 'fourthDownEff',
   'turnovers', 'totalPenaltiesYards', 'possessionTime', 'redZoneAttempts', 'sacksYardsLost', 'yardsPerPlay'];
@@ -35,9 +36,9 @@ function TeamStatsCompare({ game }) {
   if (!rows.length) return null;
   return (
     <div className="card">
-      <h3 className="card-title compare-head">
+      <h2 className="card-title compare-head">
         <span>{game.away.abbreviation}</span><span>Team stats</span><span>{game.home.abbreviation}</span>
-      </h3>
+      </h2>
       {rows.map((r) => (
         <div key={r.name} className="compare-row"><b>{r.a}</b><span className="muted">{r.label}</span><b>{r.b}</b></div>
       ))}
@@ -51,6 +52,8 @@ export default function Game() {
     refreshMs: 30000,
     shouldRefresh: (body) => isLive(body.data)
   });
+  const matchupTitle = data ? `${data.data.away.name} at ${data.data.home.name}` : null;
+  usePageMetadata(matchupTitle && `${matchupTitle} · Game Center`, matchupTitle && `${matchupTitle}: scores, statistics, leaders and scoring plays.`);
 
   if (loading && !data) return <Loading label="Loading game…" />;
   if (error && !data) return <ErrorBox error={error} />;
@@ -59,6 +62,7 @@ export default function Game() {
 
   return (
     <section>
+      <h1 className="section-title">{matchupTitle} · Game center</h1>
       <div className="card game-hero">
         <div className="hero-status"><StatusPill game={g} />{isLive(g) && <span className="muted small">auto-refreshing</span>}{g.status.state === 'pre' && <Link className="small" to={`/preview/${g.game_id}`}><u>Matchup preview</u></Link>}</div>
         <div className="hero-teams">
@@ -89,7 +93,7 @@ export default function Game() {
         {started && <TeamStatsCompare game={g} />}
         {g.player_leaders.length > 0 && (
           <div className="card">
-            <h3 className="card-title">{started ? 'Game leaders' : 'Season leaders'}</h3>
+            <h2 className="card-title">{started ? 'Game leaders' : 'Season leaders'}</h2>
             {g.player_leaders.map((tl) => (
               <div key={tl.team.id} className="leader-team">
                 <div className="leader-team-name"><Logo src={tl.team.logo} size={20} alt="" /> {tl.team.abbreviation}</div>
@@ -125,7 +129,7 @@ export default function Game() {
 
       {g.news.length > 0 && (
         <>
-          <h2 className="section-title">News</h2>
+          <h2 className="section-title">League news</h2>
           <div className="card list-card">
             {g.news.map((n) => (
               <a key={n.headline} href={n.url || '#'} target="_blank" rel="noreferrer" className="news">

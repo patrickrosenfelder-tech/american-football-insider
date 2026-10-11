@@ -25,7 +25,7 @@ export function WeatherBlock({ gameId }) {
   return (
     <div className="card">
       {stale && <StaleData at={lastUpdated} />}
-      <h3 className="card-title compare-head"><span>Weather</span><span className={`wx-level ${g.impact?.level || 'none'}`}>{g.impact ? LEVEL_LABEL[g.impact.level] : ''}</span></h3>
+      <h2 className="card-title compare-head"><span>Weather</span><span className={`wx-level ${g.impact?.level || 'none'}`}>{g.impact ? LEVEL_LABEL[g.impact.level] : ''}</span></h2>
       <p className="small muted">{g.venue?.name}{g.roof_label ? ` · ${g.roof_label}` : ''}</p>
       {g.roof === 'dome' || g.roof === 'covered' ? <p className="small">{g.impact?.note}</p> : (
         <>

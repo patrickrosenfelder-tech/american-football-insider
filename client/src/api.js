@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 const sessionCache = new Map();
 
@@ -21,21 +21,28 @@ export async function api(path, { timeoutMs = 15000 } = {}) {
 
 // Fetches `path`; re-polls every `refreshMs` while `shouldRefresh(body)` is true.
 export function useApi(path, { refreshMs = 0, shouldRefresh = () => false, timeoutMs = 15000 } = {}) {
-  const [state, setState] = useState({ data: path ? sessionCache.get(path)?.data || null : null, error: null, loading: Boolean(path), stale: false, lastUpdated: sessionCache.get(path)?.updatedAt || null });
+  const initial = () => ({ path, data: sessionCache.get(path)?.data || null, error: null, loading: Boolean(path), stale: false, lastUpdated: sessionCache.get(path)?.updatedAt || null });
+  const [state, setState] = useState(initial);
+  const latestPath = useRef(path);
+  const requestId = useRef(0);
+  latestPath.current = path;
 
   const load = useCallback(async (silent) => {
-    if (!path) { setState({ data: null, error: null, loading: false, stale: false, lastUpdated: null }); return null; }
-    if (!silent) setState((s) => ({ ...s, loading: true, error: null }));
+    const id = ++requestId.current;
+    if (!path) { setState({ path, data: null, error: null, loading: false, stale: false, lastUpdated: null }); return null; }
+    if (!silent) setState((s) => ({ ...(s.path === path ? s : initial()), loading: true, error: null }));
     try {
       const body = await api(path, { timeoutMs });
       const updatedAt = new Date().toISOString();
       sessionCache.set(path, { data: body, updatedAt });
-      setState({ data: body, error: null, loading: false, stale: false, lastUpdated: updatedAt });
+      if (latestPath.current !== path || requestId.current !== id) return null;
+      setState({ path, data: body, error: null, loading: false, stale: false, lastUpdated: updatedAt });
       return body;
     } catch (error) {
+      if (latestPath.current !== path || requestId.current !== id) return null;
       setState((s) => {
-        const cached = s.data || sessionCache.get(path)?.data || null;
-        return { data: cached, error, loading: false, stale: Boolean(cached), lastUpdated: s.lastUpdated || sessionCache.get(path)?.updatedAt || null };
+        const cached = (s.path === path ? s.data : null) || sessionCache.get(path)?.data || null;
+        return { path, data: cached, error, loading: false, stale: Boolean(cached), lastUpdated: (s.path === path ? s.lastUpdated : null) || sessionCache.get(path)?.updatedAt || null };
       });
       return null;
     }
@@ -51,20 +58,22 @@ export function useApi(path, { refreshMs = 0, shouldRefresh = () => false, timeo
       }
     };
     tick(false);
-    return () => { cancelled = true; clearTimeout(timer); };
+    return () => { cancelled = true; requestId.current += 1; clearTimeout(timer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load, refreshMs]);
 
-  return { ...state, retry: () => load(false) };
+  return { ...(state.path === path ? state : initial()), retry: () => load(false) };
 }
 
 export const isLive = (game) => game?.status?.state === 'in';
 
 export function formatKickoff(iso) {
   const d = new Date(iso);
-  return d.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  return `${d.toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} ET`;
 }
 
 export function dayKey(iso) {
-  return new Date(iso).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  return new Date(iso).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'long', month: 'long', day: 'numeric' });
 }
+
+export const formatTimestamp = (iso) => iso ? `${new Date(iso).toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short' })} ET` : '–';

@@ -5,6 +5,7 @@ import { MatchupTendencies } from './Tendencies.jsx';
 import { WeatherBlock } from './Weather.jsx';
 import { TrendsBlock } from './Picks.jsx';
 import { MatchupNews } from './News.jsx';
+import { usePageMetadata } from '../metadata.js';
 
 // [label, path, higherIsBetter, suffix]
 const STAT_ROWS = [
@@ -29,7 +30,7 @@ const get = (obj, path) => path.split('.').reduce((o, k) => (o == null ? o : o[k
 function Compare({ away, home, rows, title, note }) {
   return (
     <div className="card">
-      <h3 className="card-title compare-head"><span>{away.abbreviation}</span><span>{title}</span><span>{home.abbreviation}</span></h3>
+      <h2 className="card-title compare-head"><span>{away.abbreviation}</span><span>{title}</span><span>{home.abbreviation}</span></h2>
       {rows.map(([label, a, b, higher, suffix = '']) => {
         const better = a == null || b == null || a === b || higher == null ? null : (a > b) === higher ? 'a' : 'b';
         return (
@@ -90,6 +91,8 @@ function Injuries({ side }) {
 export default function Preview() {
   const { gameId } = useParams();
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/previews/${gameId}`);
+  const matchupTitle = data ? `${data.data.away.name} at ${data.data.home.name}` : null;
+  usePageMetadata(matchupTitle && `${matchupTitle} · Preview`, matchupTitle && `${matchupTitle}: form, injuries, model picks, trends and kickoff weather.`);
   if (loading) return <Loading label="Building matchup preview…" />;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   const p = data.data;
@@ -98,6 +101,7 @@ export default function Preview() {
 
   return (
     <section>
+      <h1 className="section-title">{matchupTitle} · Week {p.week} preview</h1>
       {stale && <StaleData at={lastUpdated} />}
       <div className="card game-hero">
         <div className="hero-status"><span className="pill pre">Week {p.week} preview</span>{p.status !== 'pre' && <Link className="small" to={`/game/${p.game_id}`}><u>Game center</u></Link>}</div>
@@ -129,11 +133,11 @@ export default function Preview() {
       <div className="grid two-col">
         {[away, home].map((t) => (
           <div key={t.id} className="card">
-            <h3 className="card-title team-title"><Logo src={t.logo} size={20} alt="" /> {t.abbreviation} · starting QB</h3>
+            <h2 className="card-title team-title"><Logo src={t.logo} size={20} alt="" /> {t.abbreviation} · starting QB</h2>
             <QbCard side={t} />
-            <h3 className="card-title mt">Recent form</h3>
+            <h2 className="card-title mt">Recent form</h2>
             <Form side={t} />
-            <h3 className="card-title mt">Key injuries</h3>
+            <h2 className="card-title mt">Key injuries</h2>
             <Injuries side={t} />
           </div>
         ))}
@@ -141,7 +145,7 @@ export default function Preview() {
 
       <MatchupNews away={away} home={home} />
 
-      <TrendsBlock gameId={p.game_id} away={away} home={home} />
+      <TrendsBlock gameId={p.game_id} away={away} home={home} week={p.week} />
 
       <div className="grid two-col">
         <WeatherBlock gameId={p.game_id} />
@@ -152,7 +156,7 @@ export default function Preview() {
           ? <Compare away={away} home={home} rows={statRows} title="Team stats" note={`Season to date${p.team_stats_through_week ? `, through Week ${p.team_stats_through_week}` : ''} (nflverse play-by-play). Green = better.`} />
           : <div className="card muted small">Team stats not loaded yet.</div>}
         <div className="card">
-          <h3 className="card-title">Head-to-head</h3>
+          <h2 className="card-title">Head-to-head</h2>
           {!p.head_to_head?.total && <p className="muted small">No meetings since 1999.</p>}
           {p.head_to_head?.total > 0 && (
             <>

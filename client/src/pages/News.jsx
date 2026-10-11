@@ -2,6 +2,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 import { SocialWidget } from './Social.jsx';
+import { usePageMetadata } from '../metadata.js';
 
 const ago = (iso) => {
   const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
@@ -49,9 +50,11 @@ function Headlines({ items }) {
 export function NewsFeed({ team = null, compact = false }) {
   const [params, setParams] = useSearchParams();
   const kind = compact ? null : params.get('kind');
+  const search = compact ? null : params.get('q');
   const qs = new URLSearchParams();
   if (team) qs.set('team', team);
   if (kind) qs.set('kind', kind);
+  if (search) qs.set('q', search);
   const { data, error, loading } = useApi(`/news?${qs}`);
   if (loading) return <Loading label="Loading news…" />;
   if (error) return <ErrorBox error={error} />;
@@ -66,6 +69,7 @@ export function NewsFeed({ team = null, compact = false }) {
           ))}
         </div>
       )}
+      {search && <p role="status">Showing results for “{search}” <button className="link-btn" onClick={() => { const next = new URLSearchParams(params); next.delete('q'); setParams(next, { replace: true }); }}>Clear search</button></p>}
       {!d.stories.length && <div className="state">No stories yet{team ? ' for this team' : ''}.</div>}
       {[['headline', 'Latest news'], ['data', 'From the data']].map(([k, label]) => {
         const list = d.stories.filter((s) => s.kind === k);
@@ -92,7 +96,7 @@ export function MatchupNews({ away, home, limit = 6 }) {
   const { data, error, loading } = useApi(`/news?team=${away.abbreviation},${home.abbreviation}&limit=${limit}`);
   return (
     <div className="card">
-      <h3 className="card-title">Matchup news · {away.abbreviation} &amp; {home.abbreviation}</h3>
+      <h2 className="card-title">Matchup news · {away.abbreviation} &amp; {home.abbreviation}</h2>
       {loading && <p className="muted small">Loading news…</p>}
       {error && <p className="muted small">News unavailable: {error.message}</p>}
       {data && !data.data.stories.length && <p className="muted small">No stories for these teams yet.</p>}
@@ -120,6 +124,7 @@ export default function News() {
       <div className="page-head">
         <div><h1>{teamName || 'News'}</h1><p className="muted small">{teamName ? `${teamName} news, insider posts and data stories` : 'League news in short, sourced summaries — plus stories built from live data.'}</p></div>
         <label className="week-select">
+          <span className="sr-only">Filter news by team</span>
           <select value={team || ''} onChange={(e) => setTeam(e.target.value)}>
             <option value="">All teams</option>
             {(data?.data || []).map((t) => <option key={t.id} value={t.abbreviation}>{t.name}</option>)}
@@ -138,6 +143,7 @@ export default function News() {
 export function NewsStory() {
   const { storyId } = useParams();
   const { data, error, loading } = useApi(`/news/${storyId}`);
+  usePageMetadata(data?.data.title, data?.data.summary?.slice(0, 160) || 'NFL news with linked sources.');
   if (loading) return <Loading label="Loading story…" />;
   if (error) return <ErrorBox error={error} />;
   const s = data.data;
