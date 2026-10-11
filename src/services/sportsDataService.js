@@ -132,7 +132,9 @@ const hasLiveGame = (games) => games.some((g) => g.status.state === 'in');
 const getScoreboard = async ({ week, season, seasonType } = {}) => {
   const params = {};
   if (week) params.week = week;
-  if (season) params.dates = season;
+  // `dates` is required alongside week for ESPN to consistently return the
+  // requested season instead of silently falling back to the live scoreboard.
+  if (season || week) params.dates = season || new Date().getUTCFullYear();
   if (seasonType) params.seasontype = seasonType;
   const cacheKey = `scoreboard_${week || 'cur'}_${season || 'cur'}_${seasonType || 'cur'}`;
 

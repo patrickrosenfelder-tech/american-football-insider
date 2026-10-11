@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -7,12 +7,11 @@ import Team from './pages/Team.jsx';
 import Game from './pages/Game.jsx';
 import Player from './pages/Player.jsx';
 import Injuries from './pages/Injuries.jsx';
-import Previews from './pages/Previews.jsx';
 import Preview from './pages/Preview.jsx';
 import TendenciesPage from './pages/Tendencies.jsx';
 import Playoffs from './pages/Playoffs.jsx';
 import News, { NewsStory } from './pages/News.jsx';
-import Weather from './pages/Weather.jsx';
+import Weather, { GameWeather } from './pages/Weather.jsx';
 import Picks from './pages/Picks.jsx';
 import Model from './pages/Model.jsx';
 import PowerRankings from './pages/PowerRankings.jsx';
@@ -22,16 +21,20 @@ import Status from './pages/Status.jsx';
 
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   useEffect(() => {
     const route = location.pathname.split('/')[1];
-    const titles = { '': 'Scores', news: 'News', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
+    const titles = { '': 'Games', news: 'News', social: 'Watch', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Games', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
     document.title = `${titles[route] || 'Football Insider'} | AFI`;
     setMoreOpen(false);
   }, [location.pathname]);
 
   const overflowLinks = [
-    ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/teams', 'Teams'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies']
+    ['/trades', 'Trades'], ['/free-agents', 'Free Agents'], ['/model', 'AFI Model'], ['/power-rankings', 'Power Rankings'], ['/previews', 'Matchup previews'],
+    ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies'], ['/status', 'Data Status']
   ];
   return (
     <>
@@ -41,24 +44,26 @@ export default function App() {
             <img src="/favicon.svg" alt="" width="28" height="28" />
             <span>Football <b>Insider</b></span>
           </NavLink>
-          <nav>
-            <NavLink to="/" end>Scores</NavLink>
-            <NavLink to="/news">News</NavLink>
-            <NavLink to="/trades">Trades</NavLink>
-            <NavLink to="/free-agents">Free Agents</NavLink>
+          <nav aria-label="Primary navigation">
+            <NavLink to="/" end>Games</NavLink>
             <NavLink to="/standings">Standings</NavLink>
-            <NavLink to="/previews">Previews</NavLink>
-            <NavLink to="/picks">Picks</NavLink>
-            <NavLink to="/model">AFI Model</NavLink>
-            <NavLink to="/power-rankings">Rankings</NavLink>
-            {overflowLinks.map(([to, label]) => <NavLink key={to} className="nav-overflow" to={to}>{label}</NavLink>)}
+            <NavLink to="/picks">Stats</NavLink>
+            <NavLink to="/teams">Teams</NavLink>
+            <NavLink to="/news">News</NavLink>
             <div className="nav-more-wrap">
-              <button className="nav-more" aria-expanded={moreOpen} onClick={() => setMoreOpen((open) => !open)}>More…</button>
+              <button className="nav-more" aria-expanded={moreOpen} aria-haspopup="menu" onClick={() => setMoreOpen((open) => !open)}>More</button>
               {moreOpen && <div className="nav-more-menu">{overflowLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</div>}
             </div>
           </nav>
           <div className="nav-actions" aria-label="Account tools">
-            <button className="nav-icon" type="button" aria-label="Search">⌕</button>
+            {searchOpen ? (
+              <form className="global-search" onSubmit={(event) => { event.preventDefault(); const q = searchQuery.trim(); if (q) navigate(`/news?q=${encodeURIComponent(q)}`); setSearchOpen(false); }}>
+                <input autoFocus type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search news…" aria-label="Search news" />
+                <button type="button" className="search-close" onClick={() => setSearchOpen(false)} aria-label="Close search">×</button>
+              </form>
+            ) : (
+              <button className="nav-icon" type="button" aria-label="Search news" onClick={() => setSearchOpen(true)}>⌕</button>
+            )}
             <span className="user-avatar" aria-label="User account">FI</span>
           </div>
         </div>
@@ -72,12 +77,13 @@ export default function App() {
           <Route path="/game/:gameId" element={<Game />} />
           <Route path="/players/:playerId" element={<Player />} />
           <Route path="/injuries" element={<Injuries />} />
-          <Route path="/previews" element={<Previews />} />
+          <Route path="/previews" element={<Navigate to="/?view=schedule" replace />} />
           <Route path="/preview/:gameId" element={<Preview />} />
           <Route path="/tendencies" element={<TendenciesPage />} />
           <Route path="/playoffs" element={<Playoffs />} />
           <Route path="/news" element={<News />} />
-          <Route path="/social" element={<Navigate to="/news" replace />} />
+          <Route path="/social" element={<Navigate to="/news#social" replace />} />
+          <Route path="/weather/game/:gameId" element={<GameWeather />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/picks" element={<Picks />} />
           <Route path="/model" element={<Model />} />

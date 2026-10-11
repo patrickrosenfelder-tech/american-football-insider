@@ -90,8 +90,9 @@ function Injuries({ side }) {
 export default function Preview() {
   const { gameId } = useParams();
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/previews/${gameId}`);
-  if (loading) return <Loading label="Building matchup preview…" />;
+  if (loading && !data) return <Loading label="Building matchup preview…" />;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
+  if (!data?.data?.away || !data.data.home) return <ErrorBox error={new Error('This matchup preview returned an invalid response.')} onRetry={retry} />;
   const p = data.data;
   const { away, home } = p;
   const statRows = STAT_ROWS.map(([label, path, higher, suffix]) => [label, get(away.stats, path), get(home.stats, path), higher, suffix]);
