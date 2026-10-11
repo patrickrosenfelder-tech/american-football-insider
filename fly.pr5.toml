@@ -7,7 +7,7 @@ primary_region = 'iad'
 [env]
   PORT = '8080'
   DB_PATH = '/data/preview.db'
-  NODE_OPTIONS = '--max-old-space-size=120'
+  NODE_OPTIONS = '--max-old-space-size=256'
   SITE_URL = 'https://american-football-insider-pr5.fly.dev'
   PREVIEW_DEPLOYMENT = 'true'
 
@@ -24,13 +24,13 @@ primary_region = 'iad'
   processes = ['app']
 
   [[http_service.checks]]
-    grace_period = '30s'
+    grace_period = '60s'
     interval = '30s'
     method = 'GET'
     timeout = '5s'
     path = '/api/health'
 
 [[vm]]
-  memory = '256mb'
+  memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
