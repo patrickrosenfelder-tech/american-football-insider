@@ -42,3 +42,18 @@ For identical-data comparisons, set `AUDIT_SCOREBOARD` to a captured public
 `AUDIT_PORT` allows reference and candidate servers to run side by side.
 The audit compared all 15 card rectangles at 1280px, and tested Final/Upcoming
 filters, score values, postgame links and responsive navigation.
+
+## Hosted PR #5 preview
+
+Preview: https://american-football-insider-pr5.fly.dev
+
+Deploy the PR branch explicitly with
+`fly deploy --config fly.pr5.toml --app american-football-insider-pr5 --remote-only --ha=false`.
+Production's `fly.toml` remains separate. The preview has its own app, machine,
+SQLite volume and canonical URL; no production credentials are copied. Its
+responses use `X-Robots-Tag: noindex, nofollow`.
+
+The preview stops when idle and starts on access. Its independent database
+warms public feeds and generates picks after startup, so historical tracked
+records and AI summaries can differ from production. AI provider credentials
+are not configured in the preview. Merging the PR does not deploy production.
