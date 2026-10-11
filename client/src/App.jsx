@@ -7,7 +7,6 @@ import Team from './pages/Team.jsx';
 import Game from './pages/Game.jsx';
 import Player from './pages/Player.jsx';
 import Injuries from './pages/Injuries.jsx';
-import Previews from './pages/Previews.jsx';
 import Preview from './pages/Preview.jsx';
 import TendenciesPage from './pages/Tendencies.jsx';
 import Playoffs from './pages/Playoffs.jsx';
@@ -28,13 +27,13 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   useEffect(() => {
     const route = location.pathname.split('/')[1];
-    const titles = { '': 'Scores', news: 'News', social: 'Watch', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Previews', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
+    const titles = { '': 'Games', news: 'News', social: 'Watch', trades: 'Trades', 'free-agents': 'Free Agents', standings: 'Standings', previews: 'Games', preview: 'Matchup Preview', picks: 'Picks', model: 'AFI Model', 'power-rankings': 'Power Rankings', weather: 'Weather', playoffs: 'Playoffs', teams: 'Teams', injuries: 'Injuries', tendencies: 'Tendencies', game: 'Game Center', players: 'Player', status: 'Data Status' };
     document.title = `${titles[route] || 'Football Insider'} | AFI`;
     setMoreOpen(false);
   }, [location.pathname]);
 
   const overflowLinks = [
-    ['/trades', 'Trades'], ['/free-agents', 'Free Agents'], ['/model', 'AFI Model'], ['/power-rankings', 'Power Rankings'],
+    ['/trades', 'Trades'], ['/free-agents', 'Free Agents'], ['/model', 'AFI Model'], ['/power-rankings', 'Power Rankings'], ['/previews', 'Matchup previews'],
     ['/weather', 'Weather'], ['/playoffs', 'Playoffs'], ['/injuries', 'Injuries'], ['/tendencies', 'Tendencies'], ['/status', 'Data Status']
   ];
   return (
@@ -46,9 +45,8 @@ export default function App() {
             <span>Football <b>Insider</b></span>
           </NavLink>
           <nav aria-label="Primary navigation">
-            <NavLink to="/" end>Scores</NavLink>
+            <NavLink to="/" end>Games</NavLink>
             <NavLink to="/standings">Standings</NavLink>
-            <NavLink to="/previews">Schedule</NavLink>
             <NavLink to="/picks">Stats</NavLink>
             <NavLink to="/teams">Teams</NavLink>
             <NavLink to="/news">News</NavLink>
@@ -79,7 +77,7 @@ export default function App() {
           <Route path="/game/:gameId" element={<Game />} />
           <Route path="/players/:playerId" element={<Player />} />
           <Route path="/injuries" element={<Injuries />} />
-          <Route path="/previews" element={<Previews />} />
+          <Route path="/previews" element={<Navigate to="/?view=schedule" replace />} />
           <Route path="/preview/:gameId" element={<Preview />} />
           <Route path="/tendencies" element={<TendenciesPage />} />
           <Route path="/playoffs" element={<Playoffs />} />

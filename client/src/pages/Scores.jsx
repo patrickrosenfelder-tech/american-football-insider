@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useApi, isLive, dayKey } from '../api.js';
-import { FeaturedFinal, GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Scores() {
   const [params, setParams] = useSearchParams();
@@ -28,9 +28,7 @@ export default function Scores() {
   const currentKey = `${seasonType || data.season_type}-${week || data.week}`;
 
   const filteredGames = games.filter((g) => filter === 'all' || (filter === 'final' && g.status.state === 'post') || (filter === 'live' && isLive(g)) || (filter === 'upcoming' && g.status.state === 'pre'));
-  const finals = filteredGames.filter((g) => g.status.state === 'post');
-  const scheduledGames = filteredGames.filter((g) => g.status.state !== 'post');
-  const byDay = scheduledGames.reduce((acc, g) => {
+  const byDay = filteredGames.reduce((acc, g) => {
     const k = dayKey(g.date);
     (acc[k] ||= []).push(g);
     return acc;
@@ -49,7 +47,7 @@ export default function Scores() {
 
   return (
     <section>
-      <div className={`scores-hero ${finals.length > 0 ? 'has-featured-final' : ''}`}>
+      <div className="scores-hero">
       <div className="page-head scores-page-head">
         <div>
           <h1>{data.season} {(seasonType || data.season_type) === '3' || data.season_type === 3 ? 'Playoffs' : `Week ${week || data.week}`}</h1>
@@ -73,12 +71,6 @@ export default function Scores() {
         ))}
       </div>
 
-      {finals.length > 0 && (
-        <section className="finals-section" aria-labelledby="finals-heading">
-          <h2 id="finals-heading" className="sr-only">Final scores</h2>
-          <div className="featured-finals">{finals.map((g) => <FeaturedFinal key={g.game_id} game={g} />)}</div>
-        </section>
-      )}
       </div>
 
       {filteredGames.length === 0 && <div className="state">{games.length === 0 ? 'No games scheduled this week.' : 'No games match this filter.'}</div>}
