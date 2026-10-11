@@ -66,7 +66,7 @@ export default function Game() {
           <span className="hero-links">
             <Link className="small" to={`/preview/${g.game_id}`}><u>Matchup preview</u></Link>
             <Link className="small" to={`/weather/game/${g.game_id}`}><u>Weather</u></Link>
-            <Link className="small" to={`/teams/${g.away.abbreviation}?tab=injuries`}><u>Injury reports</u></Link>
+            <Link className="small" to="/injuries"><u>Injury report</u></Link>
             <Link className="small" to="/news"><u>Team news</u></Link>
           </span>
         </div>

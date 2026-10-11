@@ -69,7 +69,7 @@ export function GameCard({ game }) {
           <Link to={`/game/${game.game_id}`}>Game center</Link>
           <Link to={`/preview/${game.game_id}`}>Preview</Link>
           <Link to={`/weather/game/${game.game_id}`}>Weather</Link>
-          <Link to={`/teams/${game.away.abbreviation}?tab=injuries`}>Injuries</Link>
+          <Link to="/injuries">Injuries</Link>
           <Link to="/news">News</Link>
         </div>
       )}
