@@ -132,6 +132,12 @@ fly deploy --remote-only -a american-football-insider
 fly secrets set GROQ_API_KEY=... OPENROUTER_API_KEY=... ADMIN_TOKEN=... -a american-football-insider
 ```
 
+### Isolated PR5 staging
+
+The preview at https://american-football-insider-pr5.fly.dev uses `fly.pr5.toml`, its own `afi_preview_data` volume and `/data/preview.db`. Deploy it with `fly deploy --remote-only -c fly.pr5.toml`. Its pick history and provider credentials are independent of production.
+
+The **AFI predictions** workflow generates one fresh prediction artifact and publishes it to both apps on its existing schedule. Staging uses the GitHub secrets `STAGING_AFI_URL` and `STAGING_AFI_ADMIN_TOKEN`; the latter must match staging's Fly `ADMIN_TOKEN` and must be a separate token from production. For a preview-only refresh, dispatch the workflow with `target=staging` and the PR branch as its ref. This skips the production publish step. Each run uploads its generated artifact for inspection. The 48-hour freshness limit stays enforced; expired predictions remain visibly unavailable until a successful refresh.
+
 ## Open items
 
 - **X/Twitter**: the official API is paid and scraping is not allowed, so it is skipped. **Bluesky / Reddit**: not wired in yet. Reddit's Data API needs registered OAuth apps. Bluesky's public API is usable if we pick a list of accounts.
