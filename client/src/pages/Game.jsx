@@ -1,3 +1,4 @@
+import { usePageMetadata } from '../metadata.js';
 import { Link, useParams } from 'react-router-dom';
 import { useApi, isLive, formatKickoff } from '../api.js';
 import { Loading, ErrorBox, Logo, StatusPill, Updated } from '../components.jsx';
@@ -52,6 +53,7 @@ export default function Game() {
     shouldRefresh: (body) => isLive(body.data)
   });
 
+  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name}` : null, 'NFL matchup information, team statistics, injuries and model analysis.');
   if (loading && !data) return <Loading label="Loading game…" />;
   if (error && !data) return <ErrorBox error={error} />;
   const g = data.data;
@@ -59,8 +61,18 @@ export default function Game() {
 
   return (
     <section>
+      <h1 className="sr-only">{g.away.name} at {g.home.name} game center</h1>
       <div className="card game-hero">
-        <div className="hero-status"><StatusPill game={g} />{isLive(g) && <span className="muted small">auto-refreshing</span>}{g.status.state === 'pre' && <Link className="small" to={`/preview/${g.game_id}`}><u>Matchup preview</u></Link>}</div>
+        <div className="hero-status">
+          <StatusPill game={g} />
+          {isLive(g) && <span className="muted small">auto-refreshing</span>}
+          <span className="hero-links">
+            <Link className="small" to={`/preview/${g.game_id}`}><u>Matchup preview</u></Link>
+            <Link className="small" to={`/weather/game/${g.game_id}`}><u>Weather</u></Link>
+            <Link className="small" to="/injuries"><u>Injury report</u></Link>
+            <Link className="small" to="/news"><u>Team news</u></Link>
+          </span>
+        </div>
         <div className="hero-teams">
           {[g.away, g.home].map((t, i) => (
             <Link key={t.id} to={`/teams/${t.abbreviation}`} className={`hero-team ${g.status.state === 'post' && !t.winner ? 'lost' : ''}`}>

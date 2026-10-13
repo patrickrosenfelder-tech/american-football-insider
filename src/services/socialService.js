@@ -183,7 +183,7 @@ const getIndex = async () => {
 };
 
 const tagTeams = (post, index) => {
-  const teams = new Set(post.account_team ? [post.account_team] : []);
+  const teams = new Set();
   if (index) {
     const { tagItem } = require('./newsService');
     const text = [post.text, post.body, post.media?.title].filter(Boolean).join(' ');
@@ -222,6 +222,7 @@ const runPlatform = async (platform, list, fetcher) => {
         if (Number.isNaN(t)) return;
         p.published = new Date(t).toISOString();
         p.teams = tagTeams(p, index);
+        p.tagging_version = 2;
         delete p.account_team;
         const existing = state.posts[p.id];
         if (!existing) added += 1;
@@ -285,7 +286,7 @@ const list = async ({ platform = null, account = null, team = null, limit = 50 }
   const platforms = platform ? String(platform).toLowerCase().split(',') : null;
   const teams = team ? String(team).toUpperCase().split(',').filter(Boolean) : null;
   const now = Date.now();
-  const posts = Object.values(state.posts)
+  const posts = Object.values(state.posts).map((p) => ({ ...p, teams: p.tagging_version === 2 ? p.teams : [] }))
     .filter((p) => (!platforms || platforms.includes(p.platform)) && (!account || p.account === account) && (!teams || p.teams.some((t) => teams.includes(t))))
     .sort((a, b) => b.published.localeCompare(a.published))
     .slice(0, limit)
@@ -339,4 +340,4 @@ const status = async () => {
   };
 };
 
-module.exports = { runBluesky, runYoutube, runReddit, list, status, redditConfigured, fetchBluesky, fetchYoutube, fetchReddit, blueskySegments, isBreaking, DATASET };
+module.exports = { runBluesky, runYoutube, runReddit, list, status, redditConfigured, fetchBluesky, fetchYoutube, fetchReddit, tagTeams, blueskySegments, isBreaking, DATASET };

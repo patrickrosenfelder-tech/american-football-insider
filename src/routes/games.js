@@ -7,7 +7,11 @@ const sportsDataService = require('../services/sportsDataService');
 // Without params returns ESPN's current scoreboard (this week's games).
 router.get('/', async (req, res) => {
   try {
-    const { week, season, seasontype } = req.query;
+    const { week, seasontype } = req.query;
+    // ESPN will sometimes fall back to its current scoreboard when a week is
+    // requested without an explicit season. Always pin historical/future week
+    // queries to the current NFL season so the selector cannot show stale data.
+    const season = req.query.season || (week ? new Date().getUTCFullYear() : undefined);
     const board = await sportsDataService.getScoreboard({ week, season, seasonType: seasontype });
     res.json({
       success: true,

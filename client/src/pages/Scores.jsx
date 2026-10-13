@@ -1,11 +1,12 @@
 import { useSearchParams } from 'react-router-dom';
 import { useApi, isLive, dayKey } from '../api.js';
-import { FeaturedFinal, GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Scores() {
   const [params, setParams] = useSearchParams();
   const week = params.get('week');
   const seasonType = params.get('seasontype');
+  const filter = params.get('filter') || 'all';
   const query = new URLSearchParams();
   if (week) query.set('week', week);
   if (seasonType) query.set('seasontype', seasonType);
@@ -17,6 +18,7 @@ export default function Scores() {
 
   if (loading && !data) return <Loading label="Loading scoreboard…" />;
   if (error && !data) return <ErrorBox error={error} />;
+  if (!data?.data || !Array.isArray(data.data)) return <ErrorBox error={new Error('The scoreboard returned an invalid response.')} />;
 
   const games = data.data;
   const liveCount = games.filter(isLive).length;
@@ -25,9 +27,8 @@ export default function Scores() {
     .flatMap((b) => b.weeks.map((w) => ({ ...w, season_type: b.season_type, key: `${b.season_type}-${w.week}` })));
   const currentKey = `${seasonType || data.season_type}-${week || data.week}`;
 
-  const finals = games.filter((g) => g.status.state === 'post');
-  const scheduledGames = games.filter((g) => g.status.state !== 'post');
-  const byDay = scheduledGames.reduce((acc, g) => {
+  const filteredGames = games.filter((g) => filter === 'all' || (filter === 'final' && g.status.state === 'post') || (filter === 'live' && isLive(g)) || (filter === 'upcoming' && g.status.state === 'pre'));
+  const byDay = filteredGames.reduce((acc, g) => {
     const k = dayKey(g.date);
     (acc[k] ||= []).push(g);
     return acc;
@@ -38,13 +39,19 @@ export default function Scores() {
     setParams(st === '2' ? { week: wk } : { week: wk, seasontype: st });
   };
 
+  const onFilterChange = (next) => {
+    const nextParams = new URLSearchParams(params);
+    if (next === 'all') nextParams.delete('filter'); else nextParams.set('filter', next);
+    setParams(nextParams, { replace: true });
+  };
+
   return (
     <section>
-      <div className={`scores-hero ${finals.length > 0 ? 'has-featured-final' : ''}`}>
+      <div className="scores-hero">
       <div className="page-head scores-page-head">
         <div>
           <h1>{data.season} {(seasonType || data.season_type) === '3' || data.season_type === 3 ? 'Playoffs' : `Week ${week || data.week}`}</h1>
-          <p className="muted">All times ET · {games.length} games{liveCount > 0 && <> · <span className="live-text">{liveCount} live</span></>}{liveCount > 0 && ' · auto-refreshing'}</p>
+          <p className="muted">All times ET · {filteredGames.length} of {games.length} games{liveCount > 0 && <> · <span className="live-text">{liveCount} live</span></>}{liveCount > 0 && ' · auto-refreshing'}</p>
         </div>
         {weekOptions.length > 0 && (
           <label className="week-select">
@@ -58,15 +65,15 @@ export default function Scores() {
         )}
       </div>
 
-      {finals.length > 0 && (
-        <section className="finals-section" aria-labelledby="finals-heading">
-          <h2 id="finals-heading" className="sr-only">Final scores</h2>
-          <div className="featured-finals">{finals.map((g) => <FeaturedFinal key={g.game_id} game={g} />)}</div>
-        </section>
-      )}
+      <div className="score-filters" aria-label="Score filters">
+        {[['all', 'All games'], ['live', 'Live'], ['upcoming', 'Upcoming'], ['final', 'Final']].map(([key, label]) => (
+          <button key={key} type="button" className={filter === key ? 'active' : ''} onClick={() => onFilterChange(key)}>{label}</button>
+        ))}
       </div>
 
-      {games.length === 0 && <div className="state">No games scheduled this week.</div>}
+      </div>
+
+      {filteredGames.length === 0 && <div className="state">{games.length === 0 ? 'No games scheduled this week.' : 'No games match this filter.'}</div>}
 
       {Object.entries(byDay).map(([day, list]) => (
         <div key={day} className="day-group">

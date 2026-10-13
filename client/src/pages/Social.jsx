@@ -147,7 +147,7 @@ export function SocialWidget({ team = null, limit = 12, title = 'Social' }) {
   const posts = data?.data.posts || [];
   const breaking = posts.filter((p) => p.breaking).length;
   return (
-    <aside className="social-widget">
+    <aside id="social" className="social-widget">
       <button type="button" className="social-toggle" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <span>{title}{breaking > 0 && <span className="social-breaking inline">{breaking} breaking</span>}</span>
         <span className="muted">{open ? '▲' : '▼'}</span>
@@ -162,5 +162,26 @@ export function SocialWidget({ team = null, limit = 12, title = 'Social' }) {
         <div className="social-list">{posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>
       </div>
     </aside>
+  );
+}
+
+export default function Social() {
+  const { data, error, loading } = useApi('/social?limit=60', live);
+  const posts = data?.data?.posts || [];
+  return (
+    <section>
+      <div className="page-head">
+        <div>
+          <h1>Watch</h1>
+          <p className="muted small">Live clips, videos, and updates from the football conversation.</p>
+        </div>
+        <span className="feed-status"><span className="feed-status-dot" /> Live feed</span>
+      </div>
+      {loading && !data && <Loading label="Loading watch feed…" />}
+      {error && !data && <p className="muted">Watch feed unavailable: {error.message}</p>}
+      {!loading && !error && !posts.length && <div className="state">No recent watch content.</div>}
+      {posts.length > 0 && <div className="social-feed">{posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>}
+      {data?.data?.last_updated && <p className="muted small updated">Updated {new Date(data.data.last_updated).toLocaleString()}</p>}
+    </section>
   );
 }

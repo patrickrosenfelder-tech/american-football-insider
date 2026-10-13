@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { formatKickoff, isLive } from './api.js';
+import { formatKickoff, formatTimestamp, isLive } from './api.js';
 
 export function Loading({ label = 'Loading…' }) {
   return <div className="state skeleton-state" role="status" aria-label={label}><div className="skeleton-line wide" /><div className="skeleton-line" /><span className="sr-only">{label}</span></div>;
@@ -51,18 +51,29 @@ export function GameCard({ game }) {
     </div>
   );
   return (
-    <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className={`card game-card ${isLive(game) ? 'is-live' : ''}`} style={{ '--team-accent': accent }}>
-      <div className="game-card-teams">
-        <Team team={game.away} />
-        <Team team={game.home} />
-      </div>
-      <div className="game-card-meta">
-        <StatusPill game={game} />
-        {game.broadcast && <span>{game.broadcast}</span>}
-        {isLive(game) && game.down_distance && <span className="situation">{game.down_distance}</span>}
-        {game.status.state === 'pre' && game.odds && <span>{game.odds}</span>}
-      </div>
-    </Link>
+    <article className={`card game-card ${isLive(game) ? 'is-live' : ''} ${game.status.state === 'post' ? 'is-final' : ''}`} style={{ '--team-accent': accent }}>
+      <Link to={game.status.state === 'pre' ? `/preview/${game.game_id}` : `/game/${game.game_id}`} className="game-card-main">
+        <div className="game-card-teams">
+          <Team team={game.away} />
+          <Team team={game.home} />
+        </div>
+        <div className="game-card-meta">
+          <StatusPill game={game} />
+          {game.broadcast && <span>{game.broadcast}</span>}
+          {isLive(game) && game.down_distance && <span className="situation">{game.down_distance}</span>}
+          {game.status.state === 'pre' && game.odds && <span>{game.odds}</span>}
+        </div>
+      </Link>
+      {game.status.state === 'post' && (
+        <div className="game-card-links" aria-label="Postgame information">
+          <Link to={`/game/${game.game_id}`}>Game center</Link>
+          <Link to={`/preview/${game.game_id}`}>Preview</Link>
+          <Link to={`/weather/game/${game.game_id}`}>Weather</Link>
+          <Link to="/injuries">Injuries</Link>
+          <Link to="/news">News</Link>
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -82,9 +93,9 @@ export function FeaturedFinal({ game }) {
     <Link to={`/game/${game.game_id}`} className="featured-final card" style={{ '--team-accent': accent }}>
       <div className="featured-matchup">
         <Team team={game.away} align="away" />
-        <b className="featured-score away-score" aria-label={`${game.away.name} score`}>{game.away.score ?? '–'}</b>
+        <b className="featured-score away-score" aria-label={`${game.away.name} score ${game.away.score ?? 'not available'}`}>{game.away.score ?? '–'}</b>
         <span className="final-badge">FINAL</span>
-        <b className="featured-score home-score" aria-label={`${game.home.name} score`}>{game.home.score ?? '–'}</b>
+        <b className="featured-score home-score" aria-label={`${game.home.name} score ${game.home.score ?? 'not available'}`}>{game.home.score ?? '–'}</b>
         <Team team={game.home} align="home" />
       </div>
       <div className="featured-footer">
@@ -120,10 +131,10 @@ export function Updated({ at, label = 'Last updated', staleHours = 6 }) {
   const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
   const relative = minutes < 1 ? 'just now' : minutes < 60 ? `${minutes} minute${minutes === 1 ? '' : 's'} ago` : `${Math.round(minutes / 60)} hour${Math.round(minutes / 60) === 1 ? '' : 's'} ago`;
   const stale = minutes >= staleHours * 60;
-  return <p className={`updated muted small ${stale ? 'stale-note' : ''}`}>{stale && 'Results may be stale — '}{label}: {relative} ({date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })})</p>;
+  return <p className={`updated muted small ${stale ? 'stale-note' : ''}`}>{stale && 'Results may be stale — '}{label}: {relative} ({formatTimestamp(at)})</p>;
 }
 
 export function StaleData({ at }) {
   if (!at) return <div className="stale-banner">Results may be stale — refresh failed.</div>;
-  return <div className="stale-banner">Results may be stale — last updated at {new Date(at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}.</div>;
+  return <div className="stale-banner">Results may be stale — last updated at {formatTimestamp(at)}.</div>;
 }

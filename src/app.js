@@ -28,6 +28,7 @@ const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
+const { renderMetadata } = require('./services/pageMetadata');
 
 const app = express();
 // 3000/3001 are used by other local services on the dev Mac.
@@ -35,6 +36,9 @@ const PORT = process.env.PORT || 3002;
 const CLIENT_DIST = path.join(__dirname, '../client/dist');
 
 app.use(cors());
+if (process.env.PREVIEW_DEPLOYMENT === 'true') {
+  app.use((req, res, next) => { res.set('X-Robots-Tag', 'noindex, nofollow'); next(); });
+}
 // A season's Python prediction artifact includes all model inputs and can be
 // several hundred KB; Express's 100 KB default rejects an otherwise valid POST.
 app.use(express.json({ limit: '1mb' }));
@@ -74,10 +78,11 @@ app.use('/api', (req, res) => {
 
 // Serve the built React app (npm run build) with SPA fallback.
 if (fs.existsSync(CLIENT_DIST)) {
+  const template = fs.readFileSync(path.join(CLIENT_DIST, 'index.html'), 'utf8');
   app.use(express.static(CLIENT_DIST, { maxAge: '1h', index: false }));
   app.get('*', (req, res) => {
     res.set('Cache-Control', 'no-cache');
-    res.sendFile(path.join(CLIENT_DIST, 'index.html'));
+    res.type('html').send(renderMetadata(template, req.path));
   });
 } else {
   app.get('/', (req, res) => {
