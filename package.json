@@ -12,6 +12,7 @@
     "test:parity": "jest test/parity.test.js --runInBand"
   },
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "axios": "^1.6.2",
     "cors": "^2.8.5",
     "csv-parse": "^5.6.0",

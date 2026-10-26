@@ -29,12 +29,18 @@ const scheduler = require('./jobs/scheduler');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
 const { renderMetadata } = require('./services/pageMetadata');
+const { classifyPath } = require('./services/siteRoutes');
+const { loadSummary } = require('./services/prerender');
+const { securityHeaders } = require('./middleware/securityHeaders');
+const siteRoutes = require('./routes/site');
 
 const app = express();
 // 3000/3001 are used by other local services on the dev Mac.
 const PORT = process.env.PORT || 3002;
-const CLIENT_DIST = path.join(__dirname, '../client/dist');
+const CLIENT_DIST = process.env.CLIENT_DIST || path.join(__dirname, '../client/dist');
 
+app.disable('x-powered-by');
+app.use(securityHeaders());
 app.use(cors());
 if (process.env.PREVIEW_DEPLOYMENT === 'true') {
   app.use((req, res, next) => { res.set('X-Robots-Tag', 'noindex, nofollow'); next(); });
@@ -76,13 +82,31 @@ app.use('/api', (req, res) => {
   res.status(404).json({ success: false, error: 'Not found' });
 });
 
-// Serve the built React app (npm run build) with SPA fallback.
+app.use(siteRoutes);
+
+// Cache policy for built files: Vite's content-hashed bundles never change; logos and
+// icons are long-lived; the service worker and manifest must update promptly.
+const staticCacheControl = (res, filePath) => {
+  const rel = path.relative(CLIENT_DIST, filePath).split(path.sep).join('/');
+  if (rel.startsWith('assets/')) res.set('Cache-Control', 'public, max-age=31536000, immutable');
+  else if (rel === 'sw.js') res.set('Cache-Control', 'no-cache');
+  // Logo/icon files are regenerated only by scripts; give replacements a new file name.
+  else if (rel.startsWith('logos/') || rel.startsWith('icons/')) res.set('Cache-Control', 'public, max-age=31536000');
+  else if (rel === 'manifest.webmanifest') res.set('Cache-Control', 'public, max-age=86400');
+  else res.set('Cache-Control', 'public, max-age=3600');
+};
+
+// Serve the built React app (npm run build) with SPA fallback for known client routes.
 if (fs.existsSync(CLIENT_DIST)) {
   const template = fs.readFileSync(path.join(CLIENT_DIST, 'index.html'), 'utf8');
-  app.use(express.static(CLIENT_DIST, { maxAge: '1h', index: false }));
-  app.get('*', (req, res) => {
+  app.use(express.static(CLIENT_DIST, { index: false, setHeaders: staticCacheControl }));
+  app.get('*', async (req, res) => {
     res.set('Cache-Control', 'no-cache');
-    res.type('html').send(renderMetadata(template, req.path));
+    const route = classifyPath(req.path);
+    if (!route.known) return res.status(404).type('html').send(renderMetadata(template, req.path, { notFound: true }));
+    const summary = await loadSummary(req.path.split('/')[1] || '', route);
+    if (summary.status === 404) return res.status(404).type('html').send(renderMetadata(template, req.path, { notFound: true }));
+    return res.type('html').send(renderMetadata(template, req.path, summary));
   });
 } else {
   app.get('/', (req, res) => {

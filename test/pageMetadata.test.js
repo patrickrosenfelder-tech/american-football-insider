@@ -5,7 +5,8 @@ test('initial team HTML contains a descriptive title, canonical and sharing meta
   expect(html).toContain('<title>Buffalo Bills | AFI</title>');
   expect(html).toContain('Buffalo Bills: schedule, roster, injuries');
   expect(html).toContain('property="og:title" content="Buffalo Bills | AFI"');
-  expect(html).toContain('name="twitter:card" content="summary"');
+  expect(html).toContain('name="twitter:card" content="summary_large_image"');
+  expect(html).toContain('property="og:image" content="https://american-football-insider.fly.dev/og-image.png"');
   expect(html).toContain('rel="canonical" href="https://american-football-insider.fly.dev/teams/BUF"');
 });
 test('route descriptions differ and arbitrary paths are HTML-escaped', () => {

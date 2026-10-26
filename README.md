@@ -63,6 +63,16 @@ curl -s -X POST https://american-football-insider.fly.dev/api/playoffs/scenario 
 curl -s -X POST -H "Authorization: Bearer $ADMIN_TOKEN" "https://american-football-insider.fly.dev/api/admin/jobs/news/run?wait=1"
 ```
 
+## Site, sharing and PWA
+
+- **Crawlers**: `/robots.txt` and `/sitemap.xml` (static routes, 32 team pages, current-season `/game/:id` and upcoming `/preview/:id` pages) are real files with correct content types. Unknown paths and invalid team/game ids return HTTP 404 with a "Page not found | AFI" title (`src/services/siteRoutes.js` mirrors the client routes in `client/src/App.jsx`).
+- **Initial HTML**: every page ships its title, description, canonical, Open Graph and `summary_large_image` Twitter tags. Home, `/standings`, `/game/:id` and `/preview/:id` also include a server-rendered `<h1>` and the core text (teams, score or kickoff) that React replaces on boot (`src/services/prerender.js`).
+- **Share images**: `client/public/og-image.png` is the 1200x630 brand card; `/og/game/:id.png` and `/og/preview/:id.png` are rendered on demand with team colors, logos and score/kickoff (`src/services/shareImage.js`, resvg, in-memory cache). Regenerate the brand card and PWA icons with `node scripts/build-brand-assets.js`.
+- **Team logos**: served locally from `client/public/logos` (96/192 px WebP + PNG, one-year cache) instead of ESPN's 500 px originals. Refresh with `node scripts/fetch-logos.js` (needs `cwebp`).
+- **Headers**: CSP (only the hosts the UI uses), HSTS, nosniff, `X-Frame-Options: DENY`, Referrer-Policy and Permissions-Policy on every response (`src/middleware/securityHeaders.js`). Hashed `/assets/*` bundles are `immutable` for a year; HTML and `sw.js` are `no-cache`.
+- **PWA**: `manifest.webmanifest`, icons (192/512/maskable) and `sw.js`, which precaches the app shell and hashed bundles. API calls are network-first (cache only used offline), so scores are never served stale online.
+- **Dates**: all UI dates use `client/src/dates.js` ("Oct 8, 2026", "Sun, Oct 26, 1:00 PM ET", US Eastern) regardless of browser locale.
+
 ## Data sources
 
 - **ESPN public JSON** (keyless, unofficial): scoreboard, summary, teams, rosters, depth charts, standings, injuries, news, transactions, odds (DraftKings lines via ESPN).

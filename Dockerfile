@@ -10,6 +10,8 @@ RUN npm run build && npm prune --omit=dev
 
 FROM node:22-bookworm-slim
 WORKDIR /app
+# DejaVu fonts for the server-rendered share images (src/services/shareImage.js).
+RUN apt-get update && apt-get install -y --no-install-recommends fonts-dejavu-core && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production PORT=8080 DB_PATH=/tmp/nfl-data.db
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/client/dist ./client/dist
