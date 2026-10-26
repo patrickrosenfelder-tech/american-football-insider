@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useApi, isLive, dayKey } from '../api.js';
-import { GameCard, Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { GameCard, ScoresSkeleton, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Scores() {
   const [params, setParams] = useSearchParams();
@@ -16,7 +16,7 @@ export default function Scores() {
     shouldRefresh: (body) => body.data.some((g) => isLive(g) || g.status.state === 'pre')
   });
 
-  if (loading && !data) return <Loading label="Loading scoreboard…" />;
+  if (loading && !data) return <ScoresSkeleton />;
   if (error && !data) return <ErrorBox error={error} />;
   if (!data?.data || !Array.isArray(data.data)) return <ErrorBox error={new Error('The scoreboard returned an invalid response.')} />;
 
@@ -79,7 +79,7 @@ export default function Scores() {
         <div key={day} className="day-group">
           <div className="scores-section-head"><h2 className="day-title">{day}</h2><span>{list.length} game{list.length === 1 ? '' : 's'}</span></div>
           <div className="grid games-grid">
-            {list.map((g) => <GameCard key={g.game_id} game={g} />)}
+            {list.map((g, i) => <GameCard key={g.game_id} game={g} eager={day === Object.keys(byDay)[0] && i < 4} />)}
           </div>
         </div>
       ))}

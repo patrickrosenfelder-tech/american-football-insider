@@ -19,7 +19,7 @@ const STAT_LABELS = {
 const fmt = (k, v) => {
   if (v == null) return '–';
   if (k === 'target_share') return `${(v * 100).toFixed(1)}%`;
-  if (Number.isInteger(v)) return v.toLocaleString();
+  if (Number.isInteger(v)) return v.toLocaleString('en-US');
   return v.toFixed(2);
 };
 

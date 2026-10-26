@@ -1,7 +1,7 @@
 import { usePageMetadata } from '../metadata.js';
 import { Link, useParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, InjuryBadge, Updated, StaleData } from '../components.jsx';
+import { Loading, PageSkeleton, ErrorBox, Logo, InjuryBadge, Updated, StaleData } from '../components.jsx';
 import { MatchupTendencies } from './Tendencies.jsx';
 import { WeatherBlock } from './Weather.jsx';
 import { TrendsBlock } from './Picks.jsx';
@@ -91,8 +91,10 @@ function Injuries({ side }) {
 export default function Preview() {
   const { gameId } = useParams();
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/previews/${gameId}`);
-  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name} · Preview` : null, 'NFL matchup information, team statistics, injuries and model analysis.');
-  if (loading && !data) return <Loading label="Building matchup preview…" />;
+  const missing = !data && /not found/i.test(error?.message || '');
+  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name} · Preview` : missing ? 'Page not found' : null, 'NFL matchup information, team statistics, injuries and model analysis.');
+  if (loading && !data) return <PageSkeleton label="Building matchup preview…" hero tables={2} />;
+  if (missing) return <div className="state"><h1>Game not found</h1><p>There is no game with this id. <Link to="/"><u>Go to this week’s games</u></Link></p></div>;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   if (!data?.data?.away || !data.data.home) return <ErrorBox error={new Error('This matchup preview returned an invalid response.')} onRetry={retry} />;
   const p = data.data;
@@ -108,7 +110,7 @@ export default function Preview() {
         <div className="hero-teams">
           {[away, home].map((t, i) => (
             <Link key={t.id} to={`/teams/${t.abbreviation}`} className="hero-team">
-              <Logo src={t.logo} size={72} alt={t.name} />
+              <Logo src={t.logo} size={72} alt={t.name} eager />
               <span className="hero-name">{t.name}</span>
               <span className="muted small">{t.standing?.record} · {t.standing?.summary}{t.standing?.streak ? ` · ${t.standing.streak}` : ''} · {i === 0 ? 'Away' : 'Home'}</span>
             </Link>

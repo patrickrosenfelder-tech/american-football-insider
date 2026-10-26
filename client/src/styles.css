@@ -590,3 +590,41 @@ th.sortable:hover, th.sortable.active { color: var(--accent); }
   .global-search { position: absolute; right: 16px; top: 60px; z-index: 11; }
   .global-search input { width: min(230px, calc(100vw - 100px)); }
 }
+
+/* Audit round 2: contrast, tap targets and layout stability. Colors only darken
+   existing tokens/badges to reach WCAG AA (4.5:1); layout of the approved design is unchanged. */
+:root { --muted: #5a6780; --badge-red: #c8371c; }
+.inj { background: #b45309; }
+.inj-o, .inj-ir, .inj-pup, .inj-sus, .inj-susp, .wx-level.high, .pick-res.loss, .social-breaking { background: var(--badge-red); }
+.wx-level.high { border-color: var(--badge-red); }
+.inj-d { background: #c2410c; }
+.inj-q, .wx-level.medium { background: #a16207; border-color: #a16207; }
+.subnav button.active, .tabs button.active { background: var(--badge-red); border-color: var(--badge-red); }
+.social-badge.bluesky { background: #0062d6; }
+.social-badge.youtube, .social-avatar.fallback.youtube { background: #cc0000; }
+.social-badge.reddit, .social-avatar.fallback.reddit { background: #c43a00; }
+.game-card-links a { display: inline-flex; align-items: center; min-height: 24px; color: #1554a5; }
+@media (max-width: 640px) {
+  .game-card-links { gap: 0 4px; padding: 2px 6px; }
+  .game-card-links a { min-height: 44px; padding: 0 8px; }
+}
+/* Main never collapses child margins through itself and always fills the viewport, so the
+   footer cannot jump when data replaces the loading skeleton (CLS). */
+#main-content { display: flow-root; min-height: 100vh; }
+.skeleton-block { display: block; border-radius: 8px; background: linear-gradient(90deg, var(--line), color-mix(in srgb, var(--line) 45%, var(--card)), var(--line)); background-size: 200% 100%; animation: skeleton 1.2s ease-in-out infinite; }
+.skeleton-card .game-card-team strong.skeleton-block { width: 70%; height: 1.1em; margin: 0 auto; }
+.skeleton-card .game-card-team span.skeleton-block { width: 40%; height: .9em; margin: 4px auto 0; }
+.skeleton-card .game-card-meta .skeleton-block { width: 120px; height: 22px; border-radius: 999px; }
+.skeleton-card .logo-fallback { background: var(--line); }
+.skeleton-title { width: min(280px, 70%); height: 2.2rem; }
+.skeleton-sub { width: min(360px, 85%); height: .9rem; margin-top: 10px; }
+.skeleton-row { height: 34px; margin: 8px 14px; }
+.skeleton-pill { width: 84px; height: 36px; border-radius: 999px; }
+.skeleton-hero { height: 260px; }
+@media (prefers-reduced-motion: reduce) { .skeleton-block, .skeleton-line { animation: none; } }
+/* Server-rendered summary shown before the app boots (replaced by React). */
+.ssr-summary { padding: 18px 0 40px; }
+.ssr-summary h1 { margin: 10px 0 8px; }
+.ssr-summary ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+.ssr-summary li { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.ssr-summary h2 { font-size: 1rem; margin: 18px 0 0; }

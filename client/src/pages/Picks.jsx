@@ -1,6 +1,7 @@
+import { formatDate } from '../dates.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff, formatTimestamp } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
+import { Loading, PageSkeleton, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
 
 const fmtLine = (v) => (v == null ? '–' : v > 0 ? `+${v}` : v === 0 ? 'PK' : `${v}`);
 const fmtMl = (v) => (v == null ? '' : v > 0 ? ` (+${v})` : ` (${v})`);
@@ -65,7 +66,7 @@ function PickCard({ g }) {
 function ModelRun({ run }) {
   if (!run) return null;
   const at = run.generated_at ? formatTimestamp(run.generated_at) : null;
-  if (run.available) return <p className="muted small">Model run: <b>{at}</b> · {run.model_version} · {run.games} games{run.data_through ? ` · data through ${new Date(run.data_through).toLocaleDateString()}` : ''}</p>;
+  if (run.available) return <p className="muted small">Model run: <b>{at}</b> · {run.model_version} · {run.games} games{run.data_through ? ` · data through ${formatDate(run.data_through)}` : ''}</p>;
   return <p className="disclaimer"><b>Model v1 fallback:</b> {at ? `the latest v2 run (${at}) is older than ${run.max_age_hours}h` : 'no v2 predictions are available'}, so these picks use the v1 formula.</p>;
 }
 
@@ -116,7 +117,7 @@ export default function Picks() {
   const [params] = useSearchParams();
   const week = params.get('week');
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/picks${week ? `?week=${week}` : ''}`, { refreshMs: 5000, shouldRefresh: (body) => body.data.refresh_in_progress });
-  if (loading && !data) return <Loading label="Loading picks…" />;
+  if (loading && !data) return <PageSkeleton label="Loading picks…" tables={3} rows={4} />;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   const d = data.data;
   return (
@@ -137,7 +138,7 @@ export default function Picks() {
       </div>
       <ModelRun run={d.model_run} />
       <p className="disclaimer">{d.disclaimer}</p>
-      <h2 className="section-title">Season record{d.tracking_since ? <span className="muted small"> · tracked since {new Date(d.tracking_since).toLocaleDateString()}</span> : ''}</h2>
+      <h2 className="section-title">Season record{d.tracking_since ? <span className="muted small"> · tracked since {formatDate(d.tracking_since)}</span> : ''}</h2>
       <RecordTiles record={d.record} />
       <h2 className="section-title">Record by confidence</h2>
       <ConfidenceRecord rows={d.confidence_record} />

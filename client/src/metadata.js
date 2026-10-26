@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+// Keep in sync with PAGES in src/services/pageMetadata.js (server-rendered titles).
 const ROUTES = {
   '': ['Games', 'NFL scores, upcoming games, kickoff times and matchup previews.'],
   standings: ['Standings', 'NFL division standings, records and conference playoff seeds.'],
@@ -7,10 +8,27 @@ const ROUTES = {
   picks: ['Picks', 'AFI model spread, total and moneyline picks with a transparent tracked record.'],
   news: ['News', 'NFL news summaries and data stories with links to their sources.'],
   preview: ['Matchup Preview', 'NFL matchup form, injuries, trends, model picks and kickoff weather.'],
+  previews: ['Matchup Previews', 'NFL matchup previews with form, injuries, trends and weather.'],
   game: ['Game Center', 'NFL game scores, team statistics, leaders and scoring plays.'],
-  status: ['Data Status', 'Refresh health, last successful updates and data-source errors.']
+  status: ['Data Status', 'Refresh health, last successful updates and data-source errors.'],
+  trades: ['Trades', 'NFL trades, transactions and sourced trade rumors.'],
+  'free-agents': ['Free Agents', 'NFL free agents and recent player signings.'],
+  model: ['AFI Model', 'AFI model methodology, prediction quality and backtests.'],
+  'power-rankings': ['Power Rankings', 'NFL team power rankings and performance signals.'],
+  weather: ['Weather', 'NFL kickoff weather forecasts and potential game impacts.'],
+  playoffs: ['Playoffs', 'NFL playoff scenarios, seeds and projected odds.'],
+  injuries: ['Injuries', 'NFL injury reports and practice participation.'],
+  tendencies: ['Tendencies', 'NFL scheme tendencies and team comparisons.'],
+  players: ['Player', 'NFL player profiles and season statistics.']
 };
 export const routeMetadata = (pathname) => ROUTES[pathname.split('/')[1]] || [pathname.split('/')[1].replace(/-/g, ' ') || 'Football Insider', 'NFL team information, analysis and live data from Football Insider.'];
+
+// Matchup pages get a generated 1200x630 card; everything else uses the brand card.
+// Mirrors shareImagePath() in src/services/pageMetadata.js.
+export const shareImagePath = (pathname) => {
+  const match = /^\/(game|preview)\/(\d{6,12})$/.exec(pathname);
+  return match ? `/og/${match[1]}/${match[2]}.png` : '/og-image.png';
+};
 
 export function setPageMetadata(title, description) {
   document.title = `${title} | AFI`;
@@ -25,7 +43,9 @@ export function setPageMetadata(title, description) {
   meta('meta[property="og:description"]', { property: 'og:description' }, description);
   meta('meta[property="og:type"]', { property: 'og:type' }, 'website');
   meta('meta[property="og:url"]', { property: 'og:url' }, url);
-  meta('meta[name="twitter:card"]', { name: 'twitter:card' }, 'summary');
+  meta('meta[property="og:image"]', { property: 'og:image' }, `${window.location.origin}${shareImagePath(window.location.pathname)}`);
+  meta('meta[name="twitter:card"]', { name: 'twitter:card' }, 'summary_large_image');
+  meta('meta[name="twitter:image"]', { name: 'twitter:image' }, `${window.location.origin}${shareImagePath(window.location.pathname)}`);
   meta('meta[name="twitter:title"]', { name: 'twitter:title' }, document.title);
   meta('meta[name="twitter:description"]', { name: 'twitter:description' }, description);
   let canonical = document.head.querySelector('link[rel="canonical"]');

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { setPageMetadata, routeMetadata } from './metadata.js';
+import { setPageMetadata, routeMetadata, usePageMetadata } from './metadata.js';
 import Scores from './pages/Scores.jsx';
 import Standings from './pages/Standings.jsx';
 import Teams from './pages/Teams.jsx';
@@ -19,6 +19,11 @@ import PowerRankings from './pages/PowerRankings.jsx';
 import Trades from './pages/Trades.jsx';
 import FreeAgents from './pages/FreeAgents.jsx';
 import Status from './pages/Status.jsx';
+
+function NotFound() {
+  usePageMetadata('Page not found', 'The page you requested does not exist on Football Insider.');
+  return <div className="state"><h1>Page not found</h1><p>That page doesn’t exist. <NavLink to="/"><u>Go to this week’s games</u></NavLink></p></div>;
+}
 
 export default function App() {
   const location = useLocation();
@@ -103,7 +108,7 @@ export default function App() {
           <Route path="/free-agents" element={<FreeAgents />} />
           <Route path="/status" element={<Status />} />
           <Route path="/news/:storyId" element={<NewsStory />} />
-          <Route path="*" element={<div className="state">Page not found.</div>} />
+          <Route path="*" element={<NotFound key={location.pathname} />} />
         </Routes>
       </main>
       <footer className="wrap footer">

@@ -1,7 +1,7 @@
 import { usePageMetadata } from '../metadata.js';
 import { Link, useParams } from 'react-router-dom';
 import { useApi, isLive, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, StatusPill, Updated } from '../components.jsx';
+import { PageSkeleton, ErrorBox, Logo, StatusPill, Updated, matchupTeams } from '../components.jsx';
 
 const KEY_STATS = ['totalYards', 'netPassingYards', 'rushingYards', 'firstDowns', 'thirdDownEff', 'fourthDownEff',
   'turnovers', 'totalPenaltiesYards', 'possessionTime', 'redZoneAttempts', 'sacksYardsLost', 'yardsPerPlay'];
@@ -53,8 +53,10 @@ export default function Game() {
     shouldRefresh: (body) => isLive(body.data)
   });
 
-  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name}` : null, 'NFL matchup information, team statistics, injuries and model analysis.');
-  if (loading && !data) return <Loading label="Loading game…" />;
+  const missing = !data && /not found/i.test(error?.message || '');
+  usePageMetadata(data?.data?.away && data?.data?.home ? `${data.data.away.name} at ${data.data.home.name}` : missing ? 'Page not found' : null, 'NFL matchup information, team statistics, injuries and model analysis.');
+  if (loading && !data) return <PageSkeleton label="Loading game…" hero tables={2} />;
+  if (missing) return <div className="state"><h1>Game not found</h1><p>There is no game with this id. <Link to="/"><u>Go to this week’s games</u></Link></p></div>;
   if (error && !data) return <ErrorBox error={error} />;
   const g = data.data;
   const started = g.status.state !== 'pre';
@@ -69,14 +71,14 @@ export default function Game() {
           <span className="hero-links">
             <Link className="small" to={`/preview/${g.game_id}`}><u>Matchup preview</u></Link>
             <Link className="small" to={`/weather/game/${g.game_id}`}><u>Weather</u></Link>
-            <Link className="small" to="/injuries"><u>Injury report</u></Link>
-            <Link className="small" to="/news"><u>Team news</u></Link>
+            <Link className="small" to={`/injuries?team=${matchupTeams(g)}`}><u>Injury report</u></Link>
+            <Link className="small" to={`/news?team=${matchupTeams(g)}`}><u>Team news</u></Link>
           </span>
         </div>
         <div className="hero-teams">
           {[g.away, g.home].map((t, i) => (
             <Link key={t.id} to={`/teams/${t.abbreviation}`} className={`hero-team ${g.status.state === 'post' && !t.winner ? 'lost' : ''}`}>
-              <Logo src={t.logo} size={72} alt={t.name} />
+              <Logo src={t.logo} size={72} alt={t.name} eager />
               <span className="hero-name">{t.short_name}</span>
               <span className="muted small">{t.record} · {i === 0 ? 'Away' : 'Home'}</span>
               {started && <span className="hero-score">{t.score}</span>}

@@ -1,3 +1,4 @@
+import { formatDateTime, formatShortDate } from '../dates.js';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
@@ -13,7 +14,7 @@ export const shortAgo = (iso) => {
   if (m < 60) return `${Math.max(m, 1)}m`;
   if (m < 24 * 60) return `${Math.round(m / 60)}h`;
   if (m < 7 * 24 * 60) return `${Math.round(m / 1440)}d`;
-  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return formatShortDate(iso);
 };
 
 const compact = (n) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}K` : String(n));
@@ -121,7 +122,7 @@ export function SocialCard({ p }) {
           {p.author.handle !== p.author.name && <span className="muted small"> {p.author.handle}</span>}
         </div>
         <span className={`social-badge ${p.platform}`} title={plat.label}>{plat.icon} {plat.label}</span>
-        <a href={p.url} target="_blank" rel="noreferrer" className="muted small" title={new Date(p.published).toLocaleString()}>{shortAgo(p.published)}</a>
+        <a href={p.url} target="_blank" rel="noreferrer" className="muted small" title={formatDateTime(p.published)}>{shortAgo(p.published)}</a>
       </header>
       {p.breaking && <span className="social-breaking">Breaking</span>}
       {p.flair && <span className="tag">{p.flair}</span>}
@@ -181,7 +182,7 @@ export default function Social() {
       {error && !data && <p className="muted">Watch feed unavailable: {error.message}</p>}
       {!loading && !error && !posts.length && <div className="state">No recent watch content.</div>}
       {posts.length > 0 && <div className="social-feed">{posts.map((p) => <SocialCard key={p.id} p={p} />)}</div>}
-      {data?.data?.last_updated && <p className="muted small updated">Updated {new Date(data.data.last_updated).toLocaleString()}</p>}
+      {data?.data?.last_updated && <p className="muted small updated">Updated {formatDateTime(data.data.last_updated)}</p>}
     </section>
   );
 }

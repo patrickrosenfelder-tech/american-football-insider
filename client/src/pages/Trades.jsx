@@ -1,10 +1,11 @@
+import { formatDate } from '../dates.js';
 import { useState } from 'react';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox } from '../components.jsx';
 
 const TEAMS = 'ARI ATL BAL BUF CAR CHI CIN CLE DAL DEN DET GB HOU IND JAX KC LAC LAR LV MIA MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WSH'.split(' ');
 const POSITIONS = ['QB', 'RB', 'WR', 'TE', 'OT', 'G', 'C', 'DE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
-const fmtDate = (d) => new Date(`${d}T12:00:00`).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+const fmtDate = (d) => formatDate(d);
 const signed = (n) => `${n > 0 ? '+' : ''}${n}`;
 
 function Asset({ item }) {
@@ -36,7 +37,7 @@ function Rumor({ x }) {
     <span className={`pill ${x.status === 'Active' ? 'pre' : x.status === 'Happened' ? 'live' : 'final'}`}>{x.status}</span></div>
     <p>{x.summary}</p>
     {x.status === 'Happened' && x.trade_id && <p className="small"><a href={`#trade-${x.trade_id}`}>See the completed trade ↑</a></p>}
-    <p className="small muted">Teams linked: {x.teams.join(', ') || '—'} · {x.mentions} outlet{x.mentions === 1 ? '' : 's'} · first seen {new Date(x.first_seen).toLocaleDateString()} · updated {new Date(x.last_updated).toLocaleDateString()}</p>
+    <p className="small muted">Teams linked: {x.teams.join(', ') || '—'} · {x.mentions} outlet{x.mentions === 1 ? '' : 's'} · first seen {formatDate(x.first_seen)} · updated {formatDate(x.last_updated)}</p>
     <div className="sources">{x.sources.slice(0, 5).map((s, i) => <a key={i} href={s.url} target="_blank" rel="noreferrer" title={s.title}>{s.outlet || 'Source'}</a>)}</div></article>;
 }
 

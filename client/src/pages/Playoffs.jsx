@@ -229,7 +229,7 @@ export default function Playoffs() {
           {odds.error && <ErrorBox error={odds.error} />}
           {odds.data && (
             <>
-              <p className="muted small">{odds.data.data.sims.toLocaleString()} simulations of the {odds.data.data.remaining_games} remaining games. {overview.model.win_probability}</p>
+              <p className="muted small">{odds.data.data.sims.toLocaleString('en-US')} simulations of the {odds.data.data.remaining_games} remaining games. {overview.model.win_probability}</p>
               <OddsTable odds={odds.data.data} />
               <Updated at={odds.data.data.computed_at} />
             </>

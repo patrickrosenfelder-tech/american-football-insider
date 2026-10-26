@@ -5,13 +5,76 @@ export function Loading({ label = 'Loading…' }) {
   return <div className="state skeleton-state" role="status" aria-label={label}><div className="skeleton-line wide" /><div className="skeleton-line" /><span className="sr-only">{label}</span></div>;
 }
 
+// Placeholders built from the real page classes so they occupy the same space as the loaded content.
+export function PageHeadSkeleton() {
+  return <div className="page-head"><div className="grow"><span className="skeleton-block skeleton-title" /><span className="skeleton-block skeleton-sub" /></div></div>;
+}
+
+export function GameCardSkeleton() {
+  const Team = () => (
+    <div className="game-card-team">
+      <strong className="skeleton-block" /><span className="skeleton-block" />
+      <div className="game-card-mark"><span className="logo-fallback" style={{ width: 54, height: 54 }} /></div>
+    </div>
+  );
+  return (
+    <article className="card game-card skeleton-card" aria-hidden="true">
+      <div className="game-card-main"><div className="game-card-teams"><Team /><Team /></div><div className="game-card-meta"><span className="skeleton-block" /></div></div>
+    </article>
+  );
+}
+
+export function ScoresSkeleton({ label = 'Loading scoreboard…', cards = 6 }) {
+  return (
+    <section role="status" aria-label={label}>
+      <div className="scores-hero">
+        <PageHeadSkeleton />
+        <div className="score-filters">{[0, 1, 2, 3].map((i) => <span key={i} className="skeleton-block skeleton-pill" />)}</div>
+      </div>
+      <div className="day-group">
+        <div className="scores-section-head"><span className="skeleton-block skeleton-sub" /></div>
+        <div className="grid games-grid">{Array.from({ length: cards }, (_, i) => <GameCardSkeleton key={i} />)}</div>
+      </div>
+      <span className="sr-only">{label}</span>
+    </section>
+  );
+}
+
+export function TableSkeleton({ rows = 6 }) {
+  return <div className="card table-card" aria-hidden="true">{Array.from({ length: rows }, (_, i) => <span key={i} className="skeleton-block skeleton-row" />)}</div>;
+}
+
+export function PageSkeleton({ label = 'Loading…', hero = false, tables = 2, rows = 6 }) {
+  return (
+    <section role="status" aria-label={label}>
+      {hero ? <div className="card skeleton-block skeleton-hero" /> : <PageHeadSkeleton />}
+      {Array.from({ length: tables }, (_, i) => <TableSkeleton key={i} rows={rows} />)}
+      <span className="sr-only">{label}</span>
+    </section>
+  );
+}
+
 export function ErrorBox({ error, onRetry }) {
   return <div className="state error" role="alert"><p>Couldn’t load data: {error?.message || String(error)}</p><button className="btn retry-btn" onClick={onRetry || (() => window.location.reload())}>Retry</button></div>;
 }
 
-export function Logo({ src, alt, size = 28 }) {
+// ESPN's 500 px logos are served as local 96/192 px copies (scripts/fetch-logos.js).
+const LOCAL_LOGO = /^https:\/\/a\.espncdn\.com\/i\/teamlogos\/nfl\/500\/(?:scoreboard\/)?([a-z]{2,3})\.png$/i;
+const LOCAL_TEAMS = new Set(['ari', 'atl', 'bal', 'buf', 'car', 'chi', 'cin', 'cle', 'dal', 'den', 'det', 'gb', 'hou', 'ind', 'jax', 'kc', 'lac', 'lar', 'lv', 'mia', 'min', 'ne', 'no', 'nyg', 'nyj', 'phi', 'pit', 'sea', 'sf', 'tb', 'ten', 'wsh']);
+export function localLogo(src) {
+  const team = LOCAL_LOGO.exec(src || '')?.[1]?.toLowerCase();
+  return team && LOCAL_TEAMS.has(team) ? team : null;
+}
+
+export function Logo({ src, alt, size = 28, eager = false }) {
   if (!src) return <span className="logo-fallback" style={{ width: size, height: size }} />;
-  return <img className="logo" src={src} alt={alt || ''} width={size} height={size} loading="lazy" />;
+  const team = localLogo(src);
+  const loading = eager ? 'eager' : 'lazy';
+  if (!team) return <img className="logo" src={src} alt={alt || ''} width={size} height={size} loading={loading} decoding="async" />;
+  return (
+    <img className="logo" src={`/logos/${team}-96.webp`} srcSet={`/logos/${team}-96.webp 96w, /logos/${team}-192.webp 192w`} sizes={`${size}px`}
+      alt={alt || ''} width={size} height={size} loading={loading} decoding="async" />
+  );
 }
 
 export function StatusPill({ game }) {
@@ -37,7 +100,10 @@ function TeamRow({ team, game }) {
   );
 }
 
-export function GameCard({ game }) {
+// "BUF,KC": filter value for the injury report and news feed of one matchup.
+export const matchupTeams = (game) => [game.away?.abbreviation, game.home?.abbreviation].filter(Boolean).join(',');
+
+export function GameCard({ game, eager = false }) {
   const accent = game.home?.color || game.away?.color || '#0b1c2d';
   const showScore = game.status.state !== 'pre';
   const Team = ({ team }) => (
@@ -45,7 +111,7 @@ export function GameCard({ game }) {
       <strong>{team.short_name || team.name}</strong>
       {team.record && <span>{team.record}</span>}
       <div className="game-card-mark">
-        <Logo src={team.logo} alt={team.abbreviation} size={54} />
+        <Logo src={team.logo} alt={team.abbreviation} size={54} eager={eager} />
         {showScore && <b className="game-card-score">{team.score ?? '–'}</b>}
       </div>
     </div>
@@ -69,8 +135,8 @@ export function GameCard({ game }) {
           <Link to={`/game/${game.game_id}`}>Game center</Link>
           <Link to={`/preview/${game.game_id}`}>Preview</Link>
           <Link to={`/weather/game/${game.game_id}`}>Weather</Link>
-          <Link to="/injuries">Injuries</Link>
-          <Link to="/news">News</Link>
+          <Link to={`/injuries?team=${matchupTeams(game)}`}>Injuries</Link>
+          <Link to={`/news?team=${matchupTeams(game)}`}>News</Link>
         </div>
       )}
     </article>

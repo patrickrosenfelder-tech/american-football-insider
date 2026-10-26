@@ -1,3 +1,4 @@
+import { formatDateTime } from '../dates.js';
 import { useMemo, useState } from 'react';
 import { useApi } from '../api.js';
 import { Loading, ErrorBox } from '../components.jsx';
@@ -54,7 +55,7 @@ export default function FreeAgents() {
   const set = (k) => (e) => setView((v) => ({ ...v, [k]: e.target.value }));
   const count = (g) => (d.agents || []).filter((p) => !g || p.group === g).length;
   return <section className="page"><h1>Top Free Agents</h1>
-    <p className="muted">Unsigned veterans and active-roster releases, each confirmed as a free agent on ESPN at the last daily refresh{d.last_updated ? ` (${new Date(d.last_updated).toLocaleString()})` : ''}. Players who sign anywhere drop off automatically.</p>
+    <p className="muted">Unsigned veterans and active-roster releases, each confirmed as a free agent on ESPN at the last daily refresh{d.last_updated ? ` (${formatDateTime(d.last_updated)})` : ''}. Players who sign anywhere drop off automatically.</p>
     <div className="card prose note"><b>How the AFI FA score works</b><br />{d.formula}<br /><span className="small muted">Team fits = top 3 teams by positional need: healthy players vs. a 53-man target at the position, plus injured starters (nflverse weekly rosters + 2026 snap shares).</span></div>
     <div className="tabs">
       {['', ...groups].map((g) => <button key={g || 'all'} type="button" className={view.group === g ? 'active' : ''} onClick={() => setView((v) => ({ ...v, group: g }))}>{g || 'All'} <span className="muted small">{count(g)}</span></button>)}

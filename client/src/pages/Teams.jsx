@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { getFavoriteTeams, toggleFavoriteTeam, useApi } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { PageSkeleton, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Teams() {
   const { data, error, loading } = useApi('/teams');
   const [query, setQuery] = useState('');
   const [favorites, setFavorites] = useState(() => getFavoriteTeams());
-  if (loading) return <Loading label="Loading teams…" />;
+  if (loading) return <PageSkeleton label="Loading teams…" tables={2} rows={8} />;
   if (error) return <ErrorBox error={error} />;
 
   const filtered = data.data.filter((t) => `${t.name} ${t.abbreviation} ${t.division}`.toLowerCase().includes(query.toLowerCase()));

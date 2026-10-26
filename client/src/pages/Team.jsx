@@ -2,7 +2,7 @@ import { usePageMetadata } from '../metadata.js';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { getFavoriteTeams, toggleFavoriteTeam, useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { Loading, PageSkeleton, ErrorBox, Logo, Updated } from '../components.jsx';
 import DepthChart from './DepthChart.jsx';
 import Roster from './Roster.jsx';
 import { TeamInjuries } from './Injuries.jsx';
@@ -66,7 +66,7 @@ export default function Team() {
   const team = useApi(`/teams/${teamId}`);
 
   usePageMetadata(team.data?.data?.name, team.data?.data?.name ? `${team.data.data.name}: schedule, roster, injuries, news and season statistics.` : null);
-  if (team.loading) return <Loading label="Loading team…" />;
+  if (team.loading) return <PageSkeleton label="Loading team…" hero tables={1} />;
   if (team.error) return <ErrorBox error={team.error} />;
   const t = team.data.data;
   const favorite = favorites.includes(t.abbreviation);

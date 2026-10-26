@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated } from '../components.jsx';
+import { PageSkeleton, ErrorBox, Logo, Updated } from '../components.jsx';
 
 export default function Standings() {
   const { data, error, loading } = useApi('/standings');
-  if (loading) return <Loading label="Loading standings…" />;
+  if (loading) return <PageSkeleton label="Loading standings…" tables={4} rows={5} />;
   if (error) return <ErrorBox error={error} />;
   const { conferences, season_display } = data.data;
 

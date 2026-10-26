@@ -9,5 +9,7 @@ const scores = read('client/src/pages/Scores.jsx');
 const components = read('client/src/components.jsx');
 const card = components.slice(components.indexOf('export function GameCard('), components.indexOf('export function FeaturedFinal('));
 test('preserves the approved light-theme stylesheet', () => expect(hash(css)).toBe('7940e1d04ad576cd08732b9e86c2a1e9825b454b60a3e4895e90c82af416cf51'));
-test('preserves the approved scoreboard, week picker and filters', () => expect(hash(scores)).toBe('84c339592f0c6a3520ff2141acade879a130d206cc2789908c5eb75cfc6f5372'));
-test('preserves the approved score card and postgame links', () => expect(hash(card)).toBe('a69870d01d9d1a1c9d7af56b9199ad223b12e66359fb31b9e2e1471059295450'));
+// Reviewed 2026-10-26: loading state uses a same-size card skeleton (CLS) and the first cards load logos eagerly; layout unchanged.
+test('preserves the approved scoreboard, week picker and filters', () => expect(hash(scores)).toBe('5d66b5d6ed6e57a35fd4e80597faf3bd61534a62df2f6874325bf7830af05eb9'));
+// Reviewed 2026-10-26: Injuries/News links filter to the two teams of the game; eager logo prop. Visual layout unchanged.
+test('preserves the approved score card and postgame links', () => expect(hash(card)).toBe('ba33d73be364339e51b710a8c49909fbf07c587086f2d2195387aee7a2388179'));

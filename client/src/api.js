@@ -1,3 +1,4 @@
+import { formatDateTime } from './dates.js';
 import { useEffect, useState, useCallback, useRef } from 'react';
 
 const sessionCache = new Map();
@@ -78,13 +79,6 @@ export function useApi(path, { refreshMs = 0, shouldRefresh = () => false, timeo
 
 export const isLive = (game) => game?.status?.state === 'in';
 
-export function formatKickoff(iso) {
-  const d = new Date(iso);
-  return `${d.toLocaleString(undefined, { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} ET`;
-}
-
-export function dayKey(iso) {
-  return new Date(iso).toLocaleDateString(undefined, { timeZone: 'America/New_York', weekday: 'long', month: 'long', day: 'numeric' });
-}
-
-export const formatTimestamp = (iso) => iso ? `${new Date(iso).toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short' })} ET` : '–';
+export { formatKickoff, formatDate, formatShortDate, formatDateTime } from './dates.js';
+export { formatDayHeading as dayKey } from './dates.js';
+export const formatTimestamp = (iso) => formatDateTime(iso);

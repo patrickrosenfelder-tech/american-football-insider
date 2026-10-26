@@ -1,6 +1,6 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useApi, formatKickoff } from '../api.js';
-import { Loading, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
+import { Loading, PageSkeleton, ErrorBox, Logo, Updated, StaleData } from '../components.jsx';
 
 const LEVEL_LABEL = { none: 'No impact', low: 'Low', medium: 'Moderate', high: 'High' };
 
@@ -52,7 +52,7 @@ export default function Weather() {
   const [params] = useSearchParams();
   const week = params.get('week');
   const { data, error, loading, retry, stale, lastUpdated } = useApi(`/weather${week ? `?week=${week}` : ''}`, { timeoutMs: 10000 });
-  if (loading && !data) return <Loading label="Loading forecasts…" />;
+  if (loading && !data) return <PageSkeleton label="Loading forecasts…" tables={3} rows={4} />;
   if (error && !data) return <ErrorBox error={error} onRetry={retry} />;
   if (!data?.data || !Array.isArray(data.data.games)) return <ErrorBox error={new Error('Weather data is unavailable right now.')} onRetry={retry} />;
   const d = data.data;
