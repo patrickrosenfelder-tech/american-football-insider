@@ -4,3 +4,7 @@ client/dist
 .env
 .git
 *.log
+scripts/model/.cache
+**/__pycache__
+coverage
+scripts/model/features_*.csv
