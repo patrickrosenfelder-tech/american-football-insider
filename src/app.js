@@ -117,9 +117,14 @@ if (fs.existsSync(CLIENT_DIST)) {
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`American Football Insider running on port ${PORT}`);
+    // The old boot path downloaded and parsed every missing historical data set
+    // (including the full play-by-play archive) before the scheduler started.
+    // On Fly's 256 MB single CPU VM that monopolized the event loop long enough
+    // for even /api/health to time out.  Start serving and schedule each bounded
+    // refresh independently; the normal scheduler backfills data at its own
+    // cadence without making application availability depend on a bulk import.
     refresh.loadStatus()
-      .then(() => refresh.bootstrap())
-      .catch((error) => console.error('Bootstrap refresh failed:', error.message))
+      .catch((error) => console.error('Refresh status load failed:', error.message))
       .finally(() => scheduler.start());
   });
 }
