@@ -12,6 +12,8 @@ const PAGES = {
   'free-agents': ['Free Agents', 'NFL free agents and recent player signings.'],
   model: ['AFI Model', 'AFI model methodology, prediction quality and backtests.'],
   'power-rankings': ['Power Rankings', 'NFL team power rankings and performance signals.'],
+  elo: ['Elo Ratings', 'AFI base Elo for every NFL team: results Elo plus a roster adjustment by position group.'],
+  accuracy: ['Accuracy vs Vegas', 'How often the AFI model picks NFL winners compared with the Vegas closing line.'],
   weather: ['Weather', 'NFL kickoff weather forecasts and potential game impacts.'],
   playoffs: ['Playoffs', 'NFL playoff scenarios, seeds and projected odds.'],
   injuries: ['Injuries', 'NFL injury reports and practice participation.'],
@@ -30,7 +32,8 @@ const shareImagePath = (pathname) => {
   return match ? `/og/${match[1]}/${match[2]}.png` : '/og-image.png';
 };
 
-const NAV = [['/', 'Games'], ['/standings', 'Standings'], ['/picks', 'Picks'], ['/teams', 'Teams'], ['/news', 'News']];
+// Section landing pages; mirrors NAV_GROUPS in client/src/App.jsx (React replaces this shell on boot).
+const NAV = [['/', 'Games'], ['/standings', 'Standings'], ['/picks', 'Model'], ['/teams', 'Teams'], ['/news', 'News']];
 // Static shell shown until React boots (React replaces everything inside #root).
 const shellHtml = (bodyHtml) => `<header class="topbar"><div class="wrap topbar-inner"><a href="/" class="brand"><img src="/favicon.svg" alt="" width="28" height="28" /><span>Football <b>Insider</b></span></a><nav aria-label="Primary navigation">${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('')}</nav></div></header>
 <main class="wrap" id="main-content"><div class="ssr-summary">

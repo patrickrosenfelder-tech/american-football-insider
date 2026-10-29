@@ -14,3 +14,5 @@ build/
 npm-debug.log*
 client/dist/
 __pycache__/
+coverage/
+brag-output/

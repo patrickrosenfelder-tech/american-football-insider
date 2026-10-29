@@ -43,6 +43,13 @@ router.post('/predictions', requireAdmin, async (req, res) => {
   } catch (error) { return res.status(500).json({ success: false, error: error.message }); }
 });
 
+// v3 base Elo ratings, published by the same scheduled workflow (scripts/model/v3/export_ratings.py).
+router.post('/ratings', requireAdmin, async (req, res) => {
+  try {
+    return res.json({ success: true, data: await require('../services/ratingsService').saveRatings(req.body) });
+  } catch (error) { return res.status(error.status || 500).json({ success: false, error: error.message }); }
+});
+
 // GET /admin/llm (also available as /api/admin/llm) — provider accounting and latest observed limits.
 router.get('/llm', requireAdmin, async (req, res) => {
   try {

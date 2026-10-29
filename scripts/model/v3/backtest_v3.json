@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28T20:04:34.545196+00:00",
+  "generated_at": "2026-10-29T14:50:08.157735+00:00",
   "oos_games": 2448,
   "seasons": [
     2017,
@@ -2710,6 +2710,96 @@
         "margin_mae": 9.754
       }
     }
+  },
+  "confidence_buckets": {
+    "v2": [
+      {
+        "range": "0-3",
+        "games": 902,
+        "su_accuracy": 0.5743
+      },
+      {
+        "range": "3-6",
+        "games": 740,
+        "su_accuracy": 0.6432
+      },
+      {
+        "range": "6-9",
+        "games": 449,
+        "su_accuracy": 0.7105
+      },
+      {
+        "range": "9+",
+        "games": 349,
+        "su_accuracy": 0.7908
+      }
+    ],
+    "core_v31": [
+      {
+        "range": "0-3",
+        "games": 923,
+        "su_accuracy": 0.5417
+      },
+      {
+        "range": "3-6",
+        "games": 684,
+        "su_accuracy": 0.6477
+      },
+      {
+        "range": "6-9",
+        "games": 472,
+        "su_accuracy": 0.7479
+      },
+      {
+        "range": "9+",
+        "games": 361,
+        "su_accuracy": 0.8199
+      }
+    ],
+    "B_m1.0_early-0.2": [
+      {
+        "range": "0-3",
+        "games": 727,
+        "su_accuracy": 0.5475
+      },
+      {
+        "range": "3-6",
+        "games": 780,
+        "su_accuracy": 0.6615
+      },
+      {
+        "range": "6-9",
+        "games": 483,
+        "su_accuracy": 0.7246
+      },
+      {
+        "range": "9+",
+        "games": 450,
+        "su_accuracy": 0.8333
+      }
+    ],
+    "vegas": [
+      {
+        "range": "0-3",
+        "games": 555,
+        "su_accuracy": 0.5315
+      },
+      {
+        "range": "3-6",
+        "games": 945,
+        "su_accuracy": 0.6201
+      },
+      {
+        "range": "6-9",
+        "games": 569,
+        "su_accuracy": 0.7504
+      },
+      {
+        "range": "9+",
+        "games": 371,
+        "su_accuracy": 0.8625
+      }
+    ]
   },
   "blend_weight_on_core_latest": 0.151
 }

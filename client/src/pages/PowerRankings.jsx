@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../api.js';
+import { Logo } from '../components.jsx';
 
 const COLS = [
   { id: 'rank', label: 'Rank', key: (r) => r.rank, desc: false },
@@ -8,8 +9,9 @@ const COLS = [
   { id: 'record', label: 'Record', key: (r) => winPct(r.record), desc: true },
   { id: 'score', label: 'Score', key: (r) => r.score, desc: true },
   { id: 'elo', label: 'Elo', key: (r) => r.elo, desc: true },
-  { id: 'off', label: 'Off EPA', key: (r) => r.off_adj_epa_proxy ?? -99, desc: true },
-  { id: 'def', label: 'Def EPA', key: (r) => r.def_adj_epa_proxy ?? -99, desc: true },
+  { id: 'off', label: 'Off EPA/play', key: (r) => r.off_epa ?? -99, desc: true },
+  // Lower EPA allowed is better, so the default sort for defense is ascending.
+  { id: 'def', label: 'Def EPA/play allowed', key: (r) => r.def_epa_allowed ?? 99, desc: false },
 ];
 
 function winPct(rec) {
@@ -18,7 +20,7 @@ function winPct(rec) {
   return g ? (w + t / 2) / g : -1;
 }
 
-const fmt = (x) => (x == null ? '—' : (x > 0 ? '+' : '') + x.toFixed(2));
+const fmt = (x) => (x == null ? '—' : (x > 0 ? '+' : '') + x.toFixed(3));
 
 export default function PowerRankings() {
   const { data, loading, error } = useApi('/power-rankings');
@@ -51,8 +53,8 @@ export default function PowerRankings() {
       {COLS.map((c) => <th key={c.id} className={`sortable ${view.sort === c.id ? 'active' : ''} ${c.left ? 'left' : ''}`} onClick={() => sortBy(c)}>{c.label}{view.sort === c.id ? (view.dir === 'desc' ? ' ▼' : ' ▲') : ''}</th>)}
       <th className="left">Why</th></tr></thead>
       <tbody>{rows.map((r) => <tr key={r.team}><td>{r.rank}</td>
-        <td className="left nowrap"><Link to={`/teams/${r.team}`}>{r.logo && <img className="headshot mini" src={r.logo} alt="" loading="lazy" />}<b>{r.team}</b></Link></td>
-        <td>{r.record || '—'}</td><td>{r.score}</td><td>{r.elo}</td><td>{fmt(r.off_adj_epa_proxy)}</td><td>{fmt(r.def_adj_epa_proxy)}</td><td className="left small">{r.reason}</td></tr>)}</tbody>
+        <td className="left nowrap"><Link to={`/teams/${r.team}`}>{r.logo && <Logo src={r.logo} size={22} alt="" />} <b>{r.team}</b></Link></td>
+        <td>{r.record || '—'}</td><td>{r.score}</td><td>{r.elo}</td><td>{fmt(r.off_epa)}</td><td>{fmt(r.def_epa_allowed)}</td><td className="left small">{r.reason}</td></tr>)}</tbody>
     </table>{!rows.length && <div className="state">No teams match these filters.</div>}</div>
     <p className="muted small">Rank is always the overall AFI rank; filters and sorting only change what is shown. Click a column header to sort.</p>
   </section>;

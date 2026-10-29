@@ -32,16 +32,25 @@ const getModel = async () => ({
   promotion_rule: 'Promote only when out-of-sample log loss improves and straight-up accuracy does not decline.'
 });
 
+// The v3 artifact uses nflverse abbreviations; ESPN's differ for two teams.
+const fromV3 = (ratings) => Object.fromEntries((ratings?.teams || []).map((t) => [t.team_espn || t.team, t]));
+
 const getPowerRankings = async (season) => {
-  const [model, elo] = await Promise.all([buildModel(season), eloHistory(season)]);
+  const [model, elo, ratings] = await Promise.all([buildModel(season), eloHistory(season), require('./ratingsService').getRatings().catch(() => null)]);
+  const v3 = ratings?.season === season ? fromV3(ratings) : {};
   const rows = Object.entries(model.teams).map(([id, team]) => {
-    const name = model.byId[id]; const e = elo[name.abbreviation] || 1505;
+    const name = model.byId[id];
+    // AFI base Elo (results + roster) when the v3 artifact covers this season, else results-only Elo.
+    const e = v3[name.abbreviation]?.base_elo ?? elo[name.abbreviation] ?? 1505;
     const score = team.efficiency.rating * 40 + team.recency.value * 2 + (e - 1505) / 18;
+    const epa = (x) => (x == null ? null : Math.round(x * 1000) / 1000);
     return { team: name.abbreviation, team_id: id, elo: Math.round(e), score: round(score),
-      off_adj_epa_proxy: round(team.efficiency.ypp || 0), def_adj_epa_proxy: round(-(team.efficiency.ypp || 0)),
+      off_epa: epa(team.efficiency.off_epa), def_epa_allowed: epa(team.efficiency.def_epa),
       games: team.games, reason: `${name.abbreviation} is driven by ${team.efficiency.snippet}` };
   }).sort((a, b) => b.score - a.score).map((r, i) => ({ ...r, rank: i + 1 }));
-  return { season, version: registry.version, updated_at: new Date().toISOString(), methodology: 'Decay-weighted efficiency proxy + AFI Elo. Availability is incorporated into game predictions and will be added to rankings when an official injury snapshot is present.', rankings: rows };
+  const eloNote = Object.keys(v3).length ? `AFI base Elo (results + roster, ${ratings.model_version}, week ${ratings.week})` : 'results-only AFI Elo';
+  return { season, version: registry.version, updated_at: new Date().toISOString(), elo_source: Object.keys(v3).length ? 'v3_base' : 'results',
+    methodology: `Decay-weighted efficiency + ${eloNote}. Off EPA is expected points added per offensive play; Def EPA is per play allowed (lower is better).`, rankings: rows };
 };
 
 // Converts raw terms on a pick card into plain-language, learned feature

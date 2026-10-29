@@ -73,5 +73,7 @@ def games(refresh=False):
         urllib.request.urlretrieve(GAMES_URL, path)
     g = pd.read_csv(path)
     g = g[g.game_type.eq("REG")].copy()
-    g["kickoff"] = pd.to_datetime(g.gameday.astype(str) + " " + g.gametime.fillna("13:00"), utc=True, errors="coerce")
+    # nflverse gameday/gametime are US Eastern wall-clock times.
+    local = pd.to_datetime(g.gameday.astype(str) + " " + g.gametime.fillna("13:00"), errors="coerce")
+    g["kickoff"] = local.dt.tz_localize("America/New_York", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
     return g.sort_values(["kickoff", "game_id"]).reset_index(drop=True)

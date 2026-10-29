@@ -1,0 +1,2111 @@
+{
+  "model_version": "v3.2",
+  "generated_at": "2026-10-29T14:52:37.443449+00:00",
+  "season": 2026,
+  "week": 8,
+  "data_through": "2026-10-27T00:15:00+00:00",
+  "method": "Export current AFI v3 base Elo ratings for the site (/elo).\n\nbase Elo = results Elo + roster adjustment. The roster adjustment is each position\ngroup's strength (available players, this week) minus the league average that week,\ntimes the group's learned weight, converted at 25 Elo per point of margin. Weights\ncome from the v3 core model refit on every played game.",
+  "elo_per_point": 25.0,
+  "position_factors_elo_per_sd": {
+    "QB": 42.9,
+    "RB": 3.5,
+    "WR": 8.3,
+    "TE": -0.4,
+    "OL": 19.8,
+    "DL": 15.0,
+    "LB": 10.3,
+    "CB": -2.7,
+    "S": 18.5,
+    "K": 5.8
+  },
+  "teams": [
+    {
+      "team": "BUF",
+      "team_espn": "BUF",
+      "week": 8,
+      "results_elo": 1649,
+      "roster_adj": 104,
+      "base_elo": 1753,
+      "groups": {
+        "QB": 73.4,
+        "RB": 5.8,
+        "WR": 0.7,
+        "TE": -0.4,
+        "OL": 24.6,
+        "DL": -0.8,
+        "LB": 17.6,
+        "CB": -2.7,
+        "S": -8.2,
+        "K": -6.1
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1722,
+          "results_elo": 1603
+        },
+        {
+          "week": 2,
+          "base_elo": 1733,
+          "results_elo": 1624
+        },
+        {
+          "week": 3,
+          "base_elo": 1792,
+          "results_elo": 1640
+        },
+        {
+          "week": 4,
+          "base_elo": 1802,
+          "results_elo": 1648
+        },
+        {
+          "week": 5,
+          "base_elo": 1763,
+          "results_elo": 1628
+        },
+        {
+          "week": 6,
+          "base_elo": 1752,
+          "results_elo": 1642
+        },
+        {
+          "week": 8,
+          "base_elo": 1753,
+          "results_elo": 1649
+        }
+      ],
+      "rank": 1
+    },
+    {
+      "team": "SF",
+      "team_espn": "SF",
+      "week": 7,
+      "results_elo": 1657,
+      "roster_adj": 82,
+      "base_elo": 1739,
+      "groups": {
+        "QB": 80.8,
+        "RB": 5.2,
+        "WR": -11.9,
+        "TE": -1.0,
+        "OL": 21.1,
+        "DL": -9.2,
+        "LB": -5.1,
+        "CB": 2.6,
+        "S": -1.1,
+        "K": 1.2
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1627,
+          "results_elo": 1559
+        },
+        {
+          "week": 2,
+          "base_elo": 1664,
+          "results_elo": 1594
+        },
+        {
+          "week": 3,
+          "base_elo": 1696,
+          "results_elo": 1607
+        },
+        {
+          "week": 4,
+          "base_elo": 1726,
+          "results_elo": 1614
+        },
+        {
+          "week": 5,
+          "base_elo": 1746,
+          "results_elo": 1634
+        },
+        {
+          "week": 6,
+          "base_elo": 1758,
+          "results_elo": 1651
+        },
+        {
+          "week": 7,
+          "base_elo": 1739,
+          "results_elo": 1657
+        }
+      ],
+      "rank": 2
+    },
+    {
+      "team": "SEA",
+      "team_espn": "SEA",
+      "week": 8,
+      "results_elo": 1646,
+      "roster_adj": 84,
+      "base_elo": 1729,
+      "groups": {
+        "QB": -0.6,
+        "RB": -1.3,
+        "WR": 9.0,
+        "TE": 0.2,
+        "OL": 2.1,
+        "DL": 9.8,
+        "LB": 9.5,
+        "CB": -2.6,
+        "S": 52.1,
+        "K": 5.4
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1705,
+          "results_elo": 1640
+        },
+        {
+          "week": 2,
+          "base_elo": 1648,
+          "results_elo": 1649
+        },
+        {
+          "week": 3,
+          "base_elo": 1692,
+          "results_elo": 1666
+        },
+        {
+          "week": 4,
+          "base_elo": 1688,
+          "results_elo": 1648
+        },
+        {
+          "week": 5,
+          "base_elo": 1699,
+          "results_elo": 1655
+        },
+        {
+          "week": 6,
+          "base_elo": 1687,
+          "results_elo": 1638
+        },
+        {
+          "week": 7,
+          "base_elo": 1709,
+          "results_elo": 1625
+        },
+        {
+          "week": 8,
+          "base_elo": 1729,
+          "results_elo": 1646
+        }
+      ],
+      "rank": 3
+    },
+    {
+      "team": "DET",
+      "team_espn": "DET",
+      "week": 8,
+      "results_elo": 1569,
+      "roster_adj": 118,
+      "base_elo": 1687,
+      "groups": {
+        "QB": 58.2,
+        "RB": 5.9,
+        "WR": 16.3,
+        "TE": -0.7,
+        "OL": -8.3,
+        "DL": 16.6,
+        "LB": -7.2,
+        "CB": 1.1,
+        "S": 34.5,
+        "K": 1.2
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1630,
+          "results_elo": 1563
+        },
+        {
+          "week": 2,
+          "base_elo": 1642,
+          "results_elo": 1567
+        },
+        {
+          "week": 3,
+          "base_elo": 1638,
+          "results_elo": 1551
+        },
+        {
+          "week": 4,
+          "base_elo": 1669,
+          "results_elo": 1559
+        },
+        {
+          "week": 5,
+          "base_elo": 1649,
+          "results_elo": 1535
+        },
+        {
+          "week": 7,
+          "base_elo": 1684,
+          "results_elo": 1558
+        },
+        {
+          "week": 8,
+          "base_elo": 1687,
+          "results_elo": 1569
+        }
+      ],
+      "rank": 4
+    },
+    {
+      "team": "JAX",
+      "team_espn": "JAX",
+      "week": 8,
+      "results_elo": 1612,
+      "roster_adj": 67,
+      "base_elo": 1679,
+      "groups": {
+        "QB": 28.0,
+        "RB": 0.5,
+        "WR": 6.8,
+        "TE": -0.1,
+        "OL": 6.3,
+        "DL": 11.6,
+        "LB": 1.1,
+        "CB": -3.8,
+        "S": 10.2,
+        "K": 6.3
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1618,
+          "results_elo": 1582
+        },
+        {
+          "week": 2,
+          "base_elo": 1662,
+          "results_elo": 1596
+        },
+        {
+          "week": 3,
+          "base_elo": 1639,
+          "results_elo": 1577
+        },
+        {
+          "week": 4,
+          "base_elo": 1674,
+          "results_elo": 1607
+        },
+        {
+          "week": 5,
+          "base_elo": 1706,
+          "results_elo": 1623
+        },
+        {
+          "week": 6,
+          "base_elo": 1705,
+          "results_elo": 1631
+        },
+        {
+          "week": 8,
+          "base_elo": 1679,
+          "results_elo": 1612
+        }
+      ],
+      "rank": 5
+    },
+    {
+      "team": "DEN",
+      "team_espn": "DEN",
+      "week": 8,
+      "results_elo": 1630,
+      "roster_adj": 31,
+      "base_elo": 1661,
+      "groups": {
+        "QB": 9.1,
+        "RB": -0.7,
+        "WR": -2.4,
+        "TE": 0.4,
+        "OL": 13.0,
+        "DL": 13.7,
+        "LB": -3.3,
+        "CB": -2.1,
+        "S": 5.6,
+        "K": -2.6
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1672,
+          "results_elo": 1617
+        },
+        {
+          "week": 2,
+          "base_elo": 1610,
+          "results_elo": 1578
+        },
+        {
+          "week": 3,
+          "base_elo": 1641,
+          "results_elo": 1597
+        },
+        {
+          "week": 4,
+          "base_elo": 1674,
+          "results_elo": 1609
+        },
+        {
+          "week": 5,
+          "base_elo": 1641,
+          "results_elo": 1590
+        },
+        {
+          "week": 6,
+          "base_elo": 1645,
+          "results_elo": 1603
+        },
+        {
+          "week": 7,
+          "base_elo": 1654,
+          "results_elo": 1617
+        },
+        {
+          "week": 8,
+          "base_elo": 1661,
+          "results_elo": 1630
+        }
+      ],
+      "rank": 6
+    },
+    {
+      "team": "CHI",
+      "team_espn": "CHI",
+      "week": 8,
+      "results_elo": 1580,
+      "roster_adj": 60,
+      "base_elo": 1640,
+      "groups": {
+        "QB": 6.4,
+        "RB": 1.6,
+        "WR": 3.7,
+        "TE": -0.1,
+        "OL": 22.9,
+        "DL": 8.8,
+        "LB": 1.8,
+        "CB": 6.0,
+        "S": 9.8,
+        "K": -1.3
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1570,
+          "results_elo": 1532
+        },
+        {
+          "week": 2,
+          "base_elo": 1629,
+          "results_elo": 1559
+        },
+        {
+          "week": 3,
+          "base_elo": 1495,
+          "results_elo": 1538
+        },
+        {
+          "week": 4,
+          "base_elo": 1575,
+          "results_elo": 1567
+        },
+        {
+          "week": 5,
+          "base_elo": 1594,
+          "results_elo": 1576
+        },
+        {
+          "week": 6,
+          "base_elo": 1605,
+          "results_elo": 1540
+        },
+        {
+          "week": 7,
+          "base_elo": 1621,
+          "results_elo": 1561
+        },
+        {
+          "week": 8,
+          "base_elo": 1640,
+          "results_elo": 1580
+        }
+      ],
+      "rank": 7
+    },
+    {
+      "team": "LA",
+      "team_espn": "LAR",
+      "week": 8,
+      "results_elo": 1573,
+      "roster_adj": 55,
+      "base_elo": 1628,
+      "groups": {
+        "QB": 33.3,
+        "RB": 3.2,
+        "WR": 8.7,
+        "TE": 0.1,
+        "OL": 22.8,
+        "DL": -10.8,
+        "LB": 5.5,
+        "CB": -7.1,
+        "S": 4.2,
+        "K": -5.2
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1724,
+          "results_elo": 1602
+        },
+        {
+          "week": 2,
+          "base_elo": 1625,
+          "results_elo": 1567
+        },
+        {
+          "week": 3,
+          "base_elo": 1665,
+          "results_elo": 1583
+        },
+        {
+          "week": 4,
+          "base_elo": 1667,
+          "results_elo": 1570
+        },
+        {
+          "week": 5,
+          "base_elo": 1686,
+          "results_elo": 1587
+        },
+        {
+          "week": 6,
+          "base_elo": 1662,
+          "results_elo": 1573
+        },
+        {
+          "week": 7,
+          "base_elo": 1621,
+          "results_elo": 1553
+        },
+        {
+          "week": 8,
+          "base_elo": 1628,
+          "results_elo": 1573
+        }
+      ],
+      "rank": 8
+    },
+    {
+      "team": "KC",
+      "team_espn": "KC",
+      "week": 8,
+      "results_elo": 1562,
+      "roster_adj": 49,
+      "base_elo": 1611,
+      "groups": {
+        "QB": 43.5,
+        "RB": 2.3,
+        "WR": -6.8,
+        "TE": -0.5,
+        "OL": 11.5,
+        "DL": 12.5,
+        "LB": -7.0,
+        "CB": -1.6,
+        "S": -2.5,
+        "K": -2.1
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1528,
+          "results_elo": 1490
+        },
+        {
+          "week": 2,
+          "base_elo": 1563,
+          "results_elo": 1529
+        },
+        {
+          "week": 3,
+          "base_elo": 1596,
+          "results_elo": 1537
+        },
+        {
+          "week": 4,
+          "base_elo": 1621,
+          "results_elo": 1558
+        },
+        {
+          "week": 6,
+          "base_elo": 1626,
+          "results_elo": 1569
+        },
+        {
+          "week": 7,
+          "base_elo": 1636,
+          "results_elo": 1583
+        },
+        {
+          "week": 8,
+          "base_elo": 1611,
+          "results_elo": 1562
+        }
+      ],
+      "rank": 9
+    },
+    {
+      "team": "MIN",
+      "team_espn": "MIN",
+      "week": 8,
+      "results_elo": 1641,
+      "roster_adj": -32,
+      "base_elo": 1609,
+      "groups": {
+        "QB": -31.9,
+        "RB": -1.9,
+        "WR": -2.8,
+        "TE": -0.2,
+        "OL": -19.3,
+        "DL": -6.7,
+        "LB": 14.1,
+        "CB": -3.5,
+        "S": 8.1,
+        "K": 11.7
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1536,
+          "results_elo": 1559
+        },
+        {
+          "week": 2,
+          "base_elo": 1523,
+          "results_elo": 1582
+        },
+        {
+          "week": 3,
+          "base_elo": 1582,
+          "results_elo": 1603
+        },
+        {
+          "week": 4,
+          "base_elo": 1578,
+          "results_elo": 1617
+        },
+        {
+          "week": 5,
+          "base_elo": 1590,
+          "results_elo": 1622
+        },
+        {
+          "week": 7,
+          "base_elo": 1611,
+          "results_elo": 1635
+        },
+        {
+          "week": 8,
+          "base_elo": 1609,
+          "results_elo": 1641
+        }
+      ],
+      "rank": 10
+    },
+    {
+      "team": "CIN",
+      "team_espn": "CIN",
+      "week": 8,
+      "results_elo": 1568,
+      "roster_adj": 27,
+      "base_elo": 1595,
+      "groups": {
+        "QB": 29.3,
+        "RB": -0.6,
+        "WR": 13.0,
+        "TE": 0.0,
+        "OL": 8.3,
+        "DL": 8.8,
+        "LB": -15.4,
+        "CB": -0.8,
+        "S": -22.9,
+        "K": 7.4
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1512,
+          "results_elo": 1485
+        },
+        {
+          "week": 2,
+          "base_elo": 1522,
+          "results_elo": 1502
+        },
+        {
+          "week": 3,
+          "base_elo": 1558,
+          "results_elo": 1541
+        },
+        {
+          "week": 4,
+          "base_elo": 1586,
+          "results_elo": 1528
+        },
+        {
+          "week": 5,
+          "base_elo": 1550,
+          "results_elo": 1512
+        },
+        {
+          "week": 7,
+          "base_elo": 1562,
+          "results_elo": 1528
+        },
+        {
+          "week": 8,
+          "base_elo": 1595,
+          "results_elo": 1568
+        }
+      ],
+      "rank": 11
+    },
+    {
+      "team": "PIT",
+      "team_espn": "PIT",
+      "week": 8,
+      "results_elo": 1569,
+      "roster_adj": 17,
+      "base_elo": 1586,
+      "groups": {
+        "QB": -24.2,
+        "RB": 0.7,
+        "WR": -6.6,
+        "TE": -0.2,
+        "OL": 15.0,
+        "DL": -6.5,
+        "LB": 19.5,
+        "CB": 4.0,
+        "S": 12.7,
+        "K": 2.8
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1551,
+          "results_elo": 1534
+        },
+        {
+          "week": 2,
+          "base_elo": 1557,
+          "results_elo": 1548
+        },
+        {
+          "week": 3,
+          "base_elo": 1516,
+          "results_elo": 1525
+        },
+        {
+          "week": 4,
+          "base_elo": 1542,
+          "results_elo": 1537
+        },
+        {
+          "week": 5,
+          "base_elo": 1530,
+          "results_elo": 1521
+        },
+        {
+          "week": 6,
+          "base_elo": 1544,
+          "results_elo": 1540
+        },
+        {
+          "week": 7,
+          "base_elo": 1576,
+          "results_elo": 1557
+        },
+        {
+          "week": 8,
+          "base_elo": 1586,
+          "results_elo": 1569
+        }
+      ],
+      "rank": 12
+    },
+    {
+      "team": "HOU",
+      "team_espn": "HOU",
+      "week": 7,
+      "results_elo": 1545,
+      "roster_adj": 38,
+      "base_elo": 1583,
+      "groups": {
+        "QB": 10.5,
+        "RB": -2.6,
+        "WR": 7.9,
+        "TE": -0.1,
+        "OL": -23.5,
+        "DL": 42.9,
+        "LB": -12.6,
+        "CB": -2.8,
+        "S": 9.4,
+        "K": 9.5
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1630,
+          "results_elo": 1605
+        },
+        {
+          "week": 2,
+          "base_elo": 1597,
+          "results_elo": 1584
+        },
+        {
+          "week": 3,
+          "base_elo": 1530,
+          "results_elo": 1545
+        },
+        {
+          "week": 4,
+          "base_elo": 1526,
+          "results_elo": 1532
+        },
+        {
+          "week": 5,
+          "base_elo": 1513,
+          "results_elo": 1509
+        },
+        {
+          "week": 6,
+          "base_elo": 1539,
+          "results_elo": 1526
+        },
+        {
+          "week": 7,
+          "base_elo": 1583,
+          "results_elo": 1545
+        }
+      ],
+      "rank": 13
+    },
+    {
+      "team": "NE",
+      "team_espn": "NE",
+      "week": 8,
+      "results_elo": 1582,
+      "roster_adj": -26,
+      "base_elo": 1556,
+      "groups": {
+        "QB": 37.7,
+        "RB": -0.5,
+        "WR": 2.4,
+        "TE": -0.1,
+        "OL": -11.4,
+        "DL": -8.3,
+        "LB": -5.9,
+        "CB": -1.4,
+        "S": -29.3,
+        "K": -9.0
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1590,
+          "results_elo": 1574
+        },
+        {
+          "week": 2,
+          "base_elo": 1554,
+          "results_elo": 1565
+        },
+        {
+          "week": 3,
+          "base_elo": 1610,
+          "results_elo": 1587
+        },
+        {
+          "week": 4,
+          "base_elo": 1533,
+          "results_elo": 1558
+        },
+        {
+          "week": 5,
+          "base_elo": 1571,
+          "results_elo": 1578
+        },
+        {
+          "week": 6,
+          "base_elo": 1588,
+          "results_elo": 1594
+        },
+        {
+          "week": 7,
+          "base_elo": 1583,
+          "results_elo": 1601
+        },
+        {
+          "week": 8,
+          "base_elo": 1556,
+          "results_elo": 1582
+        }
+      ],
+      "rank": 14
+    },
+    {
+      "team": "DAL",
+      "team_espn": "DAL",
+      "week": 8,
+      "results_elo": 1472,
+      "roster_adj": 76,
+      "base_elo": 1548,
+      "groups": {
+        "QB": 44.6,
+        "RB": -0.2,
+        "WR": 15.3,
+        "TE": 0.5,
+        "OL": 18.3,
+        "DL": -5.7,
+        "LB": -4.5,
+        "CB": 1.4,
+        "S": -3.2,
+        "K": 9.2
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1503,
+          "results_elo": 1461
+        },
+        {
+          "week": 2,
+          "base_elo": 1523,
+          "results_elo": 1440
+        },
+        {
+          "week": 3,
+          "base_elo": 1562,
+          "results_elo": 1465
+        },
+        {
+          "week": 4,
+          "base_elo": 1555,
+          "results_elo": 1455
+        },
+        {
+          "week": 5,
+          "base_elo": 1590,
+          "results_elo": 1478
+        },
+        {
+          "week": 6,
+          "base_elo": 1555,
+          "results_elo": 1448
+        },
+        {
+          "week": 7,
+          "base_elo": 1526,
+          "results_elo": 1433
+        },
+        {
+          "week": 8,
+          "base_elo": 1548,
+          "results_elo": 1472
+        }
+      ],
+      "rank": 15
+    },
+    {
+      "team": "GB",
+      "team_espn": "GB",
+      "week": 8,
+      "results_elo": 1534,
+      "roster_adj": -14,
+      "base_elo": 1520,
+      "groups": {
+        "QB": 26.4,
+        "RB": -2.4,
+        "WR": -0.1,
+        "TE": -0.5,
+        "OL": -24.3,
+        "DL": -19.2,
+        "LB": -7.7,
+        "CB": 0.8,
+        "S": 21.0,
+        "K": -7.5
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1560,
+          "results_elo": 1541
+        },
+        {
+          "week": 2,
+          "base_elo": 1513,
+          "results_elo": 1518
+        },
+        {
+          "week": 3,
+          "base_elo": 1509,
+          "results_elo": 1529
+        },
+        {
+          "week": 4,
+          "base_elo": 1457,
+          "results_elo": 1481
+        },
+        {
+          "week": 5,
+          "base_elo": 1491,
+          "results_elo": 1495
+        },
+        {
+          "week": 6,
+          "base_elo": 1524,
+          "results_elo": 1531
+        },
+        {
+          "week": 7,
+          "base_elo": 1550,
+          "results_elo": 1545
+        },
+        {
+          "week": 8,
+          "base_elo": 1520,
+          "results_elo": 1534
+        }
+      ],
+      "rank": 16
+    },
+    {
+      "team": "BAL",
+      "team_espn": "BAL",
+      "week": 8,
+      "results_elo": 1519,
+      "roster_adj": -17,
+      "base_elo": 1502,
+      "groups": {
+        "QB": -37.7,
+        "RB": 3.5,
+        "WR": 3.7,
+        "TE": -0.1,
+        "OL": 17.3,
+        "DL": -3.2,
+        "LB": 5.3,
+        "CB": 0.2,
+        "S": -2.9,
+        "K": -3.0
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1615,
+          "results_elo": 1547
+        },
+        {
+          "week": 2,
+          "base_elo": 1636,
+          "results_elo": 1574
+        },
+        {
+          "week": 3,
+          "base_elo": 1610,
+          "results_elo": 1540
+        },
+        {
+          "week": 4,
+          "base_elo": 1645,
+          "results_elo": 1551
+        },
+        {
+          "week": 5,
+          "base_elo": 1543,
+          "results_elo": 1556
+        },
+        {
+          "week": 6,
+          "base_elo": 1574,
+          "results_elo": 1576
+        },
+        {
+          "week": 7,
+          "base_elo": 1558,
+          "results_elo": 1558
+        },
+        {
+          "week": 8,
+          "base_elo": 1502,
+          "results_elo": 1519
+        }
+      ],
+      "rank": 17
+    },
+    {
+      "team": "ATL",
+      "team_espn": "ATL",
+      "week": 8,
+      "results_elo": 1491,
+      "roster_adj": -7,
+      "base_elo": 1484,
+      "groups": {
+        "QB": -13.1,
+        "RB": 4.5,
+        "WR": -6.6,
+        "TE": 0.4,
+        "OL": 19.4,
+        "DL": 3.7,
+        "LB": -2.3,
+        "CB": 1.2,
+        "S": -15.8,
+        "K": 1.8
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1389,
+          "results_elo": 1475
+        },
+        {
+          "week": 2,
+          "base_elo": 1456,
+          "results_elo": 1461
+        },
+        {
+          "week": 3,
+          "base_elo": 1366,
+          "results_elo": 1415
+        },
+        {
+          "week": 4,
+          "base_elo": 1447,
+          "results_elo": 1463
+        },
+        {
+          "week": 5,
+          "base_elo": 1500,
+          "results_elo": 1497
+        },
+        {
+          "week": 6,
+          "base_elo": 1482,
+          "results_elo": 1477
+        },
+        {
+          "week": 7,
+          "base_elo": 1468,
+          "results_elo": 1456
+        },
+        {
+          "week": 8,
+          "base_elo": 1484,
+          "results_elo": 1491
+        }
+      ],
+      "rank": 18
+    },
+    {
+      "team": "TB",
+      "team_espn": "TB",
+      "week": 8,
+      "results_elo": 1479,
+      "roster_adj": 2,
+      "base_elo": 1480,
+      "groups": {
+        "QB": -13.4,
+        "RB": 0.7,
+        "WR": -7.4,
+        "TE": 0.3,
+        "OL": 12.1,
+        "DL": -4.7,
+        "LB": -0.8,
+        "CB": -1.0,
+        "S": 7.8,
+        "K": 8.0
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1506,
+          "results_elo": 1484
+        },
+        {
+          "week": 2,
+          "base_elo": 1487,
+          "results_elo": 1467
+        },
+        {
+          "week": 3,
+          "base_elo": 1457,
+          "results_elo": 1446
+        },
+        {
+          "week": 4,
+          "base_elo": 1346,
+          "results_elo": 1432
+        },
+        {
+          "week": 5,
+          "base_elo": 1348,
+          "results_elo": 1418
+        },
+        {
+          "week": 6,
+          "base_elo": 1413,
+          "results_elo": 1448
+        },
+        {
+          "week": 7,
+          "base_elo": 1444,
+          "results_elo": 1430
+        },
+        {
+          "week": 8,
+          "base_elo": 1480,
+          "results_elo": 1479
+        }
+      ],
+      "rank": 19
+    },
+    {
+      "team": "PHI",
+      "team_espn": "PHI",
+      "week": 8,
+      "results_elo": 1448,
+      "roster_adj": -24,
+      "base_elo": 1424,
+      "groups": {
+        "QB": 5.3,
+        "RB": -1.2,
+        "WR": 0.8,
+        "TE": -0.3,
+        "OL": 5.9,
+        "DL": -4.8,
+        "LB": 5.8,
+        "CB": -0.7,
+        "S": -32.2,
+        "K": -2.6
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1602,
+          "results_elo": 1562
+        },
+        {
+          "week": 2,
+          "base_elo": 1593,
+          "results_elo": 1568
+        },
+        {
+          "week": 3,
+          "base_elo": 1601,
+          "results_elo": 1575
+        },
+        {
+          "week": 4,
+          "base_elo": 1570,
+          "results_elo": 1546
+        },
+        {
+          "week": 5,
+          "base_elo": 1521,
+          "results_elo": 1528
+        },
+        {
+          "week": 6,
+          "base_elo": 1405,
+          "results_elo": 1521
+        },
+        {
+          "week": 7,
+          "base_elo": 1451,
+          "results_elo": 1487
+        },
+        {
+          "week": 8,
+          "base_elo": 1424,
+          "results_elo": 1448
+        }
+      ],
+      "rank": 20
+    },
+    {
+      "team": "CAR",
+      "team_espn": "CAR",
+      "week": 8,
+      "results_elo": 1454,
+      "roster_adj": -30,
+      "base_elo": 1423,
+      "groups": {
+        "QB": -4.9,
+        "RB": 0.5,
+        "WR": 2.6,
+        "TE": 0.2,
+        "OL": -19.8,
+        "DL": -10.8,
+        "LB": 8.0,
+        "CB": 0.1,
+        "S": -4.9,
+        "K": -1.5
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1343,
+          "results_elo": 1438
+        },
+        {
+          "week": 2,
+          "base_elo": 1342,
+          "results_elo": 1411
+        },
+        {
+          "week": 3,
+          "base_elo": 1440,
+          "results_elo": 1458
+        },
+        {
+          "week": 4,
+          "base_elo": 1371,
+          "results_elo": 1445
+        },
+        {
+          "week": 6,
+          "base_elo": 1447,
+          "results_elo": 1469
+        },
+        {
+          "week": 7,
+          "base_elo": 1478,
+          "results_elo": 1502
+        },
+        {
+          "week": 8,
+          "base_elo": 1423,
+          "results_elo": 1454
+        }
+      ],
+      "rank": 21
+    },
+    {
+      "team": "LAC",
+      "team_espn": "LAC",
+      "week": 8,
+      "results_elo": 1419,
+      "roster_adj": 4,
+      "base_elo": 1423,
+      "groups": {
+        "QB": -13.9,
+        "RB": -1.6,
+        "WR": -1.0,
+        "TE": 0.4,
+        "OL": -18.1,
+        "DL": -14.6,
+        "LB": 20.2,
+        "CB": -1.0,
+        "S": 30.3,
+        "K": 3.0
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1578,
+          "results_elo": 1545
+        },
+        {
+          "week": 2,
+          "base_elo": 1536,
+          "results_elo": 1502
+        },
+        {
+          "week": 3,
+          "base_elo": 1475,
+          "results_elo": 1462
+        },
+        {
+          "week": 4,
+          "base_elo": 1444,
+          "results_elo": 1454
+        },
+        {
+          "week": 5,
+          "base_elo": 1437,
+          "results_elo": 1446
+        },
+        {
+          "week": 6,
+          "base_elo": 1428,
+          "results_elo": 1433
+        },
+        {
+          "week": 8,
+          "base_elo": 1423,
+          "results_elo": 1419
+        }
+      ],
+      "rank": 22
+    },
+    {
+      "team": "IND",
+      "team_espn": "IND",
+      "week": 8,
+      "results_elo": 1419,
+      "roster_adj": -12,
+      "base_elo": 1407,
+      "groups": {
+        "QB": -21.3,
+        "RB": 2.4,
+        "WR": -2.4,
+        "TE": 0.3,
+        "OL": 27.4,
+        "DL": 9.4,
+        "LB": -14.2,
+        "CB": 0.2,
+        "S": -18.6,
+        "K": 4.5
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1489,
+          "results_elo": 1470
+        },
+        {
+          "week": 2,
+          "base_elo": 1451,
+          "results_elo": 1444
+        },
+        {
+          "week": 3,
+          "base_elo": 1452,
+          "results_elo": 1435
+        },
+        {
+          "week": 4,
+          "base_elo": 1462,
+          "results_elo": 1449
+        },
+        {
+          "week": 5,
+          "base_elo": 1487,
+          "results_elo": 1477
+        },
+        {
+          "week": 6,
+          "base_elo": 1468,
+          "results_elo": 1459
+        },
+        {
+          "week": 7,
+          "base_elo": 1439,
+          "results_elo": 1425
+        },
+        {
+          "week": 8,
+          "base_elo": 1407,
+          "results_elo": 1419
+        }
+      ],
+      "rank": 23
+    },
+    {
+      "team": "CLE",
+      "team_espn": "CLE",
+      "week": 8,
+      "results_elo": 1472,
+      "roster_adj": -70,
+      "base_elo": 1401,
+      "groups": {
+        "QB": -36.5,
+        "RB": -4.2,
+        "WR": -10.5,
+        "TE": 0.2,
+        "OL": -24.5,
+        "DL": 9.0,
+        "LB": -9.8,
+        "CB": 2.5,
+        "S": 0.9,
+        "K": 2.3
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1294,
+          "results_elo": 1429
+        },
+        {
+          "week": 2,
+          "base_elo": 1282,
+          "results_elo": 1415
+        },
+        {
+          "week": 3,
+          "base_elo": 1332,
+          "results_elo": 1436
+        },
+        {
+          "week": 4,
+          "base_elo": 1342,
+          "results_elo": 1449
+        },
+        {
+          "week": 5,
+          "base_elo": 1381,
+          "results_elo": 1465
+        },
+        {
+          "week": 6,
+          "base_elo": 1372,
+          "results_elo": 1444
+        },
+        {
+          "week": 7,
+          "base_elo": 1391,
+          "results_elo": 1462
+        },
+        {
+          "week": 8,
+          "base_elo": 1401,
+          "results_elo": 1472
+        }
+      ],
+      "rank": 24
+    },
+    {
+      "team": "NO",
+      "team_espn": "NO",
+      "week": 7,
+      "results_elo": 1426,
+      "roster_adj": -54,
+      "base_elo": 1371,
+      "groups": {
+        "QB": -15.0,
+        "RB": -4.0,
+        "WR": 4.4,
+        "TE": 0.0,
+        "OL": -3.3,
+        "DL": -22.6,
+        "LB": 7.8,
+        "CB": 4.7,
+        "S": -24.4,
+        "K": -2.1
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1405,
+          "results_elo": 1442
+        },
+        {
+          "week": 2,
+          "base_elo": 1399,
+          "results_elo": 1438
+        },
+        {
+          "week": 3,
+          "base_elo": 1466,
+          "results_elo": 1472
+        },
+        {
+          "week": 4,
+          "base_elo": 1430,
+          "results_elo": 1443
+        },
+        {
+          "week": 5,
+          "base_elo": 1378,
+          "results_elo": 1409
+        },
+        {
+          "week": 6,
+          "base_elo": 1363,
+          "results_elo": 1397
+        },
+        {
+          "week": 7,
+          "base_elo": 1371,
+          "results_elo": 1426
+        }
+      ],
+      "rank": 25
+    },
+    {
+      "team": "WAS",
+      "team_espn": "WSH",
+      "week": 8,
+      "results_elo": 1411,
+      "roster_adj": -44,
+      "base_elo": 1367,
+      "groups": {
+        "QB": -13.6,
+        "RB": 1.5,
+        "WR": 3.8,
+        "TE": 0.4,
+        "OL": -3.1,
+        "DL": -9.3,
+        "LB": 5.5,
+        "CB": 3.7,
+        "S": -24.7,
+        "K": -8.1
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1422,
+          "results_elo": 1459
+        },
+        {
+          "week": 2,
+          "base_elo": 1424,
+          "results_elo": 1453
+        },
+        {
+          "week": 3,
+          "base_elo": 1396,
+          "results_elo": 1427
+        },
+        {
+          "week": 4,
+          "base_elo": 1375,
+          "results_elo": 1445
+        },
+        {
+          "week": 5,
+          "base_elo": 1354,
+          "results_elo": 1416
+        },
+        {
+          "week": 6,
+          "base_elo": 1368,
+          "results_elo": 1416
+        },
+        {
+          "week": 8,
+          "base_elo": 1367,
+          "results_elo": 1411
+        }
+      ],
+      "rank": 26
+    },
+    {
+      "team": "LV",
+      "team_espn": "LV",
+      "week": 8,
+      "results_elo": 1400,
+      "roster_adj": -45,
+      "base_elo": 1355,
+      "groups": {
+        "QB": -6.6,
+        "RB": -9.5,
+        "WR": -6.5,
+        "TE": -0.3,
+        "OL": -25.7,
+        "DL": 21.5,
+        "LB": -3.3,
+        "CB": 0.6,
+        "S": -16.9,
+        "K": 1.8
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1255,
+          "results_elo": 1353
+        },
+        {
+          "week": 2,
+          "base_elo": 1352,
+          "results_elo": 1386
+        },
+        {
+          "week": 3,
+          "base_elo": 1342,
+          "results_elo": 1426
+        },
+        {
+          "week": 4,
+          "base_elo": 1404,
+          "results_elo": 1455
+        },
+        {
+          "week": 5,
+          "base_elo": 1406,
+          "results_elo": 1443
+        },
+        {
+          "week": 6,
+          "base_elo": 1390,
+          "results_elo": 1427
+        },
+        {
+          "week": 7,
+          "base_elo": 1386,
+          "results_elo": 1420
+        },
+        {
+          "week": 8,
+          "base_elo": 1355,
+          "results_elo": 1400
+        }
+      ],
+      "rank": 27
+    },
+    {
+      "team": "ARI",
+      "team_espn": "ARI",
+      "week": 8,
+      "results_elo": 1378,
+      "roster_adj": -51,
+      "base_elo": 1327,
+      "groups": {
+        "QB": -31.5,
+        "RB": -1.6,
+        "WR": -6.5,
+        "TE": -0.9,
+        "OL": 1.8,
+        "DL": -10.5,
+        "LB": -0.1,
+        "CB": 0.1,
+        "S": -0.5,
+        "K": -1.3
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1314,
+          "results_elo": 1395
+        },
+        {
+          "week": 2,
+          "base_elo": 1392,
+          "results_elo": 1438
+        },
+        {
+          "week": 3,
+          "base_elo": 1354,
+          "results_elo": 1421
+        },
+        {
+          "week": 4,
+          "base_elo": 1366,
+          "results_elo": 1414
+        },
+        {
+          "week": 5,
+          "base_elo": 1334,
+          "results_elo": 1394
+        },
+        {
+          "week": 6,
+          "base_elo": 1309,
+          "results_elo": 1371
+        },
+        {
+          "week": 7,
+          "base_elo": 1319,
+          "results_elo": 1391
+        },
+        {
+          "week": 8,
+          "base_elo": 1327,
+          "results_elo": 1378
+        }
+      ],
+      "rank": 28
+    },
+    {
+      "team": "NYG",
+      "team_espn": "NYG",
+      "week": 7,
+      "results_elo": 1432,
+      "roster_adj": -112,
+      "base_elo": 1320,
+      "groups": {
+        "QB": -73.6,
+        "RB": -2.1,
+        "WR": -5.8,
+        "TE": 0.2,
+        "OL": -11.1,
+        "DL": -18.1,
+        "LB": 6.4,
+        "CB": -1.3,
+        "S": -2.1,
+        "K": -4.6
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1393,
+          "results_elo": 1427
+        },
+        {
+          "week": 2,
+          "base_elo": 1428,
+          "results_elo": 1448
+        },
+        {
+          "week": 3,
+          "base_elo": 1328,
+          "results_elo": 1432
+        },
+        {
+          "week": 4,
+          "base_elo": 1326,
+          "results_elo": 1441
+        },
+        {
+          "week": 5,
+          "base_elo": 1371,
+          "results_elo": 1461
+        },
+        {
+          "week": 6,
+          "base_elo": 1386,
+          "results_elo": 1461
+        },
+        {
+          "week": 7,
+          "base_elo": 1320,
+          "results_elo": 1432
+        }
+      ],
+      "rank": 29
+    },
+    {
+      "team": "MIA",
+      "team_espn": "MIA",
+      "week": 8,
+      "results_elo": 1390,
+      "roster_adj": -94,
+      "base_elo": 1296,
+      "groups": {
+        "QB": -38.9,
+        "RB": -1.9,
+        "WR": -11.9,
+        "TE": 0.2,
+        "OL": -23.6,
+        "DL": -4.6,
+        "LB": -6.0,
+        "CB": 3.4,
+        "S": 1.8,
+        "K": -12.6
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1422,
+          "results_elo": 1462
+        },
+        {
+          "week": 2,
+          "base_elo": 1373,
+          "results_elo": 1429
+        },
+        {
+          "week": 3,
+          "base_elo": 1359,
+          "results_elo": 1416
+        },
+        {
+          "week": 4,
+          "base_elo": 1307,
+          "results_elo": 1395
+        },
+        {
+          "week": 5,
+          "base_elo": 1291,
+          "results_elo": 1390
+        },
+        {
+          "week": 7,
+          "base_elo": 1289,
+          "results_elo": 1374
+        },
+        {
+          "week": 8,
+          "base_elo": 1296,
+          "results_elo": 1390
+        }
+      ],
+      "rank": 30
+    },
+    {
+      "team": "NYJ",
+      "team_espn": "NYJ",
+      "week": 8,
+      "results_elo": 1365,
+      "roster_adj": -109,
+      "base_elo": 1256,
+      "groups": {
+        "QB": -36.5,
+        "RB": -1.4,
+        "WR": -6.7,
+        "TE": 0.4,
+        "OL": -36.2,
+        "DL": -22.4,
+        "LB": -10.0,
+        "CB": 2.9,
+        "S": 1.9,
+        "K": -1.0
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1220,
+          "results_elo": 1366
+        },
+        {
+          "week": 2,
+          "base_elo": 1261,
+          "results_elo": 1396
+        },
+        {
+          "week": 3,
+          "base_elo": 1263,
+          "results_elo": 1386
+        },
+        {
+          "week": 4,
+          "base_elo": 1268,
+          "results_elo": 1377
+        },
+        {
+          "week": 5,
+          "base_elo": 1258,
+          "results_elo": 1368
+        },
+        {
+          "week": 6,
+          "base_elo": 1292,
+          "results_elo": 1389
+        },
+        {
+          "week": 7,
+          "base_elo": 1292,
+          "results_elo": 1382
+        },
+        {
+          "week": 8,
+          "base_elo": 1256,
+          "results_elo": 1365
+        }
+      ],
+      "rank": 31
+    },
+    {
+      "team": "TEN",
+      "team_espn": "TEN",
+      "week": 8,
+      "results_elo": 1314,
+      "roster_adj": -116,
+      "base_elo": 1199,
+      "groups": {
+        "QB": -70.6,
+        "RB": -4.2,
+        "WR": -8.6,
+        "TE": 0.4,
+        "OL": -14.6,
+        "DL": 17.7,
+        "LB": -16.4,
+        "CB": 0.3,
+        "S": -18.3,
+        "K": -1.4
+      },
+      "history": [
+        {
+          "week": 1,
+          "base_elo": 1236,
+          "results_elo": 1361
+        },
+        {
+          "week": 2,
+          "base_elo": 1187,
+          "results_elo": 1331
+        },
+        {
+          "week": 3,
+          "base_elo": 1199,
+          "results_elo": 1323
+        },
+        {
+          "week": 4,
+          "base_elo": 1183,
+          "results_elo": 1314
+        },
+        {
+          "week": 5,
+          "base_elo": 1196,
+          "results_elo": 1308
+        },
+        {
+          "week": 6,
+          "base_elo": 1179,
+          "results_elo": 1291
+        },
+        {
+          "week": 7,
+          "base_elo": 1207,
+          "results_elo": 1324
+        },
+        {
+          "week": 8,
+          "base_elo": 1199,
+          "results_elo": 1314
+        }
+      ],
+      "rank": 32
+    }
+  ],
+  "games": [
+    {
+      "game_id": "2026_08_CAR_GB",
+      "kickoff": "2026-10-30T00:15:00+00:00",
+      "home": "GB",
+      "away": "CAR",
+      "home_base_elo": 1520,
+      "away_base_elo": 1423,
+      "v3_home_margin": 1.2,
+      "v3_home_win_prob": 0.538
+    },
+    {
+      "game_id": "2026_08_ARI_DAL",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "DAL",
+      "away": "ARI",
+      "home_base_elo": 1548,
+      "away_base_elo": 1327,
+      "v3_home_margin": 4.9,
+      "v3_home_win_prob": 0.651
+    },
+    {
+      "game_id": "2026_08_ATL_TB",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "TB",
+      "away": "ATL",
+      "home_base_elo": 1480,
+      "away_base_elo": 1484,
+      "v3_home_margin": -0.5,
+      "v3_home_win_prob": 0.483
+    },
+    {
+      "game_id": "2026_08_BAL_BUF",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "BUF",
+      "away": "BAL",
+      "home_base_elo": 1753,
+      "away_base_elo": 1502,
+      "v3_home_margin": 5.6,
+      "v3_home_win_prob": 0.671
+    },
+    {
+      "game_id": "2026_08_CLE_PIT",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "PIT",
+      "away": "CLE",
+      "home_base_elo": 1586,
+      "away_base_elo": 1401,
+      "v3_home_margin": 6.3,
+      "v3_home_win_prob": 0.691
+    },
+    {
+      "game_id": "2026_08_IND_JAX",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "JAX",
+      "away": "IND",
+      "home_base_elo": 1679,
+      "away_base_elo": 1407,
+      "v3_home_margin": 6.8,
+      "v3_home_win_prob": 0.703
+    },
+    {
+      "game_id": "2026_08_LV_NYJ",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "NYJ",
+      "away": "LV",
+      "home_base_elo": 1256,
+      "away_base_elo": 1355,
+      "v3_home_margin": -2.5,
+      "v3_home_win_prob": 0.423
+    },
+    {
+      "game_id": "2026_08_MIN_DET",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "DET",
+      "away": "MIN",
+      "home_base_elo": 1687,
+      "away_base_elo": 1609,
+      "v3_home_margin": 2.3,
+      "v3_home_win_prob": 0.572
+    },
+    {
+      "game_id": "2026_08_TEN_CIN",
+      "kickoff": "2026-11-01T18:00:00+00:00",
+      "home": "CIN",
+      "away": "TEN",
+      "home_base_elo": 1595,
+      "away_base_elo": 1199,
+      "v3_home_margin": 9.6,
+      "v3_home_win_prob": 0.775
+    },
+    {
+      "game_id": "2026_08_LAC_LA",
+      "kickoff": "2026-11-01T21:05:00+00:00",
+      "home": "LAR",
+      "away": "LAC",
+      "home_base_elo": 1628,
+      "away_base_elo": 1423,
+      "v3_home_margin": 8.0,
+      "v3_home_win_prob": 0.735
+    },
+    {
+      "game_id": "2026_08_KC_DEN",
+      "kickoff": "2026-11-01T21:25:00+00:00",
+      "home": "DEN",
+      "away": "KC",
+      "home_base_elo": 1661,
+      "away_base_elo": 1611,
+      "v3_home_margin": 1.5,
+      "v3_home_win_prob": 0.546
+    },
+    {
+      "game_id": "2026_08_NE_MIA",
+      "kickoff": "2026-11-01T21:25:00+00:00",
+      "home": "MIA",
+      "away": "NE",
+      "home_base_elo": 1296,
+      "away_base_elo": 1556,
+      "v3_home_margin": -6.0,
+      "v3_home_win_prob": 0.317
+    },
+    {
+      "game_id": "2026_08_PHI_WAS",
+      "kickoff": "2026-11-02T01:20:00+00:00",
+      "home": "WSH",
+      "away": "PHI",
+      "home_base_elo": 1367,
+      "away_base_elo": 1424,
+      "v3_home_margin": 1.8,
+      "v3_home_win_prob": 0.557
+    },
+    {
+      "game_id": "2026_08_CHI_SEA",
+      "kickoff": "2026-11-03T01:15:00+00:00",
+      "home": "SEA",
+      "away": "CHI",
+      "home_base_elo": 1729,
+      "away_base_elo": 1640,
+      "v3_home_margin": 1.8,
+      "v3_home_win_prob": 0.557
+    }
+  ]
+}

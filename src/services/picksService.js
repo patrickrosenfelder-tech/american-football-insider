@@ -97,7 +97,7 @@ const efficiency = (stats, abbreviation) => {
   // YPP uses the documented 0.08 points-per-YPP conversion; the remaining
   // components normalize per-game turnovers and percentage-point rates.
   const rating = (ypp * 0.08) + (turnover * 1.4) + (third * 0.08) + (redZone * 0.05);
-  return { rating, sample: s.games || 0, ypp, turnover, third, redZone, snippet: `${abbreviation} ${ypp >= 0 ? '+' : ''}${round1(ypp)} YPP differential · ${turnover >= 0 ? '+' : ''}${round1(turnover)} turnovers/game` };
+  return { rating, sample: s.games || 0, ypp, turnover, third, redZone, off_epa: off.epa_per_play ?? null, def_epa: def.epa_per_play ?? null, snippet: `${abbreviation} ${ypp >= 0 ? '+' : ''}${round1(ypp)} YPP differential · ${turnover >= 0 ? '+' : ''}${round1(turnover)} turnovers/game` };
 };
 
 const momentum = (abbreviation, season, played) => {

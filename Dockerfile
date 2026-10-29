@@ -20,5 +20,8 @@ COPY src ./src
 # Node serves the versioned training artifact; Python is never needed at request time.
 COPY --from=build /app/scripts/model/model_v2.json ./scripts/model/model_v2.json
 COPY --from=build /app/scripts/model/predictions_current.json ./scripts/model/predictions_current.json
+# v3 base Elo ratings (fallback until the workflow publishes newer ones) and the walk-forward backtest.
+COPY --from=build /app/scripts/model/v3/ratings_current.json ./scripts/model/v3/ratings_current.json
+COPY --from=build /app/scripts/model/v3/backtest_v3.json ./scripts/model/v3/backtest_v3.json
 EXPOSE 8080
 CMD ["node", "src/app.js"]

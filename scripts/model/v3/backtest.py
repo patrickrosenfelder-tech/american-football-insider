@@ -154,8 +154,16 @@ def main():
     p = p.dropna(subset=["spread_line"])
     results = {n: grade(p, n) for n in names}
     by_season = {n: {str(s): grade(x, n) for s, x in p.groupby("season")} for n in ["v2", "core_full", CORE, "A_blend", "B_m1.0", "vegas"] if n in names}
+    # Straight-up accuracy by how confident each model is (predicted margin, in points).
+    buckets = {}
+    for n in ["v2", CORE, "B_m1.0_early-0.2", "vegas"]:
+        if n not in names: continue
+        m, y = p[f"{n}_m"].to_numpy(), p.margin.to_numpy(); d = y != 0
+        buckets[n] = [{"range": label, "games": int(s.sum()), "su_accuracy": round(float(((m[s] > 0) == (y[s] > 0)).mean()), 4) if s.sum() else None}
+                      for label, lo, hi in [("0-3", 0, 3), ("3-6", 3, 6), ("6-9", 6, 9), ("9+", 9, 99)]
+                      for s in [d & (np.abs(m) >= lo) & (np.abs(m) < hi)]]
     report = {"generated_at": pd.Timestamp.now(tz="UTC").isoformat(), "oos_games": int(len(p)), "seasons": sorted(int(s) for s in p.season.unique()),
-              "method": __doc__.strip(), "results": results, "by_season": by_season,
+              "method": __doc__.strip(), "results": results, "by_season": by_season, "confidence_buckets": buckets,
               "blend_weight_on_core_latest": round(float(p.A_weight.iloc[-1]), 3)}
     pathlib.Path(a.output).write_text(json.dumps(report, indent=2) + "\n")
     p.to_csv(data.ROOT / ".cache" / "v3_oos.csv", index=False)
