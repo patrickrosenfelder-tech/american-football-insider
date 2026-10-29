@@ -261,7 +261,10 @@ const statMap = (stats = []) => stats.reduce((acc, s) => {
   return acc;
 }, {});
 
-const getStandings = async () => cache.getOrSet('standings', async () => {
+// Standings change infrequently enough to return the last known value for an
+// hour while ESPN refreshes it. This keeps cache expiry (previously a full
+// upstream round trip) off the user-facing request path.
+const getStandings = async () => cache.getOrSetStale('standings', async () => {
   const data = await fetchJson(ESPN_STANDINGS, { level: 3 });
   const conferences = (data.children || []).map((conf) => ({
     name: conf.name,
@@ -297,7 +300,7 @@ const getStandings = async () => cache.getOrSet('standings', async () => {
     conferences,
     fetched_at: new Date().toISOString()
   };
-}, TTL.standings);
+}, TTL.standings, 3600);
 
 const getTeams = async () => cache.getOrSet('teams_all', async () => {
   const [teamsData, standings] = await Promise.all([
