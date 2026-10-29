@@ -26,6 +26,7 @@ const tradesRoutes = require('./routes/trades');
 const freeAgentsRoutes = require('./routes/freeAgents');
 const refresh = require('./jobs/refresh');
 const scheduler = require('./jobs/scheduler');
+const sportsDataService = require('./services/sportsDataService');
 const db = require('./db/database');
 const cache = require('./cache/cacheManager');
 const { renderMetadata } = require('./services/pageMetadata');
@@ -125,7 +126,11 @@ if (require.main === module) {
     // cadence without making application availability depend on a bulk import.
     refresh.loadStatus()
       .catch((error) => console.error('Refresh status load failed:', error.message))
-      .finally(() => scheduler.start());
+      .finally(() => {
+        scheduler.start();
+        // Warm the memory cache after boot without holding up readiness.
+        sportsDataService.getStandings().catch((error) => console.error('Standings warmup failed:', error.message));
+      });
   });
 }
 

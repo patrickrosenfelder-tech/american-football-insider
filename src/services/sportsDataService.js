@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cache = require('../cache/cacheManager');
+const db = require('../db/database');
 const { deriveByeWeek } = require('./scheduleIntegrity');
 
 // ESPN's public (keyless) JSON endpoints. Unofficial but stable and widely used.
@@ -261,7 +262,9 @@ const statMap = (stats = []) => stats.reduce((acc, s) => {
   return acc;
 }, {});
 
-const getStandings = async () => cache.getOrSet('standings', async () => {
+const STANDINGS_SNAPSHOT = 'standings_snapshot_v1';
+
+const fetchStandings = async () => cache.getOrSet('standings_refresh', async () => {
   const data = await fetchJson(ESPN_STANDINGS, { level: 3 });
   const conferences = (data.children || []).map((conf) => ({
     name: conf.name,
@@ -291,13 +294,37 @@ const getStandings = async () => cache.getOrSet('standings', async () => {
     }))
   }));
   const meta = data.children?.[0]?.children?.[0]?.standings || data.children?.[0]?.standings || {};
-  return {
+  const result = {
     season: meta.season || null,
     season_display: meta.seasonDisplayName || null,
     conferences,
     fetched_at: new Date().toISOString()
   };
+  cache.set('standings', result, TTL.standings);
+  // Keep the last successful response on Fly's persistent volume. ESPN can be
+  // slow or temporarily unavailable, but standings change infrequently enough
+  // that serving this snapshot is substantially better than a multi-second 502.
+  await db.saveDataset(STANDINGS_SNAPSHOT, result).catch((error) => {
+    console.error('Could not persist standings snapshot:', error.message);
+  });
+  return result;
 }, TTL.standings);
+
+const getStandings = async () => {
+  const cached = cache.get('standings');
+  if (cached !== undefined) return cached;
+
+  // A restart should not make the first visitor wait on ESPN. Return a
+  // last-known-good snapshot immediately and refresh it in the background.
+  const snapshot = await db.loadDataset(STANDINGS_SNAPSHOT).catch(() => null);
+  if (snapshot?.data?.conferences) {
+    cache.set('standings', snapshot.data, TTL.standings);
+    fetchStandings().catch((error) => console.error('Standings refresh failed:', error.message));
+    return snapshot.data;
+  }
+
+  return fetchStandings();
+};
 
 const getTeams = async () => cache.getOrSet('teams_all', async () => {
   const [teamsData, standings] = await Promise.all([
