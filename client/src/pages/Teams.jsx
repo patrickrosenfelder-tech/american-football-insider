@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { getFavoriteTeams, toggleFavoriteTeam, useApi } from '../api.js';
 import { PageSkeleton, ErrorBox, Logo, Updated } from '../components.jsx';
@@ -7,6 +7,9 @@ export default function Teams() {
   const { data, error, loading } = useApi('/teams');
   const [query, setQuery] = useState('');
   const [favorites, setFavorites] = useState(() => getFavoriteTeams());
+  // /teams?tab=depth (menu: Teams → Depth charts) sends every team link to that tab.
+  const tab = useSearchParams()[0].get('tab');
+  const suffix = tab === 'depth' ? '?tab=depth' : '';
   if (loading) return <PageSkeleton label="Loading teams…" tables={2} rows={8} />;
   if (error) return <ErrorBox error={error} />;
 
@@ -19,15 +22,15 @@ export default function Teams() {
 
   return (
     <section>
-      <div className="page-head teams-head"><div><h1>Teams</h1><p className="muted small">Browse every roster, schedule, injury report, and team feed.</p></div><input className="team-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search teams…" aria-label="Search teams" /></div>
-      {favorites.length > 0 && <div className="favorite-strip"><b>My teams</b>{data.data.filter((t) => favorites.includes(t.abbreviation)).map((t) => <Link key={t.id} to={`/teams/${t.abbreviation}`} className="favorite-team"><Logo src={t.logo} size={22} alt="" />{t.abbreviation}</Link>)}</div>}
+      <div className="page-head teams-head"><div><h1>{suffix ? 'Depth charts' : 'Teams'}</h1><p className="muted small">{suffix ? 'Pick a team to see its offense, defense and special teams depth chart.' : 'Browse every roster, schedule, injury report, and team feed.'}</p></div><input className="team-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search teams…" aria-label="Search teams" /></div>
+      {favorites.length > 0 && <div className="favorite-strip"><b>My teams</b>{data.data.filter((t) => favorites.includes(t.abbreviation)).map((t) => <Link key={t.id} to={`/teams/${t.abbreviation}${suffix}`} className="favorite-team"><Logo src={t.logo} size={22} alt="" />{t.abbreviation}</Link>)}</div>}
       <div className="grid div-grid">
         {divisions.map((div) => (
           <div key={div} className="card">
             <h2 className="card-title">{div}</h2>
             {byDivision[div].map((t) => (
               <div key={t.id} className="team-link-row">
-                <Link to={`/teams/${t.abbreviation}`} className="team-link" style={{ '--team': t.color }}><Logo src={t.logo} size={32} alt="" /><span className="grow">{t.name}</span><span className="muted">{t.record}</span></Link>
+                <Link to={`/teams/${t.abbreviation}${suffix}`} className="team-link" style={{ '--team': t.color }}><Logo src={t.logo} size={32} alt="" /><span className="grow">{t.name}</span><span className="muted">{t.record}</span></Link>
                 <button type="button" className={`favorite-button ${favorites.includes(t.abbreviation) ? 'active' : ''}`} aria-label={`${favorites.includes(t.abbreviation) ? 'Remove' : 'Add'} ${t.name} ${favorites.includes(t.abbreviation) ? 'from' : 'to'} favorites`} onClick={() => setFavorites(toggleFavoriteTeam(t.abbreviation))}>{favorites.includes(t.abbreviation) ? '★' : '☆'}</button>
               </div>
             ))}

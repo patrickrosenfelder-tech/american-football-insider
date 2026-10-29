@@ -45,3 +45,26 @@ jobs:
         env:
           AFI_URL: ${{ secrets.STAGING_AFI_URL }}
           AFI_ADMIN_TOKEN: ${{ secrets.STAGING_AFI_ADMIN_TOKEN }}
+  # AFI v3 base Elo ratings for /elo. Separate job so a v3 failure never blocks v2 predictions.
+  ratings:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -r scripts/model/requirements.txt
+      - run: python -m v3.export_ratings --refresh
+        working-directory: scripts/model
+      - uses: actions/upload-artifact@v4
+        with:
+          name: afi-ratings
+          path: scripts/model/v3/ratings_current.json
+      - name: Publish production ratings
+        if: github.event_name == 'schedule' || inputs.target != 'staging'
+        run: |
+          test -n "$AFI_URL" && test -n "$AFI_ADMIN_TOKEN"
+          curl --fail-with-body --connect-timeout 10 --max-time 60 --retry 2 -X POST "$AFI_URL/api/admin/ratings" -H "Authorization: Bearer $AFI_ADMIN_TOKEN" -H "Content-Type: application/json" --data-binary @scripts/model/v3/ratings_current.json
+        env:
+          AFI_URL: ${{ secrets.AFI_URL }}
+          AFI_ADMIN_TOKEN: ${{ secrets.AFI_ADMIN_TOKEN }}

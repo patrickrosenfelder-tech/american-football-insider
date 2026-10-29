@@ -1,0 +1,496 @@
+{
+  "method": "Factor lab: decide which factors earn a place in AFI v3, and how much they weigh.\n\nFor every factor group, on the same walk-forward setup as backtest.py (each week\npredicted by a ridge model refit on earlier weeks only):\n  add-one   base model + this group: does out-of-sample log loss improve?\n  drop-one  base model - this group (for factors already in the base)\n  luck      shuffle the group's values between games within each season N times and\n            rerun; the share of shuffles that do as well as the real data is the\n            p-value. A real factor should beat nearly all of them.\n  split     greedy forward selection using only 2017-2021 results, then the chosen\n            set is checked once on 2022-2026, which the selection never saw.\nWeights are reported as points of home margin per 1 standard deviation of the factor,\nfit separately on both halves so you can see whether they are stable.",
+  "alpha": 300.0,
+  "base": {
+    "games": 2490,
+    "log_loss": 0.6245,
+    "su_accuracy": 0.6489,
+    "margin_mae": 10.108
+  },
+  "add_one": {
+    "unit_mismatch": {
+      "games": 2490,
+      "log_loss": 0.62484,
+      "su_accuracy": 0.6514,
+      "margin_mae": 10.111,
+      "log_loss_change": 0.00034
+    },
+    "coverage_scheme": {
+      "games": 2490,
+      "log_loss": 0.6247,
+      "su_accuracy": 0.6485,
+      "margin_mae": 10.11,
+      "log_loss_change": 0.0002
+    },
+    "scheme_pressure": {
+      "games": 2490,
+      "log_loss": 0.62473,
+      "su_accuracy": 0.6538,
+      "margin_mae": 10.112,
+      "log_loss_change": 0.00023
+    },
+    "ftn_tendencies": {
+      "games": 2490,
+      "log_loss": 0.62619,
+      "su_accuracy": 0.6465,
+      "margin_mae": 10.131,
+      "log_loss_change": 0.00169
+    },
+    "early_down_pass": {
+      "games": 2490,
+      "log_loss": 0.62485,
+      "su_accuracy": 0.6497,
+      "margin_mae": 10.11,
+      "log_loss_change": 0.00035
+    },
+    "ngs_qb": {
+      "games": 2490,
+      "log_loss": 0.6233,
+      "su_accuracy": 0.6522,
+      "margin_mae": 10.089,
+      "log_loss_change": -0.0012
+    },
+    "ngs_receivers": {
+      "games": 2490,
+      "log_loss": 0.6244,
+      "su_accuracy": 0.653,
+      "margin_mae": 10.108,
+      "log_loss_change": -0.0001
+    },
+    "questionable": {
+      "games": 2490,
+      "log_loss": 0.62477,
+      "su_accuracy": 0.6505,
+      "margin_mae": 10.111,
+      "log_loss_change": 0.00027
+    },
+    "travel_timezone": {
+      "games": 2490,
+      "log_loss": 0.62503,
+      "su_accuracy": 0.6453,
+      "margin_mae": 10.112,
+      "log_loss_change": 0.00053
+    },
+    "altitude": {
+      "games": 2490,
+      "log_loss": 0.62427,
+      "su_accuracy": 0.6461,
+      "margin_mae": 10.106,
+      "log_loss_change": -0.00023
+    },
+    "primetime": {
+      "games": 2490,
+      "log_loss": 0.6242,
+      "su_accuracy": 0.6465,
+      "margin_mae": 10.107,
+      "log_loss_change": -0.0003
+    },
+    "surface": {
+      "games": 2490,
+      "log_loss": 0.62466,
+      "su_accuracy": 0.6514,
+      "margin_mae": 10.111,
+      "log_loss_change": 0.00016
+    },
+    "weather_extra": {
+      "games": 2490,
+      "log_loss": 0.6251,
+      "su_accuracy": 0.6505,
+      "margin_mae": 10.12,
+      "log_loss_change": 0.0006
+    },
+    "coaching": {
+      "games": 2490,
+      "log_loss": 0.62542,
+      "su_accuracy": 0.6497,
+      "margin_mae": 10.113,
+      "log_loss_change": 0.00092
+    },
+    "referee": {
+      "games": 2490,
+      "log_loss": 0.6247,
+      "su_accuracy": 0.6477,
+      "margin_mae": 10.109,
+      "log_loss_change": 0.0002
+    }
+  },
+  "drop_one": {
+    "elo": {
+      "games": 2490,
+      "log_loss": 0.62546,
+      "su_accuracy": 0.6469,
+      "margin_mae": 10.116,
+      "log_loss_change": 0.00096
+    },
+    "home": {
+      "games": 2490,
+      "log_loss": 0.62438,
+      "su_accuracy": 0.6497,
+      "margin_mae": 10.106,
+      "log_loss_change": -0.00012
+    },
+    "roster_delta": {
+      "games": 2490,
+      "log_loss": 0.6274,
+      "su_accuracy": 0.6453,
+      "margin_mae": 10.145,
+      "log_loss_change": 0.0029
+    },
+    "roster_abs": {
+      "games": 2490,
+      "log_loss": 0.62584,
+      "su_accuracy": 0.6493,
+      "margin_mae": 10.118,
+      "log_loss_change": 0.00134
+    },
+    "efficiency": {
+      "games": 2490,
+      "log_loss": 0.62562,
+      "su_accuracy": 0.6481,
+      "margin_mae": 10.12,
+      "log_loss_change": 0.00112
+    },
+    "pressure": {
+      "games": 2490,
+      "log_loss": 0.6249,
+      "su_accuracy": 0.6509,
+      "margin_mae": 10.103,
+      "log_loss_change": 0.0004
+    },
+    "rest": {
+      "games": 2490,
+      "log_loss": 0.62441,
+      "su_accuracy": 0.6493,
+      "margin_mae": 10.105,
+      "log_loss_change": -9e-05
+    },
+    "wind": {
+      "games": 2490,
+      "log_loss": 0.62428,
+      "su_accuracy": 0.6493,
+      "margin_mae": 10.106,
+      "log_loss_change": -0.00022
+    },
+    "division": {
+      "games": 2490,
+      "log_loss": 0.62438,
+      "su_accuracy": 0.6485,
+      "margin_mae": 10.102,
+      "log_loss_change": -0.00012
+    }
+  },
+  "luck": {
+    "unit_mismatch": {
+      "real_log_loss": 0.62484,
+      "shuffled_mean": 0.62494,
+      "p_value": 0.3796,
+      "shuffles": 1000
+    },
+    "coverage_scheme": {
+      "real_log_loss": 0.6247,
+      "shuffled_mean": 0.62479,
+      "p_value": 0.4256,
+      "shuffles": 1000
+    },
+    "scheme_pressure": {
+      "real_log_loss": 0.62473,
+      "shuffled_mean": 0.6247,
+      "p_value": 0.5065,
+      "shuffles": 1000
+    },
+    "ftn_tendencies": {
+      "real_log_loss": 0.62619,
+      "shuffled_mean": 0.62514,
+      "p_value": 0.951,
+      "shuffles": 1000
+    },
+    "early_down_pass": {
+      "real_log_loss": 0.62485,
+      "shuffled_mean": 0.62462,
+      "p_value": 0.8342,
+      "shuffles": 1000
+    },
+    "ngs_qb": {
+      "real_log_loss": 0.6233,
+      "shuffled_mean": 0.62485,
+      "p_value": 0.001,
+      "shuffles": 1000
+    },
+    "ngs_receivers": {
+      "real_log_loss": 0.6244,
+      "shuffled_mean": 0.6247,
+      "p_value": 0.1508,
+      "shuffles": 1000
+    },
+    "questionable": {
+      "real_log_loss": 0.62477,
+      "shuffled_mean": 0.62485,
+      "p_value": 0.3896,
+      "shuffles": 1000
+    },
+    "travel_timezone": {
+      "real_log_loss": 0.62503,
+      "shuffled_mean": 0.62501,
+      "p_value": 0.5015,
+      "shuffles": 1000
+    },
+    "altitude": {
+      "real_log_loss": 0.62427,
+      "shuffled_mean": 0.62465,
+      "p_value": 0.0709,
+      "shuffles": 1000
+    },
+    "primetime": {
+      "real_log_loss": 0.6242,
+      "shuffled_mean": 0.62465,
+      "p_value": 0.0599,
+      "shuffles": 1000
+    },
+    "surface": {
+      "real_log_loss": 0.62466,
+      "shuffled_mean": 0.62465,
+      "p_value": 0.4995,
+      "shuffles": 1000
+    },
+    "weather_extra": {
+      "real_log_loss": 0.6251,
+      "shuffled_mean": 0.62477,
+      "p_value": 0.8252,
+      "shuffles": 1000
+    },
+    "coaching": {
+      "real_log_loss": 0.62542,
+      "shuffled_mean": 0.62496,
+      "p_value": 0.8521,
+      "shuffles": 1000
+    },
+    "referee": {
+      "real_log_loss": 0.6247,
+      "shuffled_mean": 0.62463,
+      "p_value": 0.5874,
+      "shuffles": 1000
+    },
+    "base:elo": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62561,
+      "p_value": 0.004,
+      "shuffles": 1000
+    },
+    "base:home": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62454,
+      "p_value": 0.4086,
+      "shuffles": 1000
+    },
+    "base:roster_delta": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62882,
+      "p_value": 0.001,
+      "shuffles": 1000
+    },
+    "base:roster_abs": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62723,
+      "p_value": 0.002,
+      "shuffles": 1000
+    },
+    "base:efficiency": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62606,
+      "p_value": 0.004,
+      "shuffles": 1000
+    },
+    "base:pressure": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62509,
+      "p_value": 0.023,
+      "shuffles": 1000
+    },
+    "base:rest": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62461,
+      "p_value": 0.3457,
+      "shuffles": 1000
+    },
+    "base:wind": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62444,
+      "p_value": 0.5864,
+      "shuffles": 1000
+    },
+    "base:division": {
+      "real_log_loss": 0.6245,
+      "shuffled_mean": 0.62453,
+      "p_value": 0.4146,
+      "shuffles": 1000
+    }
+  },
+  "alternatives": {
+    "no_opp_adjust": {
+      "base": {
+        "games": 2490,
+        "log_loss": 0.62417,
+        "su_accuracy": 0.6522,
+        "margin_mae": 10.099
+      },
+      "selected": {
+        "games": 2490,
+        "log_loss": 0.62268,
+        "su_accuracy": 0.6542,
+        "margin_mae": 10.084
+      }
+    }
+  },
+  "split": {
+    "selected_on_2017_2021": [
+      {
+        "added": "primetime",
+        "log_loss_2017_2021": 0.62041
+      },
+      {
+        "added": "ngs_qb",
+        "log_loss_2017_2021": 0.61985
+      }
+    ],
+    "chosen_groups": [
+      "elo",
+      "home",
+      "roster_delta",
+      "roster_abs",
+      "efficiency",
+      "pressure",
+      "rest",
+      "wind",
+      "division",
+      "primetime",
+      "ngs_qb"
+    ],
+    "confirm_2022_plus": {
+      "base": {
+        "games": 1194,
+        "log_loss": 0.62819,
+        "su_accuracy": 0.6454,
+        "margin_mae": 9.763
+      },
+      "selected": {
+        "games": 1194,
+        "log_loss": 0.62643,
+        "su_accuracy": 0.6563,
+        "margin_mae": 9.752
+      }
+    }
+  },
+  "weights": {
+    "2017_2021": {
+      "elo_diff": 1.065,
+      "home_field": -0.001,
+      "delta_QB": 1.367,
+      "delta_RB": 0.382,
+      "delta_WR": -0.082,
+      "delta_TE": -0.36,
+      "delta_OL": -0.307,
+      "delta_DL": 0.518,
+      "delta_LB": 0.081,
+      "delta_CB": 0.398,
+      "delta_S": 0.342,
+      "delta_K": 0.065,
+      "grp_QB": 0.968,
+      "grp_RB": -0.057,
+      "grp_WR": 0.738,
+      "grp_TE": 0.51,
+      "grp_OL": 0.716,
+      "grp_DL": 0.14,
+      "grp_LB": 0.376,
+      "grp_CB": 0.275,
+      "grp_S": -0.248,
+      "grp_K": 0.465,
+      "net_epa_matchup": -0.278,
+      "pass_matchup": -0.969,
+      "rush_matchup": -0.259,
+      "success_diff": 2.204,
+      "pressure_matchup": 0.697,
+      "rest_diff": 0.063,
+      "short_week_diff": 0.03,
+      "wind_x_pass": 0.047,
+      "div_game": -0.271,
+      "primetime_home": 0.43,
+      "qb_cpoe_diff": 0.072,
+      "qb_ttt_diff": 0.536,
+      "qb_aggr_diff": -0.711
+    },
+    "2022_plus": {
+      "elo_diff": 1.119,
+      "home_field": 0.454,
+      "delta_QB": 1.008,
+      "delta_RB": 0.167,
+      "delta_WR": -0.191,
+      "delta_TE": -0.188,
+      "delta_OL": 0.687,
+      "delta_DL": 0.516,
+      "delta_LB": 0.552,
+      "delta_CB": -0.733,
+      "delta_S": 0.205,
+      "delta_K": 0.477,
+      "grp_QB": 1.272,
+      "grp_RB": -0.206,
+      "grp_WR": 0.673,
+      "grp_TE": 0.417,
+      "grp_OL": 0.843,
+      "grp_DL": 0.071,
+      "grp_LB": 0.09,
+      "grp_CB": 0.638,
+      "grp_S": 0.684,
+      "grp_K": -0.435,
+      "net_epa_matchup": -0.396,
+      "pass_matchup": 0.367,
+      "rush_matchup": -0.258,
+      "success_diff": 0.763,
+      "pressure_matchup": 0.511,
+      "rest_diff": 0.622,
+      "short_week_diff": 0.0,
+      "wind_x_pass": -0.013,
+      "div_game": -0.157,
+      "primetime_home": -0.277,
+      "qb_cpoe_diff": -0.098,
+      "qb_ttt_diff": 0.785,
+      "qb_aggr_diff": -0.817
+    },
+    "all": {
+      "elo_diff": 1.201,
+      "home_field": 0.267,
+      "delta_QB": 1.431,
+      "delta_RB": 0.347,
+      "delta_WR": -0.248,
+      "delta_TE": -0.358,
+      "delta_OL": 0.044,
+      "delta_DL": 0.668,
+      "delta_LB": 0.371,
+      "delta_CB": -0.045,
+      "delta_S": 0.477,
+      "delta_K": 0.168,
+      "grp_QB": 1.007,
+      "grp_RB": -0.303,
+      "grp_WR": 0.804,
+      "grp_TE": 0.483,
+      "grp_OL": 1.008,
+      "grp_DL": -0.047,
+      "grp_LB": 0.111,
+      "grp_CB": 0.343,
+      "grp_S": 0.017,
+      "grp_K": 0.108,
+      "net_epa_matchup": -0.559,
+      "pass_matchup": -0.474,
+      "rush_matchup": -0.34,
+      "success_diff": 1.993,
+      "pressure_matchup": 0.675,
+      "rest_diff": 0.339,
+      "short_week_diff": 0.051,
+      "wind_x_pass": 0.006,
+      "div_game": -0.223,
+      "primetime_home": 0.112,
+      "qb_cpoe_diff": -0.056,
+      "qb_ttt_diff": 0.65,
+      "qb_aggr_diff": -0.776
+    }
+  }
+}

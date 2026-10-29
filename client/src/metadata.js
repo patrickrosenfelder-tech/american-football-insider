@@ -15,6 +15,8 @@ const ROUTES = {
   'free-agents': ['Free Agents', 'NFL free agents and recent player signings.'],
   model: ['AFI Model', 'AFI model methodology, prediction quality and backtests.'],
   'power-rankings': ['Power Rankings', 'NFL team power rankings and performance signals.'],
+  elo: ['Elo Ratings', 'AFI base Elo for every NFL team: results Elo plus a roster adjustment by position group.'],
+  accuracy: ['Accuracy vs Vegas', 'How often the AFI model picks NFL winners compared with the Vegas closing line.'],
   weather: ['Weather', 'NFL kickoff weather forecasts and potential game impacts.'],
   playoffs: ['Playoffs', 'NFL playoff scenarios, seeds and projected odds.'],
   injuries: ['Injuries', 'NFL injury reports and practice participation.'],

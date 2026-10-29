@@ -4,9 +4,9 @@ const SITE_URL = () => (process.env.SITE_URL || 'https://american-football-insid
 
 const TEAM_CODES = ['ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC', 'LV', 'LAC', 'LAR', 'MIA', 'MIN', 'NE', 'NO', 'NYG', 'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB', 'TEN', 'WSH'];
 const STATIC_ROUTES = ['/', '/standings', '/picks', '/teams', '/news', '/previews', '/injuries', '/weather', '/playoffs', '/tendencies',
-  '/power-rankings', '/trades', '/free-agents', '/model', '/social', '/status'];
+  '/power-rankings', '/elo', '/accuracy', '/trades', '/free-agents', '/model', '/social', '/status'];
 // Sitemap omits redirects (/previews, /social) and the operational status page.
-const SITEMAP_STATIC = ['/', '/standings', '/picks', '/teams', '/news', '/injuries', '/weather', '/playoffs', '/tendencies', '/power-rankings', '/trades', '/free-agents', '/model'];
+const SITEMAP_STATIC = ['/', '/standings', '/picks', '/teams', '/news', '/injuries', '/weather', '/playoffs', '/tendencies', '/power-rankings', '/elo', '/accuracy', '/trades', '/free-agents', '/model'];
 
 const GAME_ID = /^\d{6,12}$/;
 const NUMERIC_ID = /^\d{1,12}$/;

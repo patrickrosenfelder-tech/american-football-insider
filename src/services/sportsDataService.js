@@ -122,8 +122,21 @@ const linesFrom = (o) => {
     spread_home: Number.isNaN(spreadHome) ? null : spreadHome,
     total: o.overUnder != null ? Number(o.overUnder) : null,
     moneyline_home: mlNum(o.moneyline?.home?.close?.odds ?? o.moneyline?.home?.open?.odds),
-    moneyline_away: mlNum(o.moneyline?.away?.close?.odds ?? o.moneyline?.away?.open?.odds)
+    moneyline_away: mlNum(o.moneyline?.away?.close?.odds ?? o.moneyline?.away?.open?.odds),
+    // Opening lines (ESPN drops all odds once a game is final, so these are logged hourly).
+    spread_home_open: lineNum(o.pointSpread?.home?.open?.line),
+    total_open: lineNum(o.total?.over?.open?.line),
+    moneyline_home_open: mlNum(o.moneyline?.home?.open?.odds),
+    moneyline_away_open: mlNum(o.moneyline?.away?.open?.odds)
   };
+};
+
+// "-3.5", "+7", "o45.5", "PK" -> number
+const lineNum = (v) => {
+  if (v == null || v === '' || v === 'OFF') return null;
+  if (/^pk$/i.test(String(v))) return 0;
+  const n = Number(String(v).replace(/^[ou]/i, '').replace('+', ''));
+  return Number.isNaN(n) ? null : n;
 };
 
 const hasLiveGame = (games) => games.some((g) => g.status.state === 'in');

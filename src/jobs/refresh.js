@@ -12,6 +12,7 @@ const cache = require('../cache/cacheManager');
 const db = require('../db/database');
 const tradeService = require('../services/tradeService');
 const freeAgentService = require('../services/freeAgentService');
+const marketLogService = require('../services/marketLogService');
 
 const { currentSeason } = rosterService;
 
@@ -101,6 +102,10 @@ const refreshOdds = () => runJob('odds', async () => {
   return { week: board.week, games: upcoming.length, games_with_lines: upcoming.filter((g) => g.lines || g.odds).length };
 });
 
+// Hourly logs for future model tests (see marketLogService): line movement and team sentiment.
+const refreshLineSnapshots = () => runJob('line_snapshots', () => marketLogService.snapshotLines());
+const refreshSentimentSnapshots = () => runJob('sentiment_snapshots', () => marketLogService.snapshotSentiment());
+
 // Player season stat lines from nflverse season stats + snap counts.
 const refreshPlayerStats = () => runJob('player_stats', async () => {
   const r = await playerStatsService.refreshPlayerStats(currentSeason());
@@ -163,4 +168,4 @@ const bootstrap = async () => {
   if (!Array.isArray(fa?.data?.practice_squad)) await refreshFreeAgents();
 };
 
-module.exports = { bootstrap, loadStatus, runJob, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshSocialBluesky, refreshSocialYoutube, refreshSocialReddit, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, status };
+module.exports = { bootstrap, loadStatus, runJob, refreshRosters, refreshInjuries, refreshWeather, refreshOdds, refreshNews, refreshSocialBluesky, refreshSocialYoutube, refreshSocialReddit, refreshPicks, refreshPlayerStats, refreshPractice, refreshPbpDerived, refreshSchedules, refreshTrades, refreshTradeRumors, refreshFreeAgents, refreshLineSnapshots, refreshSentimentSnapshots, status };
