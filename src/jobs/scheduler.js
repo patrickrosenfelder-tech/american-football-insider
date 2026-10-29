@@ -15,6 +15,8 @@ const SCHEDULE = [
   { job: 'rosters_depth', run: refresh.refreshRosters, days: null, hour: 5 },
   { job: 'injuries', run: refresh.refreshInjuries, everyHours: 1 },
   { job: 'odds', run: refresh.refreshOdds, everyHours: 1 },
+  { job: 'line_snapshots', run: refresh.refreshLineSnapshots, everyHours: 1 },
+  { job: 'sentiment_snapshots', run: refresh.refreshSentimentSnapshots, everyHours: 1 },
   { job: 'weather', run: refresh.refreshWeather, everyHours: 3 },
   { job: 'practice_report', run: refresh.refreshPractice, days: null, hour: 7 },
   { job: 'player_stats', run: refresh.refreshPlayerStats, days: null, hour: 7 },

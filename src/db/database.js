@@ -54,6 +54,22 @@ const initialize = () => {
       updated_at TEXT NOT NULL
     )`);
 
+    // Hourly betting-line snapshots (ESPN/DraftKings). ESPN removes odds once a game is final,
+    // so this log is the only record of opening lines and line movement.
+    db.run(`CREATE TABLE IF NOT EXISTS line_snapshots (
+      game_id TEXT NOT NULL, captured_at TEXT NOT NULL, season INTEGER, week INTEGER, kickoff TEXT,
+      home TEXT, away TEXT, provider TEXT, spread_home REAL, total REAL, moneyline_home REAL, moneyline_away REAL,
+      spread_home_open REAL, total_open REAL, moneyline_home_open REAL, moneyline_away_open REAL, minutes_to_kickoff INTEGER,
+      PRIMARY KEY (game_id, captured_at)
+    )`);
+
+    // Hourly per-team social volume and lexicon sentiment, from the posts in the social feed.
+    db.run(`CREATE TABLE IF NOT EXISTS sentiment_snapshots (
+      team TEXT NOT NULL, captured_at TEXT NOT NULL, window_start TEXT, posts INTEGER, insider_posts INTEGER,
+      positive INTEGER, negative INTEGER, injury_mentions INTEGER, score REAL, platforms TEXT,
+      PRIMARY KEY (team, captured_at)
+    )`);
+
     db.run(`CREATE TABLE IF NOT EXISTS picks_backtest (
       game_id TEXT PRIMARY KEY, season INTEGER NOT NULL, week INTEGER NOT NULL,
       kickoff TEXT, away TEXT NOT NULL, home TEXT NOT NULL, model_json TEXT NOT NULL,

@@ -68,6 +68,41 @@ def player_game_production(pbp):
     return out.groupby(["game_id", "gsis_id"], as_index=False).agg(prod=("prod", "sum"), kicks=("kicks", "sum"))
 
 
+# PFR advanced stats (2018+) add what play-by-play does not credit to one player: coverage
+# allowed, hurries and missed tackles for defenders, contact yards for RBs. Terms are in each
+# group's own production units (defenders: a sack = 1; RBs: EPA) and scaled by PFR_SCALE,
+# which the factor lab tests at 0 / 0.5 / 1 / 2.
+PFR_SCALE = 1.0
+PFR_FIRST = 2018
+# Lab (2019-2026): defenders 0.62546 -> 0.62392 log loss; RB contact yards added nothing (0.62549).
+PFR_GROUPS = list(DEFENSE)
+
+
+def pfr_production(first, last):
+    path = lambda kind, y: data.CACHE / f"advstats_week_{kind}_{y}.parquet"
+    def load(kind):
+        frames = []
+        for y in range(max(first, PFR_FIRST), last + 1):
+            p = path(kind, y)
+            try:
+                if not p.exists():
+                    import urllib.request; urllib.request.urlretrieve(f"{data.RELEASES}/pfr_advstats/{p.name}", p)
+                frames.append(pd.read_parquet(p))
+            except Exception as error:
+                print(f"skipping pfr {kind} {y}: {error}", flush=True)
+        d = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+        return d[d.game_type.eq("REG")] if len(d) else d
+    d, r = load("def"), load("rush")
+    n = lambda s: pd.to_numeric(s, errors="coerce").fillna(0)
+    cover = -(n(d.def_yards_allowed) - 6.5 * n(d.def_targets)) / 25 - 0.5 * n(d.def_receiving_td_allowed)
+    rows = [pd.DataFrame({"game_id": d.game_id, "pfr_id": d.pfr_player_id,
+                          "pfr_prod": cover + 0.25 * n(d.def_times_hurried) - 0.15 * n(d.def_missed_tackles)})]
+    if len(r):
+        rows.append(pd.DataFrame({"game_id": r.game_id, "pfr_id": r.pfr_player_id,
+                                  "pfr_prod": 0.04 * (n(r.rushing_yards_after_contact) - 2.8 * n(r.carries)) + 0.15 * n(r.rushing_broken_tackles)}))
+    return pd.concat(rows, ignore_index=True).groupby(["game_id", "pfr_id"], as_index=False).pfr_prod.sum()
+
+
 def team_protection(pbp):
     """Per (game, offense) pass protection + run blocking score, shared by that game's OL."""
     p = pbp[pbp.posteam.notna() & pbp.qb_kneel.ne(1) & pbp.qb_spike.ne(1)]
@@ -109,6 +144,11 @@ def player_games(pbp, snaps, rosters):
     s["exposure"] = np.where(offense, s.offense_snaps, s.defense_snaps).astype(float)
     is_ol = s.group.eq("OL")
     s.loc[is_ol, "prod"] = s.loc[is_ol, "ol_score"].fillna(0) * s.loc[is_ol, "exposure"]
+    if PFR_SCALE:
+        pfr = pfr_production(int(s.season.min()), int(s.season.max()))
+        s = s.merge(pfr, on=["game_id", "pfr_id"], how="left")
+        ok = s.group.isin(PFR_GROUPS)
+        s.loc[ok, "prod"] = s.loc[ok, "prod"] + PFR_SCALE * s.loc[ok, "pfr_prod"].fillna(0)
     is_k = s.group.eq("K")
     s.loc[is_k, "exposure"] = s.loc[is_k, "kicks"]
     s.loc[is_k, "share"] = (s.loc[is_k, "kicks"] > 0).astype(float)

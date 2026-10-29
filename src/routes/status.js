@@ -25,6 +25,8 @@ const SOURCES = [
   { key: 'free_agents', label: 'Free agents', provider: 'ESPN transactions + athlete status, nflverse stats/snaps/rosters', jobs: ['free_agents'], dataset: (s) => `free_agents_${s}` },
   { key: 'weather', label: 'Weather', provider: 'Open-Meteo', jobs: ['weather'] },
   { key: 'odds', label: 'Odds / lines', provider: 'ESPN (DraftKings)', jobs: ['odds'] },
+  { key: 'line_snapshots', label: 'Line movement log', provider: 'ESPN (DraftKings), hourly', jobs: ['line_snapshots'] },
+  { key: 'sentiment_snapshots', label: 'Team sentiment log', provider: 'AFI social feed, hourly', jobs: ['sentiment_snapshots'] },
   { key: 'picks', label: 'AFI Picks', provider: 'AFI model', jobs: ['picks'] },
   { key: 'schedules', label: 'Head-to-head history', provider: 'nflverse', jobs: ['schedules'], dataset: () => 'schedules_played' }
 ];
