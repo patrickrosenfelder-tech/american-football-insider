@@ -50,6 +50,13 @@ test('robots.txt is plain text and points to the sitemap', async () => {
   expect(body).toContain('Sitemap: https://american-football-insider.fly.dev/sitemap.xml');
 });
 
+test('standings API is edge-cacheable while it is refreshed in the background', async () => {
+  const res = await get('/api/standings');
+  expect(res.status).toBe(200);
+  expect(res.headers.get('cache-control')).toContain('s-maxage=300');
+  expect(res.headers.get('cache-control')).toContain('stale-if-error=86400');
+});
+
 test('sitemap.xml is XML with static routes, team pages and current-season game pages', async () => {
   const res = await get('/sitemap.xml');
   expect(res.status).toBe(200);
